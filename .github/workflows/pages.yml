@@ -1,0 +1,71 @@
+name: Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and never cancel one midway: a half-finished deploy
+# would leave the published site in whatever state the upload reached.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: 3.47.1
+
+jobs:
+  build:
+    name: Build the site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/client
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      # Pages serves this repository under /memini/, not at a domain root.
+      # Without the base href every asset would be requested one level up and
+      # the page would load to a blank screen.
+      - name: Build
+        run: flutter build web --release --base-href /memini/
+
+      # Drift loads these two from the site root at runtime. `flutter build
+      # web` succeeds without them and the app then cannot open its database,
+      # so a deploy that ships without them is a deploy of a broken app.
+      - name: Check the Drift web assets shipped
+        run: |
+          for f in sqlite3.wasm drift_worker.js; do
+            test -s "build/web/$f" || { echo "::error::build/web/$f is missing"; exit 1; }
+          done
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/client/build/web
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
