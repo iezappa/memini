@@ -13,9 +13,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Memini';
 
   @override
-  String get navCollection => 'Colección';
-
-  @override
   String get navStats => 'Estadísticas';
 
   @override
@@ -45,15 +42,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get filters => 'Filtros';
-
-  @override
-  String get filterOutcome => 'Resultado';
-
-  @override
-  String get filterAny => 'Cualquiera';
-
-  @override
   String get filterEscaped => 'Escapaste';
 
   @override
@@ -66,25 +54,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterAllFranchises => 'Todas las franquicias';
 
   @override
-  String get filterMinRating => 'Puntaje mínimo';
-
-  @override
-  String get sortBy => 'Ordenar por';
-
-  @override
-  String get sortPlayedNewest => 'Más recientes';
-
-  @override
-  String get sortPlayedOldest => 'Más antiguas';
-
-  @override
   String get sortRatingHigh => 'Mejor puntaje';
 
   @override
   String get sortRatingLow => 'Peor puntaje';
-
-  @override
-  String get sortName => 'Nombre';
 
   @override
   String get clearFilters => 'Limpiar filtros';
@@ -123,9 +96,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fieldNameRequired => 'La sala necesita un nombre.';
 
   @override
-  String get fieldPhoto => 'Foto';
-
-  @override
   String get fieldDescription => 'Descripción';
 
   @override
@@ -162,25 +132,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get photoFailed => 'No se pudo cargar esa imagen.';
 
   @override
-  String get franchiseNone => 'Sin franquicia';
-
-  @override
   String get franchiseHint => 'Escribí un nombre; se crea si es nueva';
 
   @override
   String get franchises => 'Franquicias';
-
-  @override
-  String franchiseRoomCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count salas',
-      one: '1 sala',
-      zero: 'sin salas',
-    );
-    return '$_temp0';
-  }
 
   @override
   String get notRated => 'Sin puntuar';
@@ -201,31 +156,16 @@ class AppLocalizationsEs extends AppLocalizations {
       'Registrá una sala y acá van a aparecer tus estadísticas.';
 
   @override
-  String get statsTotal => 'Salas jugadas';
-
-  @override
-  String get statsEscaped => 'Escapadas';
-
-  @override
   String get statsEscapeRate => 'Tasa de escape';
 
   @override
   String get statsAverage => 'Puntaje promedio';
 
   @override
-  String get statsBest => 'Mejor puntuada';
-
-  @override
-  String get statsPerYear => 'Salas por año';
-
-  @override
   String get settingsAppearance => 'Apariencia';
 
   @override
   String get settingsProfile => 'Perfil';
-
-  @override
-  String get settingsTheme => 'Tema';
 
   @override
   String get themeSystem => 'Sistema';
@@ -283,9 +223,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pinTooShort => 'Usá al menos 4 dígitos.';
-
-  @override
-  String get pinDigitsOnly => 'Solo dígitos.';
 
   @override
   String get pinMismatch => 'Los dos PIN no coinciden.';
@@ -375,9 +312,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tutorialNext => 'Siguiente';
-
-  @override
-  String get tutorialStart => 'Empezar';
 
   @override
   String get tutorialAgain => 'Ver el tutorial de nuevo';
@@ -769,15 +703,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get enrichFailed => 'La búsqueda falló. Igual podés completar a mano.';
 
   @override
-  String get enrichApply => 'Usar estos datos';
-
-  @override
   String enrichCredit(String source) {
     return 'Datos de $source';
   }
-
-  @override
-  String get statsOverview => 'Todo';
 
   @override
   String get statsEntries => 'Registros';
@@ -793,9 +721,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get statsPerYearAll => 'Registros por año';
-
-  @override
-  String get statsRooms => 'Salas de escape';
 
   @override
   String get statsHoursPlayed => 'Horas jugadas';
@@ -828,9 +753,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsKeySet => 'Configurada';
-
-  @override
-  String get settingsGetKey => 'Obtener una clave gratis';
 
   @override
   String get settingsMusicBrainzNote =>

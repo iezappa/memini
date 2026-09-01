@@ -1,7 +1,6 @@
 {
   "@@locale": "en",
   "appTitle": "Memini",
-  "navCollection": "Collection",
   "navStats": "Stats",
   "navSettings": "Settings",
   "greeting": "Hello, {name}",
@@ -22,20 +21,12 @@
       }
     }
   },
-  "filters": "Filters",
-  "filterOutcome": "Outcome",
-  "filterAny": "Any",
   "filterEscaped": "Escaped",
   "filterFailed": "Not escaped",
   "filterFranchise": "Franchise",
   "filterAllFranchises": "All franchises",
-  "filterMinRating": "Minimum score",
-  "sortBy": "Sort by",
-  "sortPlayedNewest": "Most recent",
-  "sortPlayedOldest": "Oldest",
   "sortRatingHigh": "Highest score",
   "sortRatingLow": "Lowest score",
-  "sortName": "Name",
   "clearFilters": "Clear filters",
   "emptyTitle": "Nothing logged yet",
   "emptyBody": "Add the first room you played and start building your record.",
@@ -54,7 +45,6 @@
   },
   "fieldName": "Name",
   "fieldNameRequired": "A room needs a name.",
-  "fieldPhoto": "Photo",
   "fieldDescription": "Description",
   "fieldFranchise": "Franchise",
   "fieldRating": "Score",
@@ -67,17 +57,8 @@
   "photoReplace": "Replace photo",
   "photoRemove": "Remove photo",
   "photoFailed": "Could not load that image.",
-  "franchiseNone": "No franchise",
   "franchiseHint": "Type a name; it is created if new",
   "franchises": "Franchises",
-  "franchiseRoomCount": "{count, plural, =0{no rooms} =1{1 room} other{{count} rooms}}",
-  "@franchiseRoomCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "notRated": "Not rated",
   "escapedYes": "Escaped",
   "escapedNo": "Did not escape",
@@ -90,15 +71,10 @@
     }
   },
   "statsEmpty": "Log a room and your stats will show up here.",
-  "statsTotal": "Rooms played",
-  "statsEscaped": "Escaped",
   "statsEscapeRate": "Escape rate",
   "statsAverage": "Average score",
-  "statsBest": "Highest rated",
-  "statsPerYear": "Rooms per year",
   "settingsAppearance": "Appearance",
   "settingsProfile": "Profile",
-  "settingsTheme": "Theme",
   "themeSystem": "System",
   "themeLight": "Light",
   "themeDark": "Dark",
@@ -118,7 +94,6 @@
   "pinNew": "New PIN",
   "pinConfirm": "Repeat the PIN",
   "pinTooShort": "Use at least 4 digits.",
-  "pinDigitsOnly": "Digits only.",
   "pinMismatch": "The two PINs do not match.",
   "pinWrong": "Wrong PIN.",
   "pinUnlock": "Unlock",
@@ -152,7 +127,6 @@
   "linkFailed": "Could not open the link.",
   "tutorialSkip": "Skip",
   "tutorialNext": "Next",
-  "tutorialStart": "Get started",
   "tutorialAgain": "Show the tutorial again",
   "tutorial1Title": "Everything you did, in one place",
   "tutorial1Body": "Log escape rooms, meals, concerts, films, series and games: a photo, the date and the details that matter for each one.",
@@ -309,7 +283,6 @@
   "enrichNoResults": "Nothing found. Fill it in by hand.",
   "enrichOffline": "No connection. You can still fill it in by hand.",
   "enrichFailed": "The lookup failed. You can still fill it in by hand.",
-  "enrichApply": "Use this",
   "enrichCredit": "Data from {source}",
   "@enrichCredit": {
     "placeholders": {
@@ -318,13 +291,11 @@
       }
     }
   },
-  "statsOverview": "Everything",
   "statsEntries": "Entries",
   "statsRated": "Rated",
   "statsByDomain": "By section",
   "statsBestOverall": "Your highest score",
   "statsPerYearAll": "Entries per year",
-  "statsRooms": "Escape rooms",
   "statsHoursPlayed": "Hours played",
   "statsMoneySpent": "Spent on meals",
   "statsNothingRated": "Nothing rated yet",
@@ -335,6 +306,5 @@
   "settingsRawgKey": "RAWG key (games)",
   "settingsKeyNotSet": "Not set",
   "settingsKeySet": "Set",
-  "settingsGetKey": "Get a free key",
   "settingsMusicBrainzNote": "Bands use MusicBrainz, which needs no key."
 }

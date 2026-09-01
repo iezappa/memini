@@ -104,12 +104,6 @@ abstract class AppLocalizations {
   /// **'Memini'**
   String get appTitle;
 
-  /// No description provided for @navCollection.
-  ///
-  /// In en, this message translates to:
-  /// **'Collection'**
-  String get navCollection;
-
   /// No description provided for @navStats.
   ///
   /// In en, this message translates to:
@@ -146,24 +140,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{No rooms} =1{1 room} other{{count} rooms}}'**
   String roomCount(int count);
 
-  /// No description provided for @filters.
-  ///
-  /// In en, this message translates to:
-  /// **'Filters'**
-  String get filters;
-
-  /// No description provided for @filterOutcome.
-  ///
-  /// In en, this message translates to:
-  /// **'Outcome'**
-  String get filterOutcome;
-
-  /// No description provided for @filterAny.
-  ///
-  /// In en, this message translates to:
-  /// **'Any'**
-  String get filterAny;
-
   /// No description provided for @filterEscaped.
   ///
   /// In en, this message translates to:
@@ -188,30 +164,6 @@ abstract class AppLocalizations {
   /// **'All franchises'**
   String get filterAllFranchises;
 
-  /// No description provided for @filterMinRating.
-  ///
-  /// In en, this message translates to:
-  /// **'Minimum score'**
-  String get filterMinRating;
-
-  /// No description provided for @sortBy.
-  ///
-  /// In en, this message translates to:
-  /// **'Sort by'**
-  String get sortBy;
-
-  /// No description provided for @sortPlayedNewest.
-  ///
-  /// In en, this message translates to:
-  /// **'Most recent'**
-  String get sortPlayedNewest;
-
-  /// No description provided for @sortPlayedOldest.
-  ///
-  /// In en, this message translates to:
-  /// **'Oldest'**
-  String get sortPlayedOldest;
-
   /// No description provided for @sortRatingHigh.
   ///
   /// In en, this message translates to:
@@ -223,12 +175,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lowest score'**
   String get sortRatingLow;
-
-  /// No description provided for @sortName.
-  ///
-  /// In en, this message translates to:
-  /// **'Name'**
-  String get sortName;
 
   /// No description provided for @clearFilters.
   ///
@@ -295,12 +241,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A room needs a name.'**
   String get fieldNameRequired;
-
-  /// No description provided for @fieldPhoto.
-  ///
-  /// In en, this message translates to:
-  /// **'Photo'**
-  String get fieldPhoto;
 
   /// No description provided for @fieldDescription.
   ///
@@ -374,12 +314,6 @@ abstract class AppLocalizations {
   /// **'Could not load that image.'**
   String get photoFailed;
 
-  /// No description provided for @franchiseNone.
-  ///
-  /// In en, this message translates to:
-  /// **'No franchise'**
-  String get franchiseNone;
-
   /// No description provided for @franchiseHint.
   ///
   /// In en, this message translates to:
@@ -391,12 +325,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Franchises'**
   String get franchises;
-
-  /// No description provided for @franchiseRoomCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =0{no rooms} =1{1 room} other{{count} rooms}}'**
-  String franchiseRoomCount(int count);
 
   /// No description provided for @notRated.
   ///
@@ -428,18 +356,6 @@ abstract class AppLocalizations {
   /// **'Log a room and your stats will show up here.'**
   String get statsEmpty;
 
-  /// No description provided for @statsTotal.
-  ///
-  /// In en, this message translates to:
-  /// **'Rooms played'**
-  String get statsTotal;
-
-  /// No description provided for @statsEscaped.
-  ///
-  /// In en, this message translates to:
-  /// **'Escaped'**
-  String get statsEscaped;
-
   /// No description provided for @statsEscapeRate.
   ///
   /// In en, this message translates to:
@@ -452,18 +368,6 @@ abstract class AppLocalizations {
   /// **'Average score'**
   String get statsAverage;
 
-  /// No description provided for @statsBest.
-  ///
-  /// In en, this message translates to:
-  /// **'Highest rated'**
-  String get statsBest;
-
-  /// No description provided for @statsPerYear.
-  ///
-  /// In en, this message translates to:
-  /// **'Rooms per year'**
-  String get statsPerYear;
-
   /// No description provided for @settingsAppearance.
   ///
   /// In en, this message translates to:
@@ -475,12 +379,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get settingsProfile;
-
-  /// No description provided for @settingsTheme.
-  ///
-  /// In en, this message translates to:
-  /// **'Theme'**
-  String get settingsTheme;
 
   /// No description provided for @themeSystem.
   ///
@@ -595,12 +493,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use at least 4 digits.'**
   String get pinTooShort;
-
-  /// No description provided for @pinDigitsOnly.
-  ///
-  /// In en, this message translates to:
-  /// **'Digits only.'**
-  String get pinDigitsOnly;
 
   /// No description provided for @pinMismatch.
   ///
@@ -757,12 +649,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get tutorialNext;
-
-  /// No description provided for @tutorialStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Get started'**
-  String get tutorialStart;
 
   /// No description provided for @tutorialAgain.
   ///
@@ -1448,23 +1334,11 @@ abstract class AppLocalizations {
   /// **'The lookup failed. You can still fill it in by hand.'**
   String get enrichFailed;
 
-  /// No description provided for @enrichApply.
-  ///
-  /// In en, this message translates to:
-  /// **'Use this'**
-  String get enrichApply;
-
   /// No description provided for @enrichCredit.
   ///
   /// In en, this message translates to:
   /// **'Data from {source}'**
   String enrichCredit(String source);
-
-  /// No description provided for @statsOverview.
-  ///
-  /// In en, this message translates to:
-  /// **'Everything'**
-  String get statsOverview;
 
   /// No description provided for @statsEntries.
   ///
@@ -1495,12 +1369,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Entries per year'**
   String get statsPerYearAll;
-
-  /// No description provided for @statsRooms.
-  ///
-  /// In en, this message translates to:
-  /// **'Escape rooms'**
-  String get statsRooms;
 
   /// No description provided for @statsHoursPlayed.
   ///
@@ -1561,12 +1429,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Set'**
   String get settingsKeySet;
-
-  /// No description provided for @settingsGetKey.
-  ///
-  /// In en, this message translates to:
-  /// **'Get a free key'**
-  String get settingsGetKey;
 
   /// No description provided for @settingsMusicBrainzNote.
   ///

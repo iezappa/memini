@@ -13,9 +13,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Memini';
 
   @override
-  String get navCollection => 'Collection';
-
-  @override
   String get navStats => 'Stats';
 
   @override
@@ -45,15 +42,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get filters => 'Filters';
-
-  @override
-  String get filterOutcome => 'Outcome';
-
-  @override
-  String get filterAny => 'Any';
-
-  @override
   String get filterEscaped => 'Escaped';
 
   @override
@@ -66,25 +54,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterAllFranchises => 'All franchises';
 
   @override
-  String get filterMinRating => 'Minimum score';
-
-  @override
-  String get sortBy => 'Sort by';
-
-  @override
-  String get sortPlayedNewest => 'Most recent';
-
-  @override
-  String get sortPlayedOldest => 'Oldest';
-
-  @override
   String get sortRatingHigh => 'Highest score';
 
   @override
   String get sortRatingLow => 'Lowest score';
-
-  @override
-  String get sortName => 'Name';
 
   @override
   String get clearFilters => 'Clear filters';
@@ -123,9 +96,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldNameRequired => 'A room needs a name.';
 
   @override
-  String get fieldPhoto => 'Photo';
-
-  @override
   String get fieldDescription => 'Description';
 
   @override
@@ -162,25 +132,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoFailed => 'Could not load that image.';
 
   @override
-  String get franchiseNone => 'No franchise';
-
-  @override
   String get franchiseHint => 'Type a name; it is created if new';
 
   @override
   String get franchises => 'Franchises';
-
-  @override
-  String franchiseRoomCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count rooms',
-      one: '1 room',
-      zero: 'no rooms',
-    );
-    return '$_temp0';
-  }
 
   @override
   String get notRated => 'Not rated';
@@ -200,31 +155,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsEmpty => 'Log a room and your stats will show up here.';
 
   @override
-  String get statsTotal => 'Rooms played';
-
-  @override
-  String get statsEscaped => 'Escaped';
-
-  @override
   String get statsEscapeRate => 'Escape rate';
 
   @override
   String get statsAverage => 'Average score';
 
   @override
-  String get statsBest => 'Highest rated';
-
-  @override
-  String get statsPerYear => 'Rooms per year';
-
-  @override
   String get settingsAppearance => 'Appearance';
 
   @override
   String get settingsProfile => 'Profile';
-
-  @override
-  String get settingsTheme => 'Theme';
 
   @override
   String get themeSystem => 'System';
@@ -282,9 +222,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinTooShort => 'Use at least 4 digits.';
-
-  @override
-  String get pinDigitsOnly => 'Digits only.';
 
   @override
   String get pinMismatch => 'The two PINs do not match.';
@@ -374,9 +311,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorialNext => 'Next';
-
-  @override
-  String get tutorialStart => 'Get started';
 
   @override
   String get tutorialAgain => 'Show the tutorial again';
@@ -771,15 +705,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'The lookup failed. You can still fill it in by hand.';
 
   @override
-  String get enrichApply => 'Use this';
-
-  @override
   String enrichCredit(String source) {
     return 'Data from $source';
   }
-
-  @override
-  String get statsOverview => 'Everything';
 
   @override
   String get statsEntries => 'Entries';
@@ -795,9 +723,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statsPerYearAll => 'Entries per year';
-
-  @override
-  String get statsRooms => 'Escape rooms';
 
   @override
   String get statsHoursPlayed => 'Hours played';
@@ -830,9 +755,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsKeySet => 'Set';
-
-  @override
-  String get settingsGetKey => 'Get a free key';
 
   @override
   String get settingsMusicBrainzNote =>

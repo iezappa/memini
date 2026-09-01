@@ -13,9 +13,21 @@ Last checked against it: **2026-09-01**.
 
 ## Open
 
-- [ ] The integration test boots the app and walks the bottom bar. The flows
-      worth adding next are the ones with something at stake: a title looked
-      up and saved, and the PIN lock.
+- [ ] The integration test boots the app and walks the bottom bar. The flow
+      worth adding next is a title looked up and saved.
+
+      Not the PIN, yet. `flutter_secure_storage` needs the
+      `org.freedesktop.secrets` daemon at runtime, and there is none on WSL or
+      on `ubuntu-latest`. Installing `libsecret-1-dev` is enough to link the
+      Linux build and not enough to run it, so the test would fail on the
+      environment rather than on the code. It needs gnome-keyring started and
+      unlocked in the workflow first. The widget tests cover the lock screen
+      itself in the meantime.
+
+- [ ] Settings tells the owner to paste a TMDB or RAWG key but offers no way to
+      get one. A `settingsGetKey` string existed for exactly this and was never
+      wired to anything; it was removed with the rest of the dead copy, so this
+      line is the only record left that the affordance is missing.
 
 ---
 
