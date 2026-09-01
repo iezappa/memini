@@ -85,6 +85,7 @@ class _AppearanceSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final themeMode = ref.watch(themeModeProvider);
+    final accent = ref.watch(accentProvider);
 
     return _Section(
       title: l10n.settingsAppearance,
@@ -104,6 +105,26 @@ class _AppearanceSection extends ConsumerWidget {
           showSelectedIcon: false,
           onSelectionChanged: (selection) =>
               ref.read(themeModeProvider.notifier).set(selection.first),
+        ),
+        Gap.vMd,
+        Text(
+          l10n.settingsAccent,
+          style: context.text.bodyMedium?.copyWith(
+            color: context.semantics.muted,
+          ),
+        ),
+        Gap.vSm,
+        Wrap(
+          spacing: Gap.sm,
+          runSpacing: Gap.sm,
+          children: [
+            for (final option in AppAccent.values)
+              AccentSwatch(
+                accent: option,
+                selected: option == accent,
+                onTap: () => ref.read(accentProvider.notifier).set(option),
+              ),
+          ],
         ),
       ],
     );

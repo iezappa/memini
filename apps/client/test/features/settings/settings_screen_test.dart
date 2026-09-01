@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:memini/core/theme/tokens.dart';
 import 'package:memini/app/providers.dart';
 import 'package:memini/core/database/app_database.dart';
 import 'package:memini/features/security/data/pin_service.dart';
@@ -56,6 +58,47 @@ void main() {
       'SUPPORT',
       'ABOUT',
     ]);
+
+    await unmount(tester);
+  });
+
+  testWidgets('offers every accent, with the current one marked', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+
+    final swatches = find.byType(AccentSwatch);
+    expect(swatches, findsNWidgets(AppAccent.values.length));
+    expect(
+      tester.widgetList<AccentSwatch>(swatches).where((s) => s.selected),
+      hasLength(1),
+      reason: 'exactly one accent is in use at a time',
+    );
+
+    await unmount(tester);
+  });
+
+  testWidgets('changing the accent sticks', (tester) async {
+    await pumpSettings(tester);
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(SettingsScreen)),
+    );
+    expect(container.read(accentProvider), AppAccent.brass);
+
+    await tester.tap(
+      find.byWidgetPredicate(
+        (w) => w is AccentSwatch && w.accent == AppAccent.violet,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(container.read(accentProvider), AppAccent.violet);
+    expect(
+      container.read(settingsRepositoryProvider).accent,
+      AppAccent.violet,
+      reason: 'the choice has to survive a restart, not just a rebuild',
+    );
 
     await unmount(tester);
   });

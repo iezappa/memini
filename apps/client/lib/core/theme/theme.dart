@@ -54,10 +54,15 @@ abstract final class MeminiTheme {
   static const _display = 'Fraunces';
   static const _body = 'Inter';
 
-  static ThemeData light() => _build(
+  /// The accent replaces the primary role only.
+  ///
+  /// The paper and ink surfaces are hand-tuned and stay put: this app is a
+  /// warm, dim room with coloured hardware, and regenerating the whole scheme
+  /// from the seed — the way the sibling apps do — would repaint the room too.
+  static ThemeData light([AppAccent accent = AppAccent.brass]) => _build(
     brightness: Brightness.light,
-    scheme: const ColorScheme.light(
-      primary: MeminiColors.brassDeep,
+    scheme: ColorScheme.light(
+      primary: accent.deepSeed,
       onPrimary: Colors.white,
       secondary: MeminiColors.escapedDeep,
       surface: MeminiColors.paperSurface,
@@ -76,10 +81,10 @@ abstract final class MeminiTheme {
     ),
   );
 
-  static ThemeData dark() => _build(
+  static ThemeData dark([AppAccent accent = AppAccent.brass]) => _build(
     brightness: Brightness.dark,
-    scheme: const ColorScheme.dark(
-      primary: MeminiColors.brass,
+    scheme: ColorScheme.dark(
+      primary: accent.seed,
       onPrimary: MeminiColors.ink,
       secondary: MeminiColors.escaped,
       surface: MeminiColors.inkSurface,

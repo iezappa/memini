@@ -374,6 +374,12 @@ abstract class AppLocalizations {
   /// **'Appearance'**
   String get settingsAppearance;
 
+  /// No description provided for @settingsAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent colour'**
+  String get settingsAccent;
+
   /// No description provided for @settingsProfile.
   ///
   /// In en, this message translates to:

@@ -34,6 +34,33 @@ abstract final class MeminiColors {
 }
 
 /// Spacing scale. Multiples of 4, named so layouts read as intent.
+/// The pickable accent colours, shared with the other apps in the family.
+///
+/// Brass comes first and is the default: it is the colour the whole palette
+/// was built around, so an existing owner who never opens settings sees the
+/// app they already had. The other six are the family set, every seed
+/// desaturated so none of them shouts over the paper and ink around it.
+enum AppAccent { brass, green, blue, pink, violet, orange, red }
+
+extension AppAccentSeed on AppAccent {
+  Color get seed => switch (this) {
+    AppAccent.brass => MeminiColors.brass,
+    AppAccent.green => const Color(0xFF5E8B7E),
+    AppAccent.blue => const Color(0xFF5C7C9E),
+    AppAccent.pink => const Color(0xFFB56C86),
+    AppAccent.violet => const Color(0xFF7C6BA8),
+    AppAccent.orange => const Color(0xFFC1804E),
+    AppAccent.red => const Color(0xFFB25E54),
+  };
+
+  /// The darker tone the light theme uses, so the accent still reads as text
+  /// on paper. Brass keeps its own hand-tuned pair.
+  Color get deepSeed => switch (this) {
+    AppAccent.brass => MeminiColors.brassDeep,
+    _ => Color.lerp(seed, const Color(0xFF000000), 0.22)!,
+  };
+}
+
 abstract final class Gap {
   static const xs = 4.0;
   static const sm = 8.0;

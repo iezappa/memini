@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../core/theme/tokens.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -128,6 +131,20 @@ class ThemeModeController extends Notifier<ThemeMode> {
 
   Future<void> set(ThemeMode value) async {
     await ref.read(settingsRepositoryProvider).setThemeMode(value);
+    state = value;
+  }
+}
+
+final accentProvider = NotifierProvider<AccentController, AppAccent>(
+  AccentController.new,
+);
+
+class AccentController extends Notifier<AppAccent> {
+  @override
+  AppAccent build() => ref.watch(settingsRepositoryProvider).accent;
+
+  Future<void> set(AppAccent value) async {
+    await ref.read(settingsRepositoryProvider).setAccent(value);
     state = value;
   }
 }

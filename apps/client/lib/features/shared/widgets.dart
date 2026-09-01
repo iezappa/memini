@@ -253,3 +253,50 @@ class EmptyState extends StatelessWidget {
     );
   }
 }
+
+/// One pickable accent, as a filled circle.
+///
+/// Named and exported rather than private so the settings test can assert on
+/// the set of choices and which one is in use.
+class AccentSwatch extends StatelessWidget {
+  const AccentSwatch({
+    super.key,
+    required this.accent,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final AppAccent accent;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: accent.name,
+      selected: selected,
+      button: true,
+      child: InkResponse(
+        onTap: onTap,
+        radius: 28,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: accent.seed,
+            border: Border.all(
+              // The ring, not the fill, carries the selection: a checkmark
+              // alone would vanish against the lighter swatches.
+              color: selected ? context.colors.onSurface : Colors.transparent,
+              width: 2,
+            ),
+          ),
+          child: selected
+              ? const Icon(Icons.check, size: 18, color: Colors.white)
+              : null,
+        ),
+      ),
+    );
+  }
+}

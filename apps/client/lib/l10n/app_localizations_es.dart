@@ -165,6 +165,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsAppearance => 'Apariencia';
 
   @override
+  String get settingsAccent => 'Color de acento';
+
+  @override
   String get settingsProfile => 'Perfil';
 
   @override

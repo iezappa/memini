@@ -29,6 +29,26 @@ Last checked against it: **2026-09-01**.
       wired to anything; it was removed with the rest of the dead copy, so this
       line is the only record left that the affordance is missing.
 
+- [ ] **Pick the lookup sources.** The forms use TMDB and RAWG, both of which
+      need a key the owner has to register for, and settings offers no way to
+      get one. Keyless alternatives were tested against the live endpoints:
+
+      | Domain | Keyless option | Verdict |
+      |---|---|---|
+      | Series | TVmaze | Clean win. Public, documented, no key. Returns summary, genres, image and cast. |
+      | Games | Steam storefront | Trade-off. No key, rich data, but only Steam's catalogue: "zelda tears of the kingdom" and "bloodborne" both return zero. RAWG has them. |
+      | Films | IMDb suggestion | Works, posters included, but it is imdb.com's own undocumented search endpoint — unsupported and outside their terms. |
+      | Films | Wikidata | Clean and open, descriptions even come in Spanish, but P18 is empty for most films (posters are under copyright), so no cover art. |
+      | Concerts | MusicBrainz | Already keyless. Nothing to change. |
+
+      iTunes Search was tried and dropped: zero results on every query.
+
+      The shape that fits what is already built: `EnrichmentSuggestion` is a
+      port with swappable sources, so the keyless ones can be the default and
+      TMDB/RAWG stay an optional upgrade. The app would then work on install
+      with no key at all, and a key would buy console coverage and guaranteed
+      posters. That also closes the missing "get a key" affordance above.
+
 ---
 
 ## To re-check against the standard

@@ -15,6 +15,7 @@ class MeminiApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final accent = ref.watch(accentProvider);
     final onboardingDone = ref.watch(onboardingDoneProvider);
     final pinEnabled = ref.watch(pinEnabledProvider).valueOrNull ?? false;
     final unlocked = ref.watch(unlockedProvider);
@@ -27,8 +28,8 @@ class MeminiApp extends ConsumerWidget {
       return MaterialApp(
         onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
         debugShowCheckedModeBanner: false,
-        theme: MeminiTheme.light(),
-        darkTheme: MeminiTheme.dark(),
+        theme: MeminiTheme.light(accent),
+        darkTheme: MeminiTheme.dark(accent),
         themeMode: themeMode,
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -40,8 +41,8 @@ class MeminiApp extends ConsumerWidget {
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
-      theme: MeminiTheme.light(),
-      darkTheme: MeminiTheme.dark(),
+      theme: MeminiTheme.light(accent),
+      darkTheme: MeminiTheme.dark(accent),
       themeMode: themeMode,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../theme/tokens.dart';
+
 /// Every user preference that is not domain data, in one place.
 ///
 /// Backed by shared_preferences because none of it is sensitive and all of it
@@ -15,6 +17,7 @@ class SettingsRepository {
   static const _tutorialKey = 'onboarding.tutorial_seen';
   static const _disclaimerKey = 'onboarding.disclaimer_accepted';
   static const _displayNameKey = 'profile.display_name';
+  static const _accentKey = 'settings.accent';
 
   /// Lookup keys are the owner's own: TMDB and RAWG both issue them free for
   /// personal use, and neither licence lets an app ship one for everybody.
@@ -45,6 +48,19 @@ class SettingsRepository {
 
   Future<void> setThemeMode(ThemeMode value) =>
       _prefs.setString(_themeKey, value.name);
+
+  /// Falls back to brass for anything unrecognised, so an accent renamed or
+  /// dropped in a later version cannot leave the app without a primary.
+  AppAccent get accent {
+    final name = _prefs.getString(_accentKey);
+    return AppAccent.values.firstWhere(
+      (accent) => accent.name == name,
+      orElse: () => AppAccent.brass,
+    );
+  }
+
+  Future<void> setAccent(AppAccent value) =>
+      _prefs.setString(_accentKey, value.name);
 
   bool get tutorialSeen => _prefs.getBool(_tutorialKey) ?? false;
 
