@@ -112,7 +112,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteRoom => 'Delete room';
 
   @override
-  String deleteRoomConfirm(String name) {
+  String deleteConfirm(String name) {
     return 'Delete \"$name\"? This cannot be undone.';
   }
 
@@ -492,10 +492,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteMeal => 'Delete meal';
 
   @override
-  String get deleteMealConfirm =>
-      'This meal will be removed from your log. This cannot be undone.';
-
-  @override
   String get fieldPlace => 'Place';
 
   @override
@@ -555,10 +551,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteGig => 'Delete gig';
-
-  @override
-  String get deleteGigConfirm =>
-      'This gig will be removed from your log. This cannot be undone.';
 
   @override
   String get fieldBand => 'Band';
@@ -626,10 +618,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteViewing => 'Delete title';
-
-  @override
-  String get deleteViewingConfirm =>
-      'This title will be removed from your log. This cannot be undone.';
 
   @override
   String get fieldTitle => 'Title';
@@ -717,10 +705,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteGame => 'Delete game';
-
-  @override
-  String get deleteGameConfirm =>
-      'This game will be removed from your log. This cannot be undone.';
 
   @override
   String get fieldStatus => 'Status';

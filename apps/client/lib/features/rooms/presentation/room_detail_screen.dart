@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../app/providers.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/widgets.dart';
 import '../domain/room.dart';
@@ -26,25 +27,13 @@ class RoomDetailScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final navigator = Navigator.of(context);
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deleteRoom),
-        content: Text(l10n.deleteRoomConfirm(room.title)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
+    final confirmed = await confirmDelete(
+      context,
+      title: l10n.deleteRoom,
+      body: l10n.deleteConfirm(room.title),
     );
 
-    if (confirmed != true) return;
+    if (!confirmed) return;
 
     await ref.read(roomRepositoryProvider).delete(room.id);
     await ref.read(photoStorageProvider).remove(room.photoPath);

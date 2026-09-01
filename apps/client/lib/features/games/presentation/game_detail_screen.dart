@@ -27,7 +27,7 @@ class GameDetailScreen extends ConsumerWidget {
     final confirmed = await confirmDelete(
       context,
       title: l10n.deleteGame,
-      body: l10n.deleteGameConfirm,
+      body: l10n.deleteConfirm(game.title),
     );
     if (!confirmed) return;
 

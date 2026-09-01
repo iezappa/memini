@@ -278,11 +278,11 @@ abstract class AppLocalizations {
   /// **'Delete room'**
   String get deleteRoom;
 
-  /// No description provided for @deleteRoomConfirm.
+  /// No description provided for @deleteConfirm.
   ///
   /// In en, this message translates to:
   /// **'Delete \"{name}\"? This cannot be undone.'**
-  String deleteRoomConfirm(String name);
+  String deleteConfirm(String name);
 
   /// No description provided for @fieldName.
   ///
@@ -962,12 +962,6 @@ abstract class AppLocalizations {
   /// **'Delete meal'**
   String get deleteMeal;
 
-  /// No description provided for @deleteMealConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'This meal will be removed from your log. This cannot be undone.'**
-  String get deleteMealConfirm;
-
   /// No description provided for @fieldPlace.
   ///
   /// In en, this message translates to:
@@ -1069,12 +1063,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete gig'**
   String get deleteGig;
-
-  /// No description provided for @deleteGigConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'This gig will be removed from your log. This cannot be undone.'**
-  String get deleteGigConfirm;
 
   /// No description provided for @fieldBand.
   ///
@@ -1189,12 +1177,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete title'**
   String get deleteViewing;
-
-  /// No description provided for @deleteViewingConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'This title will be removed from your log. This cannot be undone.'**
-  String get deleteViewingConfirm;
 
   /// No description provided for @fieldTitle.
   ///
@@ -1345,12 +1327,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete game'**
   String get deleteGame;
-
-  /// No description provided for @deleteGameConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'This game will be removed from your log. This cannot be undone.'**
-  String get deleteGameConfirm;
 
   /// No description provided for @fieldStatus.
   ///

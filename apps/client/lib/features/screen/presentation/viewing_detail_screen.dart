@@ -33,7 +33,7 @@ class ViewingDetailScreen extends ConsumerWidget {
     final confirmed = await confirmDelete(
       context,
       title: l10n.deleteViewing,
-      body: l10n.deleteViewingConfirm,
+      body: l10n.deleteConfirm(viewing.title),
     );
     if (!confirmed) return;
 

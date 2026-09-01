@@ -26,7 +26,7 @@ class MealDetailScreen extends ConsumerWidget {
     final confirmed = await confirmDelete(
       context,
       title: l10n.deleteMeal,
-      body: l10n.deleteMealConfirm,
+      body: l10n.deleteConfirm(meal.title),
     );
     if (!confirmed) return;
 

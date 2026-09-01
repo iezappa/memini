@@ -27,7 +27,7 @@ class GigDetailScreen extends ConsumerWidget {
     final confirmed = await confirmDelete(
       context,
       title: l10n.deleteGig,
-      body: l10n.deleteGigConfirm,
+      body: l10n.deleteConfirm(gig.title),
     );
     if (!confirmed) return;
 

@@ -44,20 +44,21 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('warns that the delete cannot be undone', (tester) async {
-    await pumpDetail(tester, await log());
+  testWidgets(
+    'names the entry it would destroy, and warns it cannot be undone',
+    (tester) async {
+      await pumpDetail(tester, await log());
 
-    await tapDelete(tester);
+      await tapDelete(tester);
 
-    expect(
-      find.text(
-        'This gig will be removed from your log. This cannot be undone.',
-      ),
-      findsOneWidget,
-    );
+      expect(
+        find.text('Delete "Divididos"? This cannot be undone.'),
+        findsOneWidget,
+      );
 
-    await unmount(tester);
-  });
+      await unmount(tester);
+    },
+  );
 
   testWidgets('leaves the entry alone when the delete is cancelled', (
     tester,

@@ -44,8 +44,8 @@
   "editRoom": "Edit room",
   "newRoom": "New room",
   "deleteRoom": "Delete room",
-  "deleteRoomConfirm": "Delete \"{name}\"? This cannot be undone.",
-  "@deleteRoomConfirm": {
+  "deleteConfirm": "Delete \"{name}\"? This cannot be undone.",
+  "@deleteConfirm": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -193,7 +193,6 @@
   "newMeal": "New meal",
   "editMeal": "Edit meal",
   "deleteMeal": "Delete meal",
-  "deleteMealConfirm": "This meal will be removed from your log. This cannot be undone.",
   "fieldPlace": "Place",
   "fieldPlaceRequired": "The place needs a name",
   "fieldDish": "Dish",
@@ -218,7 +217,6 @@
   "newGig": "New gig",
   "editGig": "Edit gig",
   "deleteGig": "Delete gig",
-  "deleteGigConfirm": "This gig will be removed from your log. This cannot be undone.",
   "fieldBand": "Band",
   "fieldBandRequired": "The band needs a name",
   "fieldVenue": "Venue",
@@ -245,7 +243,6 @@
   "newViewing": "New title",
   "editViewing": "Edit title",
   "deleteViewing": "Delete title",
-  "deleteViewingConfirm": "This title will be removed from your log. This cannot be undone.",
   "fieldTitle": "Title",
   "fieldTitleRequired": "It needs a title",
   "fieldKind": "Kind",
@@ -285,7 +282,6 @@
   "newGame": "New game",
   "editGame": "Edit game",
   "deleteGame": "Delete game",
-  "deleteGameConfirm": "This game will be removed from your log. This cannot be undone.",
   "fieldStatus": "Status",
   "statusPlaying": "Playing",
   "statusFinished": "Finished",

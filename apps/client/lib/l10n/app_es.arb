@@ -30,7 +30,14 @@
   "editRoom": "Editar sala",
   "newRoom": "Nueva sala",
   "deleteRoom": "Eliminar sala",
-  "deleteRoomConfirm": "¿Eliminar «{name}»? No se puede deshacer.",
+  "deleteConfirm": "¿Eliminar «{name}»? No se puede deshacer.",
+  "@deleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "fieldName": "Nombre",
   "fieldNameRequired": "La sala necesita un nombre.",
   "fieldPhoto": "Foto",
@@ -151,7 +158,6 @@
   "newMeal": "Nueva comida",
   "editMeal": "Editar comida",
   "deleteMeal": "Eliminar comida",
-  "deleteMealConfirm": "Esta comida se va a borrar de tu registro. No se puede deshacer.",
   "fieldPlace": "Lugar",
   "fieldPlaceRequired": "El lugar necesita un nombre",
   "fieldDish": "Plato",
@@ -176,7 +182,6 @@
   "newGig": "Nuevo recital",
   "editGig": "Editar recital",
   "deleteGig": "Eliminar recital",
-  "deleteGigConfirm": "Este recital se va a borrar de tu registro. No se puede deshacer.",
   "fieldBand": "Banda",
   "fieldBandRequired": "La banda necesita un nombre",
   "fieldVenue": "Venue",
@@ -203,7 +208,6 @@
   "newViewing": "Nuevo título",
   "editViewing": "Editar título",
   "deleteViewing": "Eliminar título",
-  "deleteViewingConfirm": "Este título se va a borrar de tu registro. No se puede deshacer.",
   "fieldTitle": "Título",
   "fieldTitleRequired": "Necesita un título",
   "fieldKind": "Tipo",
@@ -243,7 +247,6 @@
   "newGame": "Nuevo juego",
   "editGame": "Editar juego",
   "deleteGame": "Eliminar juego",
-  "deleteGameConfirm": "Este juego se va a borrar de tu registro. No se puede deshacer.",
   "fieldStatus": "Estado",
   "statusPlaying": "Jugando",
   "statusFinished": "Terminado",

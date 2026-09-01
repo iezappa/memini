@@ -112,7 +112,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteRoom => 'Eliminar sala';
 
   @override
-  String deleteRoomConfirm(String name) {
+  String deleteConfirm(String name) {
     return '¿Eliminar «$name»? No se puede deshacer.';
   }
 
@@ -493,10 +493,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteMeal => 'Eliminar comida';
 
   @override
-  String get deleteMealConfirm =>
-      'Esta comida se va a borrar de tu registro. No se puede deshacer.';
-
-  @override
   String get fieldPlace => 'Lugar';
 
   @override
@@ -555,10 +551,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteGig => 'Eliminar recital';
-
-  @override
-  String get deleteGigConfirm =>
-      'Este recital se va a borrar de tu registro. No se puede deshacer.';
 
   @override
   String get fieldBand => 'Banda';
@@ -626,10 +618,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteViewing => 'Eliminar título';
-
-  @override
-  String get deleteViewingConfirm =>
-      'Este título se va a borrar de tu registro. No se puede deshacer.';
 
   @override
   String get fieldTitle => 'Título';
@@ -717,10 +705,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteGame => 'Eliminar juego';
-
-  @override
-  String get deleteGameConfirm =>
-      'Este juego se va a borrar de tu registro. No se puede deshacer.';
 
   @override
   String get fieldStatus => 'Estado';
