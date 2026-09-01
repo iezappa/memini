@@ -13,9 +13,9 @@ Last checked against it: **2026-09-01**.
 
 ## Open
 
-- [ ] No `integration_test/`. §7 of the standard asks for critical flows
-      end to end on at least one platform; the widget tests do not start the
-      app.
+- [ ] The integration test boots the app and walks the bottom bar. The flows
+      worth adding next are the ones with something at stake: a title looked
+      up and saved, and the PIN lock.
 
 ---
 
