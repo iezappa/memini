@@ -34,16 +34,20 @@ class SettingsScreen extends ConsumerWidget {
             children: const [
               Gap.vMd,
               _AppearanceSection(),
-              Gap.vXl,
+              Gap.vSection,
+              _ProfileSection(),
+              Gap.vSection,
+              _LanguageSection(),
+              Gap.vSection,
               _SecuritySection(),
-              Gap.vXl,
+              Gap.vSection,
               _LookupsSection(),
-              Gap.vXl,
+              Gap.vSection,
               _DataSection(),
-              Gap.vXl,
+              Gap.vSection,
+              _SupportSection(),
+              Gap.vSection,
               _AboutSection(),
-              Gap.vMd,
-              SupportProjectsCard(),
             ],
           ),
         ),
@@ -52,6 +56,13 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+/// A settings section: an uppercase label, then its controls sitting straight
+/// on the page.
+///
+/// Deliberately not a card. Grouping every section in its own box adds a
+/// border and an inset for each one, and on a screen that is mostly one-line
+/// rows that reads as clutter rather than structure. The label and the page
+/// gutter carry the grouping instead.
 class _Section extends StatelessWidget {
   const _Section({required this.title, required this.children});
 
@@ -62,16 +73,7 @@ class _Section extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionLabel(title),
-        Gap.vSm,
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: Gap.xs),
-            child: Column(children: children),
-          ),
-        ),
-      ],
+      children: [SectionLabel(title), ...children],
     );
   }
 }
@@ -83,58 +85,77 @@ class _AppearanceSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final themeMode = ref.watch(themeModeProvider);
-    final locale = ref.watch(localeProvider);
-    final name = ref.watch(displayNameProvider);
 
     return _Section(
       title: l10n.settingsAppearance,
       children: [
-        ListTile(
-          title: Text(l10n.settingsTheme),
-          trailing: DropdownButton<ThemeMode>(
-            value: themeMode,
-            underline: const SizedBox.shrink(),
-            onChanged: (value) => value == null
-                ? null
-                : ref.read(themeModeProvider.notifier).set(value),
-            items: [
-              DropdownMenuItem(
-                value: ThemeMode.system,
-                child: Text(l10n.themeSystem),
-              ),
-              DropdownMenuItem(
-                value: ThemeMode.light,
-                child: Text(l10n.themeLight),
-              ),
-              DropdownMenuItem(
-                value: ThemeMode.dark,
-                child: Text(l10n.themeDark),
-              ),
-            ],
-          ),
+        // Three fixed choices, so the whole set is visible at once instead of
+        // hidden behind a dropdown that has to be opened to be read.
+        SegmentedButton<ThemeMode>(
+          segments: [
+            ButtonSegment(
+              value: ThemeMode.system,
+              label: Text(l10n.themeSystem),
+            ),
+            ButtonSegment(value: ThemeMode.light, label: Text(l10n.themeLight)),
+            ButtonSegment(value: ThemeMode.dark, label: Text(l10n.themeDark)),
+          ],
+          selected: {themeMode},
+          showSelectedIcon: false,
+          onSelectionChanged: (selection) =>
+              ref.read(themeModeProvider.notifier).set(selection.first),
         ),
-        ListTile(
-          title: Text(l10n.settingsLanguage),
-          trailing: DropdownButton<String>(
-            value: locale?.languageCode ?? 'system',
-            underline: const SizedBox.shrink(),
-            onChanged: (value) => ref
-                .read(localeProvider.notifier)
-                .set(value == 'system' ? null : Locale(value!)),
-            items: [
-              DropdownMenuItem(
-                value: 'system',
-                child: Text(l10n.languageSystem),
+      ],
+    );
+  }
+}
+
+class _LanguageSection extends ConsumerWidget {
+  const _LanguageSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final locale = ref.watch(localeProvider);
+
+    return _Section(
+      title: l10n.settingsLanguage,
+      children: [
+        SegmentedButton<String>(
+          segments: [
+            ButtonSegment(value: 'system', label: Text(l10n.languageSystem)),
+            const ButtonSegment(value: 'es', label: Text('Español')),
+            const ButtonSegment(value: 'en', label: Text('English')),
+          ],
+          selected: {locale?.languageCode ?? 'system'},
+          showSelectedIcon: false,
+          onSelectionChanged: (selection) => ref
+              .read(localeProvider.notifier)
+              .set(
+                selection.first == 'system' ? null : Locale(selection.first),
               ),
-              const DropdownMenuItem(value: 'es', child: Text('Español')),
-              const DropdownMenuItem(value: 'en', child: Text('English')),
-            ],
-          ),
         ),
+      ],
+    );
+  }
+}
+
+class _ProfileSection extends ConsumerWidget {
+  const _ProfileSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final name = ref.watch(displayNameProvider);
+
+    return _Section(
+      title: l10n.settingsProfile,
+      children: [
         ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.person_outline),
           title: Text(l10n.settingsDisplayName),
           subtitle: Text(name ?? l10n.settingsDisplayNameHint),
-          trailing: const Icon(Icons.chevron_right),
           onTap: () => _editName(context, ref, name),
         ),
       ],
@@ -188,11 +209,12 @@ class _SecuritySection extends ConsumerWidget {
       title: l10n.settingsSecurity,
       children: [
         ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.lock_outline),
           title: Text(l10n.settingsPinLock),
           subtitle: Text(
             enabled ? l10n.settingsPinLockOn : l10n.settingsPinLockOff,
           ),
-          trailing: const Icon(Icons.chevron_right),
           onTap: () => _managePin(context, ref, enabled),
         ),
       ],
@@ -374,16 +396,14 @@ class _LookupsSection extends ConsumerWidget {
     return _Section(
       title: l10n.settingsLookups,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Gap.md, Gap.sm, Gap.md, Gap.sm),
-          child: Text(
-            l10n.settingsLookupsBody,
-            style: context.text.bodySmall?.copyWith(
-              color: context.semantics.muted,
-            ),
+        Text(
+          l10n.settingsLookupsBody,
+          style: context.text.bodySmall?.copyWith(
+            color: context.semantics.muted,
           ),
         ),
         ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.movie_outlined),
           title: Text(l10n.settingsTmdbKey),
           // The key itself is never echoed back: knowing it is set is all the
@@ -400,6 +420,7 @@ class _LookupsSection extends ConsumerWidget {
           ),
         ),
         ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.sports_esports_outlined),
           title: Text(l10n.settingsRawgKey),
           subtitle: Text(
@@ -413,13 +434,10 @@ class _LookupsSection extends ConsumerWidget {
             onSave: ref.read(rawgApiKeyProvider.notifier).set,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Gap.md, 0, Gap.md, Gap.sm),
-          child: Text(
-            l10n.settingsMusicBrainzNote,
-            style: context.text.bodySmall?.copyWith(
-              color: context.semantics.muted,
-            ),
+        Text(
+          l10n.settingsMusicBrainzNote,
+          style: context.text.bodySmall?.copyWith(
+            color: context.semantics.muted,
           ),
         ),
       ],
@@ -438,16 +456,19 @@ class _DataSection extends ConsumerWidget {
       title: l10n.settingsData,
       children: [
         ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.download_outlined),
           title: Text(l10n.exportJson),
           onTap: () => _export(context, ref, asCsv: false),
         ),
         ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.table_chart_outlined),
           title: Text(l10n.exportCsv),
           onTap: () => _export(context, ref, asCsv: true),
         ),
         ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.upload_outlined),
           title: Text(l10n.importJson),
           onTap: () => _import(context, ref),
@@ -549,6 +570,22 @@ class _DataSection extends ConsumerWidget {
   }
 }
 
+/// The support links, under their own heading like every other section.
+///
+/// The card stays a card here: it is one block of copy plus two buttons, not
+/// a list of rows, so it does not fight the flat layout around it.
+class _SupportSection extends StatelessWidget {
+  const _SupportSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Section(
+      title: AppLocalizations.of(context).settingsSupport,
+      children: const [SupportProjectsCard()],
+    );
+  }
+}
+
 class _AboutSection extends StatelessWidget {
   const _AboutSection();
 
@@ -559,29 +596,18 @@ class _AboutSection extends StatelessWidget {
     return _Section(
       title: l10n.settingsAbout,
       children: [
-        ListTile(
-          leading: const Icon(Icons.info_outline),
-          title: Text(l10n.disclaimerTitle),
-          subtitle: Text(
-            l10n.disclaimerBody,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          onTap: () => showDialog<void>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.disclaimerTitle),
-              content: SingleChildScrollView(child: Text(l10n.disclaimerBody)),
-              actions: [
-                FilledButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(l10n.close),
-                ),
-              ],
-            ),
+        // Printed in full rather than hidden behind a tile: a disclaimer the
+        // owner has to tap to read is a disclaimer they never read.
+        Text(
+          l10n.disclaimerBody,
+          style: context.text.bodySmall?.copyWith(
+            color: context.semantics.muted,
+            height: 1.45,
           ),
         ),
+        Gap.vSm,
         ListTile(
+          contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.school_outlined),
           title: Text(l10n.tutorialAgain),
           onTap: () => Navigator.of(context).push(

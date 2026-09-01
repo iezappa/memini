@@ -32,6 +32,10 @@ class ContentColumn extends StatelessWidget {
 }
 
 /// Small uppercase label that opens a section.
+///
+/// It carries its own trailing gap, so a section is always the label followed
+/// directly by its controls, with nothing in between to drift out of step
+/// from one screen to the next.
 class SectionLabel extends StatelessWidget {
   const SectionLabel(this.text, {super.key});
 
@@ -39,7 +43,17 @@ class SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text.toUpperCase(), style: context.text.labelSmall);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Gap.sm),
+      child: Text(
+        text.toUpperCase(),
+        style: context.text.labelSmall?.copyWith(
+          color: context.colors.primary,
+          letterSpacing: 0.8,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 }
 

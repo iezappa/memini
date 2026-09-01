@@ -41,6 +41,9 @@ abstract final class Gap {
   static const lg = 24.0;
   static const xl = 40.0;
 
+  /// The air between two settings sections.
+  static const section = 28.0;
+
   static const hXs = SizedBox(width: xs);
   static const hSm = SizedBox(width: sm);
   static const hMd = SizedBox(width: md);
@@ -49,6 +52,7 @@ abstract final class Gap {
   static const vMd = SizedBox(height: md);
   static const vLg = SizedBox(height: lg);
   static const vXl = SizedBox(height: xl);
+  static const vSection = SizedBox(height: section);
 }
 
 abstract final class Radii {

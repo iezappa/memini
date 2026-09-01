@@ -221,6 +221,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAppearance => 'Appearance';
 
   @override
+  String get settingsProfile => 'Profile';
+
+  @override
   String get settingsTheme => 'Theme';
 
   @override
@@ -294,6 +297,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsData => 'Your data';
+
+  @override
+  String get settingsSupport => 'Support';
 
   @override
   String get exportJson => 'Export backup (JSON)';
