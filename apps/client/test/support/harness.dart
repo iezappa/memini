@@ -72,3 +72,54 @@ void useTallSurface(WidgetTester tester) {
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 }
+
+/// Pumps a form screen behind a route, the way the app reaches it.
+///
+/// Forms end with `Navigator.pop`, so mounting one as `home` would pop the
+/// only route there is. Pushing it from a trivial first screen keeps the save
+/// path the same as in production.
+Future<void> pumpPushed(
+  WidgetTester tester,
+  Widget screen, {
+  required AppDatabase database,
+  Locale locale = const Locale('en'),
+  List<Override> overrides = const [],
+}) async {
+  useTallSurface(tester);
+  await tester.pumpWidget(
+    await harness(
+      Builder(
+        builder: (context) => Scaffold(
+          body: TextButton(
+            onPressed: () =>
+                Navigator.of(context)
+                    .push(MaterialPageRoute<bool>(builder: (_) => screen)),
+            child: const Text('open'),
+          ),
+        ),
+      ),
+      database: database,
+      locale: locale,
+      overrides: overrides,
+    ),
+  );
+  await tester.tap(find.text('open'));
+  await tester.pumpAndSettle();
+}
+
+/// Form fields are labelled, not keyed, so the label is how a user finds them
+/// and how a test should too.
+Finder fieldLabelled(String label) =>
+    find.ancestor(of: find.text(label), matching: find.byType(TextField));
+
+Future<void> fillField(WidgetTester tester, String label, String value) async {
+  await tester.enterText(fieldLabelled(label).first, value);
+  await tester.pump();
+}
+
+/// Both the app bar and the foot of every form offer Save; the button at the
+/// bottom is the one a finger actually reaches.
+Future<void> tapSave(WidgetTester tester) async {
+  await tester.tap(find.widgetWithText(FilledButton, 'Save'));
+  await tester.pumpAndSettle();
+}

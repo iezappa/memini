@@ -89,6 +89,20 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('trims the name before storing it', (tester) async {
+    await pumpForm(tester);
+
+    await fillField(tester, 'Name', '  The Vault  ');
+    await tapSave(tester);
+
+    // Stray spaces are invisible on screen but not to the sort: titleAsc
+    // orders on the raw string, so a leading space jumps the room to the top
+    // of the list for no reason the owner can see.
+    expect((await rooms.list(const RoomFilter())).single.title, 'The Vault');
+
+    await unmount(tester);
+  });
+
   testWidgets('leaves an untouched optional field empty, not blank', (
     tester,
   ) async {
