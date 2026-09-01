@@ -58,3 +58,17 @@ Future<void> unmount(WidgetTester tester) async {
     await tester.pump(const Duration(seconds: 1));
   }
 }
+
+/// Gives the test a tall window so a `ListView` builds its whole child list.
+///
+/// A list only builds what fits on screen, so anything below the fold — the
+/// save button at the bottom of a form, the last sections of a settings page —
+/// simply does not exist for a finder, and the failure reads as "found 0
+/// widgets" rather than "you cannot see it yet". Widening the window is the
+/// honest fix; scrolling first would test the scroll, not the screen.
+void useTallSurface(WidgetTester tester) {
+  tester.view.physicalSize = const Size(1200, 3600);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+}

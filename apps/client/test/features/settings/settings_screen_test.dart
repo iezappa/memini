@@ -34,12 +34,7 @@ void main() {
   tearDown(() => database.close());
 
   Future<void> pumpSettings(WidgetTester tester) async {
-    // Tall enough that the whole page is built in one pass: a ListView only
-    // builds what fits, and these are assertions about the page as a whole.
-    tester.view.physicalSize = const Size(1200, 3200);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
+    useTallSurface(tester);
 
     await tester.pumpWidget(
       await harness(

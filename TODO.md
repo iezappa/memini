@@ -13,18 +13,6 @@ Last checked against it: **2026-09-01**.
 
 ## Open
 
-- [ ] The working copy under `Estandarización/` is stale — it predates §2.2,
-      the settings layout. It could not be refreshed from here because the
-      files belong to `root` (they arrived through the Windows mount), so it
-      needs one command with privileges:
-
-      sudo cp ~/projects/standardizer_multiplatform/*.md Estandarización/
-      sudo rm -f Estandarización/*:Zone.Identifier
-      sudo chown -R "$USER" Estandarización
-
-      Until then, read the standard from the canonical repository, not from
-      that folder.
-
 - [ ] No `integration_test/`. §7 of the standard asks for critical flows
       end to end on at least one platform; the widget tests do not start the
       app.
