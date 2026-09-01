@@ -96,3 +96,12 @@ jobs:
 
       - name: Build
         run: flutter build web --release
+
+      # Compiling proves nothing about the database: Drift needs these two at
+      # the site root, and without them the app loads, paints, and then cannot
+      # open its store. `flutter build web` succeeds either way.
+      - name: Check the Drift web assets shipped
+        run: |
+          for f in sqlite3.wasm drift_worker.js; do
+            test -s "build/web/$f" || { echo "::error::build/web/$f is missing"; exit 1; }
+          done
