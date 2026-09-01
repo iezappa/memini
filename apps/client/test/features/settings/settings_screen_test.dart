@@ -86,7 +86,11 @@ void main() {
     // The support block is the one deliberate card; every other control sits
     // straight on the page, which is what separates this layout from a
     // grouped-card one.
-    for (final label in ['PIN lock', 'Your name', 'TMDB key (films and series)']) {
+    for (final label in [
+      'PIN lock',
+      'Your name',
+      'TMDB key (films and series)',
+    ]) {
       expect(
         find.ancestor(
           of: find.widgetWithText(ListTile, label),

@@ -1,5 +1,7 @@
 # Memini
 
+[![CI](https://github.com/iezappa/memini/actions/workflows/ci.yml/badge.svg)](https://github.com/iezappa/memini/actions/workflows/ci.yml)
+
 A personal tracker for the things you have actually done — an IMDb of your own
 record, not a public catalogue. Escape rooms, meals out, concerts, films and
 series, and games: five logs, one shared spine.
