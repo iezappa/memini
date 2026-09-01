@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:memini/app/providers.dart';
 import 'package:memini/core/database/app_database.dart';
+import 'package:memini/features/security/data/pin_service.dart';
 import 'package:memini/core/theme/theme.dart';
 import 'package:memini/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -122,4 +123,21 @@ Future<void> fillField(WidgetTester tester, String label, String value) async {
 Future<void> tapSave(WidgetTester tester) async {
   await tester.tap(find.widgetWithText(FilledButton, 'Save'));
   await tester.pumpAndSettle();
+}
+
+/// The keychain, in memory.
+///
+/// The real one is a platform channel, so anything that touches the PIN needs
+/// this to be testable at all.
+class InMemorySecureStore implements SecureStore {
+  final _values = <String, String>{};
+
+  @override
+  Future<String?> read(String key) async => _values[key];
+
+  @override
+  Future<void> write(String key, String value) async => _values[key] = value;
+
+  @override
+  Future<void> delete(String key) async => _values.remove(key);
 }

@@ -8,19 +8,6 @@ import 'package:memini/features/shared/widgets.dart';
 
 import '../../support/harness.dart';
 
-class _InMemorySecureStore implements SecureStore {
-  final _values = <String, String>{};
-
-  @override
-  Future<String?> read(String key) async => _values[key];
-
-  @override
-  Future<void> write(String key, String value) async => _values[key] = value;
-
-  @override
-  Future<void> delete(String key) async => _values.remove(key);
-}
-
 /// The settings screen follows the shared layout every Zyreth app uses: a
 /// single flat column of sections, each opened by an uppercase [SectionLabel],
 /// with the controls sitting directly on the page.
@@ -42,7 +29,7 @@ void main() {
         database: database,
         overrides: [
           pinServiceProvider.overrideWithValue(
-            PinService(_InMemorySecureStore()),
+            PinService(InMemorySecureStore()),
           ),
         ],
       ),
