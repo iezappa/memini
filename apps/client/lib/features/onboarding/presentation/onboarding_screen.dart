@@ -31,12 +31,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
+  /// Three slides, plus the disclaimer unless there is nothing to accept.
+  int get _pageCount => widget.tutorialOnly ? 3 : 4;
+
   Future<void> _finish() async {
     if (widget.tutorialOnly) {
       Navigator.of(context).pop();
       return;
     }
     await ref.read(onboardingDoneProvider.notifier).complete();
+  }
+
+  /// Skipping is about the tutorial, not the disclaimer.
+  ///
+  /// It jumps to the last page instead of ending the flow, so the disclaimer
+  /// still has to be accepted on purpose. Ending here would have persisted
+  /// the acceptance of a text that was never on screen.
+  void _skip() {
+    if (widget.tutorialOnly) {
+      _finish();
+      return;
+    }
+    _controller.jumpToPage(_pageCount - 1);
   }
 
   @override
@@ -77,7 +93,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: isLast ? null : _finish,
+                  onPressed: isLast ? null : _skip,
                   child: Text(l10n.tutorialSkip),
                 ),
               ),
