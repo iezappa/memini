@@ -1,0 +1,9 @@
+# WSL writes one of these next to every file copied from Windows.
+*:Zone.Identifier
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Agent tooling cache — the registry itself is tracked, the cache is not.
+.atl/.skill-registry.cache.json

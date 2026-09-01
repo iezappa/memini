@@ -1,0 +1,342 @@
+{
+  "@@locale": "en",
+  "appTitle": "Memini",
+  "navCollection": "Collection",
+  "navStats": "Stats",
+  "navSettings": "Settings",
+  "greeting": "Hello, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingAnonymous": "Your collection",
+  "searchHint": "Search rooms, notes, reviews",
+  "roomCount": "{count, plural, =0{No rooms} =1{1 room} other{{count} rooms}}",
+  "@roomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filters": "Filters",
+  "filterOutcome": "Outcome",
+  "filterAny": "Any",
+  "filterEscaped": "Escaped",
+  "filterFailed": "Not escaped",
+  "filterFranchise": "Franchise",
+  "filterAllFranchises": "All franchises",
+  "filterMinRating": "Minimum score",
+  "sortBy": "Sort by",
+  "sortPlayedNewest": "Most recent",
+  "sortPlayedOldest": "Oldest",
+  "sortRatingHigh": "Highest score",
+  "sortRatingLow": "Lowest score",
+  "sortName": "Name",
+  "clearFilters": "Clear filters",
+  "emptyTitle": "Nothing logged yet",
+  "emptyBody": "Add the first room you played and start building your record.",
+  "emptyFiltered": "No room matches these filters.",
+  "addRoom": "Add room",
+  "editRoom": "Edit room",
+  "newRoom": "New room",
+  "deleteRoom": "Delete room",
+  "deleteRoomConfirm": "Delete \"{name}\"? This cannot be undone.",
+  "@deleteRoomConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldName": "Name",
+  "fieldNameRequired": "A room needs a name.",
+  "fieldPhoto": "Photo",
+  "fieldDescription": "Description",
+  "fieldFranchise": "Franchise",
+  "fieldRating": "Score",
+  "fieldReview": "Review",
+  "fieldPlayedOn": "Played on",
+  "fieldOutcome": "Did you escape?",
+  "fieldTimeLeft": "Time left (minutes)",
+  "fieldTimeLeftHint": "Only if you escaped",
+  "photoAdd": "Add photo",
+  "photoReplace": "Replace photo",
+  "photoRemove": "Remove photo",
+  "photoFailed": "Could not load that image.",
+  "franchiseNone": "No franchise",
+  "franchiseHint": "Type a name; it is created if new",
+  "franchises": "Franchises",
+  "franchiseRoomCount": "{count, plural, =0{no rooms} =1{1 room} other{{count} rooms}}",
+  "@franchiseRoomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notRated": "Not rated",
+  "escapedYes": "Escaped",
+  "escapedNo": "Did not escape",
+  "timeLeftValue": "{minutes} min left",
+  "@timeLeftValue": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "statsEmpty": "Log a room and your stats will show up here.",
+  "statsTotal": "Rooms played",
+  "statsEscaped": "Escaped",
+  "statsEscapeRate": "Escape rate",
+  "statsAverage": "Average score",
+  "statsBest": "Highest rated",
+  "statsPerYear": "Rooms per year",
+  "settingsAppearance": "Appearance",
+  "settingsTheme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "settingsLanguage": "Language",
+  "languageSystem": "System",
+  "settingsDisplayName": "Your name",
+  "settingsDisplayNameHint": "Used in the greeting",
+  "settingsSecurity": "Security",
+  "settingsPinLock": "PIN lock",
+  "settingsPinLockOff": "Off",
+  "settingsPinLockOn": "On",
+  "pinSet": "Set a PIN",
+  "pinChange": "Change PIN",
+  "pinDisable": "Turn off PIN",
+  "pinEnter": "Enter your PIN",
+  "pinCurrent": "Current PIN",
+  "pinNew": "New PIN",
+  "pinConfirm": "Repeat the PIN",
+  "pinTooShort": "Use at least 4 digits.",
+  "pinDigitsOnly": "Digits only.",
+  "pinMismatch": "The two PINs do not match.",
+  "pinWrong": "Wrong PIN.",
+  "pinUnlock": "Unlock",
+  "settingsData": "Your data",
+  "exportJson": "Export backup (JSON)",
+  "exportCsv": "Export as spreadsheet (CSV)",
+  "importJson": "Import backup",
+  "importWarningTitle": "Replace everything?",
+  "importWarningBody": "Importing replaces every room and franchise currently stored. Export a backup first if you want to keep them.",
+  "importConfirm": "Replace",
+  "importDone": "{count, plural, =1{1 room restored} other{{count} rooms restored}}",
+  "@importDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importFailed": "That file is not a valid Memini backup.",
+  "exportDone": "Backup saved.",
+  "exportFailed": "Could not save the file.",
+  "settingsAbout": "About",
+  "disclaimerTitle": "What Memini is",
+  "disclaimerBody": "Memini is a personal log of the things you have done — escape rooms, meals out, concerts, films and series, and games. It stores everything on this device only — no account, no server, no sync. If you uninstall the app or lose the device, the data goes with it, so export a backup regularly. Scores and reviews are your own opinion and are never shared with anyone.",
+  "disclaimerAccept": "I understand",
+  "supportTitle": "Support my projects",
+  "supportBody": "Memini is free and stays that way. If it is useful to you, you can buy me a coffee.",
+  "supportCafecito": "Cafecito (Argentina)",
+  "supportPatreon": "Patreon (worldwide)",
+  "linkFailed": "Could not open the link.",
+  "tutorialSkip": "Skip",
+  "tutorialNext": "Next",
+  "tutorialStart": "Get started",
+  "tutorialAgain": "Show the tutorial again",
+  "tutorial1Title": "Everything you did, in one place",
+  "tutorial1Body": "Log escape rooms, meals, concerts, films, series and games: a photo, the date and the details that matter for each one.",
+  "tutorial2Title": "Score them like a critic",
+  "tutorial2Body": "Give each entry a score out of 10 and write the review you would have wanted to read beforehand.",
+  "tutorial3Title": "Yours alone",
+  "tutorial3Body": "Everything lives on this device. Export a backup whenever you want to keep it safe.",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "close": "Close",
+  "retry": "Retry",
+  "navHome": "Home",
+  "homeTagline": "Everything worth remembering",
+  "homeRecent": "Recently logged",
+  "homeRecentEmpty": "Nothing logged yet. Pick a section above and add the first one.",
+  "domainRooms": "Escape rooms",
+  "domainDining": "Places I ate",
+  "domainConcerts": "Bands I saw",
+  "domainScreen": "Films and series",
+  "domainGames": "Games",
+  "sortTitle": "Title A–Z",
+  "sortDateNewest": "Most recent",
+  "sortDateOldest": "Oldest",
+  "mealCount": "{count, plural, =0{No meals} =1{1 meal} other{{count} meals}}",
+  "@mealCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mealSearchHint": "Search places, dishes, notes",
+  "mealEmptyTitle": "No meals logged",
+  "mealEmptyBody": "Log a place the moment you leave it, while the dish is still fresh.",
+  "mealEmptyFiltered": "No meal matches these filters",
+  "addMeal": "Add meal",
+  "newMeal": "New meal",
+  "editMeal": "Edit meal",
+  "deleteMeal": "Delete meal",
+  "deleteMealConfirm": "This meal will be removed from your log. This cannot be undone.",
+  "fieldPlace": "Place",
+  "fieldPlaceRequired": "The place needs a name",
+  "fieldDish": "Dish",
+  "fieldPrice": "Price",
+  "fieldCompany": "With",
+  "fieldLocation": "Neighbourhood or city",
+  "filterLocation": "Location",
+  "filterAllLocations": "Anywhere",
+  "gigCount": "{count, plural, =0{No gigs} =1{1 gig} other{{count} gigs}}",
+  "@gigCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gigSearchHint": "Search bands, venues, notes",
+  "gigEmptyTitle": "No gigs logged",
+  "gigEmptyBody": "Write down the night while you can still hear it.",
+  "gigEmptyFiltered": "No gig matches these filters",
+  "addGig": "Add gig",
+  "newGig": "New gig",
+  "editGig": "Edit gig",
+  "deleteGig": "Delete gig",
+  "deleteGigConfirm": "This gig will be removed from your log. This cannot be undone.",
+  "fieldBand": "Band",
+  "fieldBandRequired": "The band needs a name",
+  "fieldVenue": "Venue",
+  "fieldCity": "City",
+  "fieldSupportActs": "Support acts",
+  "fieldSupportActsHint": "Separate them with commas",
+  "fieldSetlist": "Setlist",
+  "fieldSetlistHint": "One song per line",
+  "filterCity": "City",
+  "filterAllCities": "Everywhere",
+  "viewingCount": "{count, plural, =0{Nothing watched} =1{1 title} other{{count} titles}}",
+  "@viewingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewingSearchHint": "Search titles, directors, notes",
+  "viewingEmptyTitle": "Nothing watched yet",
+  "viewingEmptyBody": "Log what you watch and the year will tell you a story.",
+  "viewingEmptyFiltered": "Nothing matches these filters",
+  "addViewing": "Add title",
+  "newViewing": "New title",
+  "editViewing": "Edit title",
+  "deleteViewing": "Delete title",
+  "deleteViewingConfirm": "This title will be removed from your log. This cannot be undone.",
+  "fieldTitle": "Title",
+  "fieldTitleRequired": "It needs a title",
+  "fieldKind": "Kind",
+  "kindFilm": "Film",
+  "kindSeries": "Series",
+  "kindMiniseries": "Miniseries",
+  "kindDocumentary": "Documentary",
+  "fieldReleaseYear": "Release year",
+  "fieldDirector": "Director",
+  "fieldCast": "Cast",
+  "fieldCastHint": "Separate them with commas",
+  "fieldSeason": "Season",
+  "seasonValue": "Season {number}",
+  "@seasonValue": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "fieldWatchedOn": "Watched on",
+  "filterKind": "Kind",
+  "filterAllKinds": "Everything",
+  "gameCount": "{count, plural, =0{No games} =1{1 game} other{{count} games}}",
+  "@gameCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gameSearchHint": "Search games, platforms, notes",
+  "gameEmptyTitle": "No games logged",
+  "gameEmptyBody": "Dropping a game is a verdict too. Log it anyway.",
+  "gameEmptyFiltered": "No game matches these filters",
+  "addGame": "Add game",
+  "newGame": "New game",
+  "editGame": "Edit game",
+  "deleteGame": "Delete game",
+  "deleteGameConfirm": "This game will be removed from your log. This cannot be undone.",
+  "fieldStatus": "Status",
+  "statusPlaying": "Playing",
+  "statusFinished": "Finished",
+  "statusHundredPercent": "100%",
+  "statusDropped": "Dropped",
+  "fieldPlatform": "Platform",
+  "fieldHoursPlayed": "Hours played",
+  "fieldPlayedUntil": "Last played",
+  "hoursValue": "{hours}h",
+  "@hoursValue": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "filterStatus": "Status",
+  "filterAllStatuses": "Any status",
+  "filterPlatform": "Platform",
+  "filterAllPlatforms": "Any platform",
+  "fieldAte": "Eaten on",
+  "fieldSawOn": "Seen on",
+  "enrich": "Look up details",
+  "enrichSearching": "Searching…",
+  "enrichNoResults": "Nothing found. Fill it in by hand.",
+  "enrichOffline": "No connection. You can still fill it in by hand.",
+  "enrichFailed": "The lookup failed. You can still fill it in by hand.",
+  "enrichApply": "Use this",
+  "enrichCredit": "Data from {source}",
+  "@enrichCredit": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "statsOverview": "Everything",
+  "statsEntries": "Entries",
+  "statsRated": "Rated",
+  "statsByDomain": "By section",
+  "statsBestOverall": "Your highest score",
+  "statsPerYearAll": "Entries per year",
+  "statsRooms": "Escape rooms",
+  "statsHoursPlayed": "Hours played",
+  "statsMoneySpent": "Spent on meals",
+  "statsNothingRated": "Nothing rated yet",
+  "enrichMissingKey": "No lookup key set. Add one in Settings, or fill it in by hand.",
+  "settingsLookups": "Lookups",
+  "settingsLookupsBody": "Optional. Paste your own free keys to fill in covers and details automatically. Memini works fully without them.",
+  "settingsTmdbKey": "TMDB key (films and series)",
+  "settingsRawgKey": "RAWG key (games)",
+  "settingsKeyNotSet": "Not set",
+  "settingsKeySet": "Set",
+  "settingsGetKey": "Get a free key",
+  "settingsMusicBrainzNote": "Bands use MusicBrainz, which needs no key."
+}
