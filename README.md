@@ -22,7 +22,6 @@ backend.
 | State | Riverpod |
 | Navigation | go_router |
 | Storage | Drift (SQLite) behind domain repositories |
-| Photos | Copied into the app documents directory |
 | Preferences | shared_preferences · PIN hash in flutter_secure_storage |
 | Lookups | TMDB, RAWG and MusicBrainz, with the owner's own keys |
 
@@ -93,7 +92,7 @@ sudo apt-get install -y libsecret-1-dev libjsoncpp-dev
 
 ## Data model
 
-Every entry shares seven fields — title, photo, description, rating (0–10),
+Every entry shares six fields — title, description, rating (0–10),
 review, the date it happened, and its id — and then adds its own:
 
 | Domain | Entity | Own fields |

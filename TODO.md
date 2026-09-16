@@ -35,10 +35,10 @@ Last checked against it: **2026-09-01**.
 
       | Domain | Keyless option | Verdict |
       |---|---|---|
-      | Series | TVmaze | Clean win. Public, documented, no key. Returns summary, genres, image and cast. |
+      | Series | TVmaze | Clean win. Public, documented, no key. Returns summary, genres and cast. |
       | Games | Steam storefront | Trade-off. No key, rich data, but only Steam's catalogue: "zelda tears of the kingdom" and "bloodborne" both return zero. RAWG has them. |
-      | Films | IMDb suggestion | Works, posters included, but it is imdb.com's own undocumented search endpoint — unsupported and outside their terms. |
-      | Films | Wikidata | Clean and open, descriptions even come in Spanish, but P18 is empty for most films (posters are under copyright), so no cover art. |
+      | Films | IMDb suggestion | Works, but it is imdb.com's own undocumented search endpoint — unsupported and outside their terms. |
+      | Films | Wikidata | Clean and open, descriptions even come in Spanish. |
       | Concerts | MusicBrainz | Already keyless. Nothing to change. |
 
       iTunes Search was tried and dropped: zero results on every query.
@@ -46,8 +46,7 @@ Last checked against it: **2026-09-01**.
       The shape that fits what is already built: `EnrichmentSuggestion` is a
       port with swappable sources, so the keyless ones can be the default and
       TMDB/RAWG stay an optional upgrade. The app would then work on install
-      with no key at all, and a key would buy console coverage and guaranteed
-      posters. That also closes the missing "get a key" affordance above.
+      with no key at all, and a key would buy console coverage. That also closes the missing "get a key" affordance above.
 
 - [ ] **P1 — Create the release keystore and record its fingerprint.**
       `docs/SIGNING.md` still says `SHA-256: PENDING`; until it is filled in,
@@ -56,7 +55,7 @@ Last checked against it: **2026-09-01**.
       here (no Android SDK on the machine that made the change).
 
 - [ ] **P1 — Check the data-safety flows in a real browser.** The storage
-      banner, `navigator.storage.persist()`, and saving/picking the `.zip`
+      banner, `navigator.storage.persist()`, and saving/picking the JSON
       backup through `share_plus` / `file_picker` on the web are covered by
       widget tests with fakes only. Walk them on the published site.
 
@@ -65,10 +64,6 @@ Last checked against it: **2026-09-01**.
 
 - [ ] **P2 — Integration coverage for erase and import.** Both are widget-
       and unit-tested; neither is driven end to end on a real database file.
-
-- [ ] **P2 — Backup memory use.** The zip is built and read in memory, photos
-      included. Fine for a personal log; a very large photo library would want
-      a streamed archive.
 
 - [ ] **P2 — Franchise logos in the backup.** `logoPath` still travels as a
       device path; nothing in the app sets it today, so no file is copied.
@@ -87,10 +82,12 @@ Last checked against it: **2026-09-01**.
 - [x] **P0 — Export reminder.** After 30 days without an export (or never,
       once there is data), snoozable for 7 days.
 - [x] **P0 — Delete all my data.** Typed confirmation, export first, wipes
-      tables, photos, PIN and every preference but language/theme/accent.
+      tables, PIN and every preference but language/theme/accent.
 - [x] **P0 — Export before import.** The import confirmation offers it.
-- [x] **P0 — Photos in the backup.** One `.zip` with `backup.json` and
-      `photos/`; old plain JSON backups still import.
+- [x] **Photos removed.** Memini keeps no photos. Schema v3 drops every
+      `photo_path` and deletes the old `room_photos` folder once; backups are
+      plain JSON again, and older ones that still name a `photoPath` import
+      with the field ignored.
 
 ---
 
@@ -105,8 +102,7 @@ standard changes, or before a release.
       asserts this, so a drift fails the suite rather than waiting to be noticed.
 - [ ] **§2.1 Product patterns.** i18n through ARB files, onboarding shown once,
       local PIN, disclaimer and backup notice accepted at onboarding and visible
-      in settings, backup import/export (zip with photos; plain JSON still
-      imports), export reminder, delete all data.
+      in settings, backup import/export (plain JSON), export reminder, delete all data.
 - [ ] **§5 CI.** `ci.yml` runs format, analyse, test and a web build. Add a
       platform to the matrix when a new target starts shipping.
 - [ ] **§7 Testing.** Widget tests for the screens, `integration_test` for the
