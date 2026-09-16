@@ -25,6 +25,7 @@ void main() {
     SharedPreferences.setMockInitialValues({
       'onboarding.tutorial_seen': true,
       'onboarding.disclaimer_accepted': true,
+      'onboarding.backup_notice_accepted': true,
       'settings.locale': 'en',
     });
   });

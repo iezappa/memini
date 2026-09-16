@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/theme/theme.dart';
+import '../features/backup/presentation/backup_notice.dart';
+import '../features/backup/presentation/backup_reminder_banner.dart';
 import '../features/backup/presentation/storage_warning_banner.dart';
 import '../features/concerts/presentation/gig_detail_screen.dart';
 import '../features/concerts/presentation/gig_form_screen.dart';
@@ -187,10 +189,13 @@ class _WithNotices extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Expanded(child: child),
-      const StorageWarningBanner(),
-    ],
+  Widget build(BuildContext context) => BackupNoticeCheck(
+    child: Column(
+      children: [
+        Expanded(child: child),
+        const StorageWarningBanner(),
+        const BackupReminderBanner(),
+      ],
+    ),
   );
 }

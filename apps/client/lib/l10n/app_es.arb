@@ -292,5 +292,22 @@
   "recoveryImportConfirmBody": "La base ilegible de este dispositivo se borra para siempre y queda lo que traiga el archivo de backup. No se puede deshacer.",
   "recoveryResetConfirmTitle": "¿Restablecer la base de datos local?",
   "recoveryResetConfirmBody": "Todo lo guardado en este dispositivo se borra para siempre y la app arranca vacía. No se puede deshacer.",
-  "recoveryResetConfirmAction": "Restablecer"
+  "recoveryResetConfirmAction": "Restablecer",
+  "backupNoticeTitle": "Tus datos viven solo en este dispositivo",
+  "backupNoticeBody": "Memini no se guarda en ningún servidor. Si desinstalás la app, perdés o reseteás el dispositivo o borrás los datos del navegador, todo lo que anotaste se pierde. Exportá un backup seguido desde Ajustes → Tus datos y guardá el archivo en otro lado.",
+  "backupNoticeCheckbox": "Entiendo, y voy a exportar backups",
+  "backupNoticeAccept": "Entendido, voy a hacer backups",
+  "backupNoticeSettings": "Tus datos no se guardan en ningún servidor. Exportá seguido y guardá el archivo fuera de este dispositivo.",
+  "backupReminderNever": "Todavía no hiciste un backup de tus datos.",
+  "backupReminderOverdue": "Tu último backup fue hace {days} días.",
+  "backupReminderAction": "Exportar",
+  "backupReminderDismiss": "Ahora no",
+  "importExportFirst": "Exportar los datos actuales antes",
+  "eraseAllData": "Borrar todos mis datos",
+  "eraseAllTitle": "¿Borrar todos tus datos?",
+  "eraseAllBody": "Se borran todas las entradas, fotos y franquicias de este dispositivo, junto con tu PIN, tu nombre, tus claves de búsqueda y tus ajustes; solo se conservan el idioma y la apariencia. Después la app vuelve a empezar desde la bienvenida. No se puede deshacer y no existe ninguna copia en otro lado: exportá antes si podrías querer algo de vuelta.",
+  "eraseAllConfirmWord": "BORRAR",
+  "eraseAllTypeToConfirm": "Escribí {word} para confirmar",
+  "eraseAllExportFirst": "Exportar antes",
+  "eraseAllAction": "Borrar todo"
 }

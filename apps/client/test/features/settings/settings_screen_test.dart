@@ -8,6 +8,8 @@ import 'package:memini/features/security/data/pin_service.dart';
 import 'package:memini/features/settings/presentation/settings_screen.dart';
 import 'package:memini/features/shared/widgets.dart';
 
+import 'package:memini/features/backup/presentation/backup_actions.dart';
+
 import '../../support/harness.dart';
 
 /// The settings screen follows the shared layout every Zyreth app uses: a
@@ -22,8 +24,11 @@ void main() {
   setUp(() => database = memoryDatabase());
   tearDown(() => database.close());
 
+  late FakeBackupFiles files;
+
   Future<void> pumpSettings(WidgetTester tester) async {
     useTallSurface(tester);
+    files = FakeBackupFiles();
 
     await tester.pumpWidget(
       await harness(
@@ -33,6 +38,7 @@ void main() {
           pinServiceProvider.overrideWithValue(
             PinService(InMemorySecureStore()),
           ),
+          backupFilesProvider.overrideWithValue(files),
         ],
       ),
     );
@@ -156,6 +162,58 @@ void main() {
       find.ancestor(of: body, matching: find.byType(ListTile)),
       findsNothing,
       reason: 'the disclaimer must be readable without tapping anything',
+    );
+
+    await unmount(tester);
+  });
+
+  testWidgets('tells the owner no server keeps a copy, above the export', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+
+    final notice = find.textContaining("isn't stored on any server");
+    expect(notice, findsOneWidget);
+    expect(
+      tester.getTopLeft(notice).dy,
+      lessThan(tester.getTopLeft(find.text('Export backup (JSON)')).dy),
+    );
+
+    await unmount(tester);
+  });
+
+  testWidgets('ends the data section with deleting everything', (tester) async {
+    await pumpSettings(tester);
+
+    final erase = find.text('Delete all my data');
+    expect(erase, findsOneWidget);
+    expect(
+      tester.getTopLeft(erase).dy,
+      greaterThan(tester.getTopLeft(find.text('Import backup')).dy),
+    );
+    expect(
+      tester.getTopLeft(erase).dy,
+      lessThan(tester.getTopLeft(find.text('SUPPORT')).dy),
+    );
+
+    await unmount(tester);
+  });
+
+  testWidgets('offers to export the current data before an import wipes it', (
+    tester,
+  ) async {
+    await pumpSettings(tester);
+
+    await tester.tap(find.text('Import backup'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Export current data first'));
+    await tester.pumpAndSettle();
+
+    expect(files.saved.keys.single, endsWith('.json'));
+    expect(
+      find.text('Replace everything?'),
+      findsOneWidget,
+      reason: 'exporting first must not also start the import',
     );
 
     await unmount(tester);

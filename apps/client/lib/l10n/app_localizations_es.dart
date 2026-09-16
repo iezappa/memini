@@ -805,4 +805,63 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recoveryResetConfirmAction => 'Restablecer';
+
+  @override
+  String get backupNoticeTitle => 'Tus datos viven solo en este dispositivo';
+
+  @override
+  String get backupNoticeBody =>
+      'Memini no se guarda en ningún servidor. Si desinstalás la app, perdés o reseteás el dispositivo o borrás los datos del navegador, todo lo que anotaste se pierde. Exportá un backup seguido desde Ajustes → Tus datos y guardá el archivo en otro lado.';
+
+  @override
+  String get backupNoticeCheckbox => 'Entiendo, y voy a exportar backups';
+
+  @override
+  String get backupNoticeAccept => 'Entendido, voy a hacer backups';
+
+  @override
+  String get backupNoticeSettings =>
+      'Tus datos no se guardan en ningún servidor. Exportá seguido y guardá el archivo fuera de este dispositivo.';
+
+  @override
+  String get backupReminderNever =>
+      'Todavía no hiciste un backup de tus datos.';
+
+  @override
+  String backupReminderOverdue(int days) {
+    return 'Tu último backup fue hace $days días.';
+  }
+
+  @override
+  String get backupReminderAction => 'Exportar';
+
+  @override
+  String get backupReminderDismiss => 'Ahora no';
+
+  @override
+  String get importExportFirst => 'Exportar los datos actuales antes';
+
+  @override
+  String get eraseAllData => 'Borrar todos mis datos';
+
+  @override
+  String get eraseAllTitle => '¿Borrar todos tus datos?';
+
+  @override
+  String get eraseAllBody =>
+      'Se borran todas las entradas, fotos y franquicias de este dispositivo, junto con tu PIN, tu nombre, tus claves de búsqueda y tus ajustes; solo se conservan el idioma y la apariencia. Después la app vuelve a empezar desde la bienvenida. No se puede deshacer y no existe ninguna copia en otro lado: exportá antes si podrías querer algo de vuelta.';
+
+  @override
+  String get eraseAllConfirmWord => 'BORRAR';
+
+  @override
+  String eraseAllTypeToConfirm(String word) {
+    return 'Escribí $word para confirmar';
+  }
+
+  @override
+  String get eraseAllExportFirst => 'Exportar antes';
+
+  @override
+  String get eraseAllAction => 'Borrar todo';
 }

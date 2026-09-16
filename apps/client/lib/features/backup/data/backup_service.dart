@@ -152,6 +152,41 @@ class BackupService {
     return document;
   }
 
+  /// Whether anything at all has been recorded.
+  Future<bool> holdsUserData() async {
+    for (final table in <TableInfo<Table, Object?>>[
+      _db.franchises,
+      _db.rooms,
+      _db.meals,
+      _db.gigs,
+      _db.viewings,
+      _db.games,
+    ]) {
+      final row = await _db
+          .customSelect(
+            'SELECT EXISTS(SELECT 1 FROM "${table.actualTableName}") AS present',
+          )
+          .getSingle();
+      if (row.read<int>('present') == 1) return true;
+    }
+    return false;
+  }
+
+  /// Empties every table in one transaction. Memini ships no seed rows, so
+  /// there is nothing to put back.
+  Future<void> eraseEverything() => _db.transaction(_deleteAll);
+
+  Future<void> _deleteAll() async {
+    // Rooms first: they reference franchises, and the foreign key would
+    // block deleting a franchise that still has rooms pointing at it.
+    await _db.delete(_db.rooms).go();
+    await _db.delete(_db.franchises).go();
+    await _db.delete(_db.meals).go();
+    await _db.delete(_db.gigs).go();
+    await _db.delete(_db.viewings).go();
+    await _db.delete(_db.games).go();
+  }
+
   /// Decodes and validates [contents] without touching the database, so a
   /// caller can refuse a bad file before deleting anything.
   static BackupDocument parse(String contents) {
@@ -167,14 +202,7 @@ class BackupService {
   /// Replaces everything stored with [document], in one transaction.
   Future<void> restore(BackupDocument document) async {
     await _db.transaction(() async {
-      // Rooms first: they reference franchises, and the foreign key would
-      // block deleting a franchise that still has rooms pointing at it.
-      await _db.delete(_db.rooms).go();
-      await _db.delete(_db.franchises).go();
-      await _db.delete(_db.meals).go();
-      await _db.delete(_db.gigs).go();
-      await _db.delete(_db.viewings).go();
-      await _db.delete(_db.games).go();
+      await _deleteAll();
 
       await _db.batch((batch) {
         batch.insertAll(_db.franchises, [

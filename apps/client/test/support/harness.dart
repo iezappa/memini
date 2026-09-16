@@ -20,13 +20,15 @@ Future<Widget> harness(
   required AppDatabase database,
   Locale locale = const Locale('en'),
   List<Override> overrides = const [],
+  Map<String, Object> prefs = const {},
 }) async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
+  SharedPreferences.setMockInitialValues(prefs);
 
   return ProviderScope(
     overrides: [
-      sharedPreferencesProvider.overrideWithValue(prefs),
+      sharedPreferencesProvider.overrideWithValue(
+        await SharedPreferences.getInstance(),
+      ),
       databaseProvider.overrideWithValue(database),
       ...overrides,
     ],

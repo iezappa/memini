@@ -10,6 +10,8 @@ import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../backup/domain/backup_document.dart';
 import '../../backup/presentation/backup_actions.dart';
+import '../../backup/presentation/backup_feedback.dart';
+import '../../backup/presentation/erase_all_data_tile.dart';
 import '../../onboarding/presentation/onboarding_screen.dart';
 import '../../shared/support_actions.dart';
 import '../../shared/widgets.dart';
@@ -472,6 +474,29 @@ class _DataSection extends ConsumerWidget {
     return _Section(
       title: l10n.settingsData,
       children: [
+        // The standard's backup notice, always on screen and above the
+        // buttons: the owner should learn that no server has a copy before
+        // they need one, not after.
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.cloud_off_outlined,
+              size: 18,
+              color: context.semantics.muted,
+            ),
+            Gap.hSm,
+            Expanded(
+              child: Text(
+                l10n.backupNoticeSettings,
+                style: context.text.bodySmall?.copyWith(
+                  color: context.semantics.muted,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Gap.vSm,
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.download_outlined),
@@ -490,6 +515,7 @@ class _DataSection extends ConsumerWidget {
           title: Text(l10n.importJson),
           onTap: () => _import(context, ref),
         ),
+        const EraseAllDataTile(),
       ],
     );
   }
@@ -524,6 +550,12 @@ class _DataSection extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(l10n.cancel),
+          ),
+          // Importing wipes what is here, so the way to keep it sits right
+          // next to the button that destroys it.
+          OutlinedButton(
+            onPressed: () => exportBackupWithFeedback(context, ref),
+            child: Text(l10n.importExportFirst),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),

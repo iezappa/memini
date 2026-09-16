@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/providers.dart';
 import '../../../core/app/app_restart.dart';
 import '../../../core/database/local_store.dart';
+import '../../../core/time/clock.dart';
 import '../data/backup_service.dart';
 import '../domain/backup_document.dart';
+import '../domain/backup_reminder.dart';
 import 'backup_files.dart';
 
 export 'backup_files.dart';
@@ -39,9 +41,16 @@ class BackupActions {
   Future<bool> exportBackup() async {
     try {
       final json = await _ref.read(backupServiceProvider).exportJson();
-      return await _ref.read(backupFilesProvider).save({
-        'memini-backup-${_stamp(DateTime.now())}.json': utf8.encode(json),
+      final now = _ref.read(clockProvider)();
+      final saved = await _ref.read(backupFilesProvider).save({
+        'memini-backup-${_stamp(now)}.json': utf8.encode(json),
       });
+      if (!saved) return false;
+
+      // Only the full backup counts: a CSV cannot be imported back.
+      await _ref.read(settingsRepositoryProvider).recordExport(now);
+      _ref.invalidate(backupReminderProvider);
+      return true;
     } on Object {
       return false;
     }
@@ -127,4 +136,38 @@ class DatabaseRecoveryActions {
 
 final databaseRecoveryActionsProvider = Provider<DatabaseRecoveryActions>(
   DatabaseRecoveryActions.new,
+);
+
+/// Whether to nudge the owner to export, decided once per launch.
+final backupReminderProvider = FutureProvider<BackupReminder>((ref) async {
+  final settings = ref.watch(settingsRepositoryProvider);
+
+  return backupReminderFor(
+    now: ref.watch(clockProvider)(),
+    lastExportAt: settings.lastExportAt,
+    dismissedAt: settings.backupReminderDismissedAt,
+    holdsData: await ref.watch(backupServiceProvider).holdsUserData(),
+  );
+});
+
+/// "Delete all my data": the store, the photos, the PIN, the preferences, and
+/// back to the start.
+class EraseAllDataActions {
+  EraseAllDataActions(this._ref);
+
+  final Ref _ref;
+
+  Future<void> eraseEverything() async {
+    await _ref.read(backupServiceProvider).eraseEverything();
+    await _ref.read(photoStorageProvider).removeAll();
+    await _ref.read(pinServiceProvider).clear();
+    await _ref.read(settingsRepositoryProvider).eraseAllButAppearance();
+
+    // Onboarding is gone with the rest, so the restart lands on it.
+    _ref.read(restartAppProvider)();
+  }
+}
+
+final eraseAllDataActionsProvider = Provider<EraseAllDataActions>(
+  EraseAllDataActions.new,
 );

@@ -10,17 +10,25 @@ import 'package:path_provider/path_provider.dart';
 /// is free to purge; a room photo has to outlive that, so it is copied in and
 /// only the copy's path is stored.
 class PhotoStorage {
-  const PhotoStorage();
+  const PhotoStorage({
+    this.documentsDirectory = getApplicationDocumentsDirectory,
+  });
+
+  /// Where the photo folder lives. Injectable so tests can use a temporary
+  /// directory instead of a platform channel.
+  final Future<Directory> Function() documentsDirectory;
 
   static const _folder = 'room_photos';
+
+  Future<Directory> _photoFolder() async =>
+      Directory('${(await documentsDirectory()).path}/$_folder');
 
   /// Returns the stored path, or null on web where there is no file system
   /// to copy into.
   Future<String?> store(String sourcePath) async {
     if (kIsWeb) return null;
 
-    final documents = await getApplicationDocumentsDirectory();
-    final folder = Directory('${documents.path}/$_folder');
+    final folder = await _photoFolder();
     if (!await folder.exists()) await folder.create(recursive: true);
 
     final extension = sourcePath.contains('.')
@@ -46,8 +54,7 @@ class PhotoStorage {
       final response = await connection.get(Uri.parse(url));
       if (response.statusCode != 200) return null;
 
-      final documents = await getApplicationDocumentsDirectory();
-      final folder = Directory('${documents.path}/$_folder');
+      final folder = await _photoFolder();
       if (!await folder.exists()) await folder.create(recursive: true);
 
       final extension = _extensionOf(url);
@@ -79,5 +86,13 @@ class PhotoStorage {
 
     final file = File(path);
     if (await file.exists()) await file.delete();
+  }
+
+  /// Deletes every photo the app copied in, orphans included.
+  Future<void> removeAll() async {
+    if (kIsWeb) return;
+
+    final folder = await _photoFolder();
+    if (await folder.exists()) await folder.delete(recursive: true);
   }
 }

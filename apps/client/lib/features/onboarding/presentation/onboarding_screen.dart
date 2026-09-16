@@ -25,6 +25,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   int _page = 0;
 
+  /// The backup notice has to be ticked before the flow can end.
+  bool _noticeAcknowledged = false;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -80,10 +83,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           icon: Icons.info_outline,
           title: l10n.disclaimerTitle,
           body: l10n.disclaimerBody,
+          // On the same page as the disclaimer, so Skip — which lands here —
+          // cannot go around it.
+          footer: _BackupNotice(
+            acknowledged: _noticeAcknowledged,
+            onChanged: (value) => setState(() => _noticeAcknowledged = value),
+          ),
         ),
     ];
 
     final isLast = _page == slides.length - 1;
+    final canFinish = widget.tutorialOnly || _noticeAcknowledged;
 
     return Scaffold(
       body: SafeArea(
@@ -126,16 +136,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: () {
-                    if (isLast) {
-                      _finish();
-                    } else {
-                      _controller.nextPage(
-                        duration: const Duration(milliseconds: 260),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  },
+                  onPressed: isLast && !canFinish
+                      ? null
+                      : () {
+                          if (isLast) {
+                            _finish();
+                          } else {
+                            _controller.nextPage(
+                              duration: const Duration(milliseconds: 260),
+                              curve: Curves.easeOut,
+                            );
+                          }
+                        },
                   child: Text(
                     isLast
                         ? (widget.tutorialOnly
@@ -155,11 +167,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 }
 
 class _Slide extends StatelessWidget {
-  const _Slide({required this.icon, required this.title, required this.body});
+  const _Slide({
+    required this.icon,
+    required this.title,
+    required this.body,
+    this.footer,
+  });
 
   final IconData icon;
   final String title;
   final String body;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -174,9 +192,51 @@ class _Slide extends StatelessWidget {
           Text(title, style: context.text.displaySmall),
           Gap.vMd,
           Text(body, style: context.text.bodyLarge),
+          if (footer != null) ...[Gap.vLg, footer!],
           Gap.vXl,
         ],
       ),
+    );
+  }
+}
+
+/// The standard's backup notice: the data lives only here, and it is on the
+/// owner to export it.
+class _BackupNotice extends StatelessWidget {
+  const _BackupNotice({required this.acknowledged, required this.onChanged});
+
+  final bool acknowledged;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.phone_android_outlined, color: context.colors.primary),
+            Gap.hSm,
+            Expanded(
+              child: Text(
+                l10n.backupNoticeTitle,
+                style: context.text.titleMedium,
+              ),
+            ),
+          ],
+        ),
+        Gap.vSm,
+        Text(l10n.backupNoticeBody, style: context.text.bodyMedium),
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: acknowledged,
+          onChanged: (value) => onChanged(value ?? false),
+          title: Text(l10n.backupNoticeCheckbox),
+        ),
+      ],
     );
   }
 }

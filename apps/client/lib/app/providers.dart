@@ -204,6 +204,9 @@ class OnboardingController extends Notifier<bool> {
     final settings = ref.read(settingsRepositoryProvider);
     await settings.markTutorialSeen();
     await settings.acceptDisclaimer();
+    // The notice is acknowledged on the same last page, so a first run is
+    // never asked about it a second time.
+    await settings.acceptBackupNotice();
     state = true;
   }
 }

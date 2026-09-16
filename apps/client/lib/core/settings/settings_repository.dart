@@ -18,6 +18,16 @@ class SettingsRepository {
   static const _disclaimerKey = 'onboarding.disclaimer_accepted';
   static const _displayNameKey = 'profile.display_name';
   static const _accentKey = 'settings.accent';
+  static const _backupNoticeKey = 'onboarding.backup_notice_accepted';
+  static const _lastExportKey = 'backup.last_export_at';
+  static const _reminderDismissedKey = 'backup.reminder_dismissed_at';
+
+  /// Preferences that survive "delete all my data".
+  ///
+  /// How the app looks and which language it speaks. None of it says anything
+  /// about the person, and losing it would greet them — right after they
+  /// deleted everything — in a language they may not read.
+  static const keptOnErase = {_localeKey, _themeKey, _accentKey};
 
   /// Lookup keys are the owner's own: TMDB and RAWG both issue them free for
   /// personal use, and neither licence lets an app ship one for everybody.
@@ -69,6 +79,40 @@ class SettingsRepository {
   bool get disclaimerAccepted => _prefs.getBool(_disclaimerKey) ?? false;
 
   Future<void> acceptDisclaimer() => _prefs.setBool(_disclaimerKey, true);
+
+  /// Whether the owner accepted that their data lives only on this device.
+  ///
+  /// Separate from the disclaimer on purpose: everyone onboarded before the
+  /// notice existed has that flag and not this one, which is exactly what
+  /// shows them the notice once.
+  bool get backupNoticeAccepted => _prefs.getBool(_backupNoticeKey) ?? false;
+
+  Future<void> acceptBackupNotice() => _prefs.setBool(_backupNoticeKey, true);
+
+  /// Kept in preferences rather than the database: the database is what the
+  /// backup carries, and a restore must not bring back the date of an export
+  /// made on another device.
+  DateTime? get lastExportAt => _dateAt(_lastExportKey);
+
+  Future<void> recordExport(DateTime at) =>
+      _prefs.setString(_lastExportKey, at.toIso8601String());
+
+  DateTime? get backupReminderDismissedAt => _dateAt(_reminderDismissedKey);
+
+  Future<void> snoozeBackupReminder(DateTime at) =>
+      _prefs.setString(_reminderDismissedKey, at.toIso8601String());
+
+  /// Forgets every preference except [keptOnErase].
+  Future<void> eraseAllButAppearance() async {
+    for (final key in _prefs.getKeys().difference(keptOnErase)) {
+      await _prefs.remove(key);
+    }
+  }
+
+  DateTime? _dateAt(String key) {
+    final stored = _prefs.getString(key);
+    return stored == null ? null : DateTime.tryParse(stored);
+  }
 
   String? get displayName => _prefs.getString(_displayNameKey);
 

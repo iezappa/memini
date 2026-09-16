@@ -25,13 +25,16 @@ void main() {
 
   /// What the app reads on the next launch to decide whether to show this
   /// flow again — and, for the disclaimer, whether it was ever accepted.
-  ({bool tutorial, bool disclaimer}) flags(WidgetTester tester) {
+  ({bool tutorial, bool disclaimer, bool backupNotice}) flags(
+    WidgetTester tester,
+  ) {
     final settings = ProviderScope.containerOf(
       tester.element(find.byType(OnboardingScreen)),
     ).read(settingsRepositoryProvider);
     return (
       tutorial: settings.tutorialSeen,
       disclaimer: settings.disclaimerAccepted,
+      backupNotice: settings.backupNoticeAccepted,
     );
   }
 
@@ -58,17 +61,43 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('accepting marks both the tutorial and the disclaimer', (
-    tester,
-  ) async {
+  testWidgets('accepting marks the tutorial, the disclaimer and the backup '
+      'notice', (tester) async {
     await pumpOnboarding(tester);
 
     await tapNext(tester, 'Next');
     await tapNext(tester, 'Next');
     await tapNext(tester, 'Next');
+    await tester.ensureVisible(find.byType(CheckboxListTile));
+    await tester.tap(find.byType(CheckboxListTile));
+    await tester.pumpAndSettle();
     await tapNext(tester, 'I understand');
 
-    expect(flags(tester), (tutorial: true, disclaimer: true));
+    expect(flags(tester), (
+      tutorial: true,
+      disclaimer: true,
+      backupNotice: true,
+    ));
+
+    await unmount(tester);
+  });
+
+  testWidgets('says the data lives only here, and will not finish until '
+      'that is acknowledged', (tester) async {
+    await pumpOnboarding(tester);
+
+    await tester.tap(find.widgetWithText(TextButton, 'Skip'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Your data lives only on this device'), findsOneWidget);
+    expect(
+      tester
+          .widget<FilledButton>(
+            find.widgetWithText(FilledButton, 'I understand'),
+          )
+          .onPressed,
+      isNull,
+    );
 
     await unmount(tester);
   });

@@ -5,7 +5,7 @@ import '../../../app/providers.dart';
 import '../../../core/database/storage_durability.dart';
 import '../../../core/theme/theme.dart';
 import '../../../l10n/app_localizations.dart';
-import 'backup_actions.dart';
+import 'backup_feedback.dart';
 
 /// Whether the storage warning was put away for this run of the app.
 ///
@@ -50,17 +50,7 @@ class StorageWarningBanner extends ConsumerWidget {
           child: Text(l10n.storageWarningDismiss),
         ),
         FilledButton.tonal(
-          onPressed: () async {
-            final messenger = ScaffoldMessenger.of(context);
-            final saved = await ref.read(backupActionsProvider).exportBackup();
-            messenger
-              ..clearSnackBars()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(saved ? l10n.exportDone : l10n.exportFailed),
-                ),
-              );
-          },
+          onPressed: () => exportBackupWithFeedback(context, ref),
           child: Text(l10n.storageExportNow),
         ),
       ],

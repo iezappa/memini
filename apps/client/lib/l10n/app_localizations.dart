@@ -1519,6 +1519,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset'**
   String get recoveryResetConfirmAction;
+
+  /// No description provided for @backupNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data lives only on this device'**
+  String get backupNoticeTitle;
+
+  /// No description provided for @backupNoticeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Memini isn\'t stored on any server. If you uninstall the app, lose or reset your device, or clear your browser data, everything you recorded is gone. Export a backup regularly from Settings → Your data and keep the file somewhere else.'**
+  String get backupNoticeBody;
+
+  /// No description provided for @backupNoticeCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand, and I\'ll export backups'**
+  String get backupNoticeCheckbox;
+
+  /// No description provided for @backupNoticeAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it, I\'ll back up'**
+  String get backupNoticeAccept;
+
+  /// No description provided for @backupNoticeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data isn\'t stored on any server. Export regularly and keep the file off this device.'**
+  String get backupNoticeSettings;
+
+  /// No description provided for @backupReminderNever.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t backed up your data yet.'**
+  String get backupReminderNever;
+
+  /// No description provided for @backupReminderOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last backup was {days} days ago.'**
+  String backupReminderOverdue(int days);
+
+  /// No description provided for @backupReminderAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get backupReminderAction;
+
+  /// No description provided for @backupReminderDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get backupReminderDismiss;
+
+  /// No description provided for @importExportFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Export current data first'**
+  String get importExportFirst;
+
+  /// No description provided for @eraseAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all my data'**
+  String get eraseAllData;
+
+  /// No description provided for @eraseAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all your data?'**
+  String get eraseAllTitle;
+
+  /// No description provided for @eraseAllBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Every entry, photo and franchise on this device is deleted, along with your PIN, your name, your lookup keys and your settings; only the language and the appearance are kept. The app then starts over from the welcome screens. It cannot be undone, and no copy exists anywhere else: export first if you might want any of it back.'**
+  String get eraseAllBody;
+
+  /// No description provided for @eraseAllConfirmWord.
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get eraseAllConfirmWord;
+
+  /// No description provided for @eraseAllTypeToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {word} to confirm'**
+  String eraseAllTypeToConfirm(String word);
+
+  /// No description provided for @eraseAllExportFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Export first'**
+  String get eraseAllExportFirst;
+
+  /// No description provided for @eraseAllAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete everything'**
+  String get eraseAllAction;
 }
 
 class _AppLocalizationsDelegate

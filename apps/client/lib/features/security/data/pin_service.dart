@@ -75,6 +75,13 @@ class PinService {
     return true;
   }
 
+  /// Removes the lock without asking for the PIN. Only for erasing all data,
+  /// which is already behind its own typed confirmation.
+  Future<void> clear() async {
+    await _store.delete(_saltKey);
+    await _store.delete(_hashKey);
+  }
+
   bool _isValid(String pin) =>
       pin.length >= minLength && RegExp(r'^\d+$').hasMatch(pin);
 
