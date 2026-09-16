@@ -17,7 +17,6 @@ class _Entry implements Trackable {
   final DateTime happenedOn;
 
   @override
-  String? get photoPath => null;
   @override
   String? get description => null;
   @override

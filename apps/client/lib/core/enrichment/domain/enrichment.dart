@@ -9,7 +9,6 @@ class EnrichmentSuggestion {
     required this.externalId,
     required this.title,
     this.description,
-    this.imageUrl,
     this.releaseYear,
     this.director,
     this.cast,
@@ -22,9 +21,6 @@ class EnrichmentSuggestion {
   final String title;
   final String? description;
 
-  /// Remote cover art. Downloaded only when the owner accepts the suggestion,
-  /// so browsing candidates costs one request, not one per row.
-  final String? imageUrl;
   final int? releaseYear;
   final String? director;
 

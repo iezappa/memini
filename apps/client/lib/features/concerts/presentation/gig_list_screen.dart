@@ -60,9 +60,8 @@ class GigListScreen extends ConsumerWidget {
         return TrackerCard(
           title: gig.title,
           subtitle: venue == null ? date : '$venue · $date',
-          photoPath: gig.photoPath,
           rating: gig.rating,
-          placeholderIcon: Icons.music_note_outlined,
+          icon: Icons.music_note_outlined,
           pill: gig.supportActs == null
               ? null
               : Text(

@@ -26,7 +26,6 @@ class DriftMealRepository implements MealRepository {
   Meal _toDomain(MealRow row) => Meal(
     id: row.id,
     title: row.title,
-    photoPath: row.photoPath,
     description: row.description,
     rating: row.rating,
     review: row.review,
@@ -79,7 +78,6 @@ class DriftMealRepository implements MealRepository {
           MealsCompanion.insert(
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
-            photoPath: Value(draft.photoPath),
             description: Value(draft.description),
             rating: Value(draft.rating),
             review: Value(draft.review),
@@ -97,7 +95,6 @@ class DriftMealRepository implements MealRepository {
     await (_db.update(_db.meals)..where((m) => m.id.equals(entry.id))).write(
       MealsCompanion(
         title: Value(entry.title.trim()),
-        photoPath: Value(entry.photoPath),
         description: Value(entry.description),
         rating: Value(entry.rating),
         review: Value(entry.review),

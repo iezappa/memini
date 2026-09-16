@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../../app/providers.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/form_fields.dart';
 import '../../../l10n/app_localizations.dart';
@@ -34,7 +32,6 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
 
   late DateTime _happenedOn;
   double? _rating;
-  String? _photoPath;
   bool _saving = false;
 
   @override
@@ -52,7 +49,6 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
 
     _happenedOn = meal?.happenedOn ?? DateTime.now();
     _rating = meal?.rating;
-    _photoPath = meal?.photoPath;
   }
 
   @override
@@ -76,24 +72,6 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     return value.isEmpty ? null : value;
   }
 
-  Future<void> _pickPhoto() async {
-    final messenger = ScaffoldMessenger.of(context);
-    final failure = AppLocalizations.of(context).photoFailed;
-
-    try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-      );
-      if (picked == null) return;
-
-      final stored = await ref.read(photoStorageProvider).store(picked.path);
-      if (mounted) setState(() => _photoPath = stored);
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(failure)));
-    }
-  }
-
   Future<void> _save() async {
     if (!_formKey.currentState!.validate() || _saving) return;
     setState(() => _saving = true);
@@ -110,7 +88,6 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
         MealDraft(
           title: _title.text.trim(),
           happenedOn: _happenedOn,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -126,7 +103,6 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
           id: existing.id,
           title: _title.text.trim(),
           happenedOn: _happenedOn,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -151,15 +127,6 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       saving: _saving,
       onSave: _save,
       children: [
-        PhotoField(
-          path: _photoPath,
-          onPick: _pickPhoto,
-          onRemove: _photoPath == null
-              ? null
-              : () => setState(() => _photoPath = null),
-          placeholderIcon: Icons.restaurant_outlined,
-        ),
-        Gap.vLg,
         TextFormField(
           controller: _title,
           textCapitalization: TextCapitalization.words,

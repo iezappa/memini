@@ -18,7 +18,6 @@ class _Entry implements Trackable {
   @override
   int get id => title.hashCode;
   @override
-  String? get photoPath => null;
   @override
   String? get description => null;
   @override

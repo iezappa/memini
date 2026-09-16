@@ -150,7 +150,7 @@ final backupReminderProvider = FutureProvider<BackupReminder>((ref) async {
   );
 });
 
-/// "Delete all my data": the store, the photos, the PIN, the preferences, and
+/// "Delete all my data": the store, the PIN, the preferences, and
 /// back to the start.
 class EraseAllDataActions {
   EraseAllDataActions(this._ref);
@@ -159,7 +159,6 @@ class EraseAllDataActions {
 
   Future<void> eraseEverything() async {
     await _ref.read(backupServiceProvider).eraseEverything();
-    await _ref.read(photoStorageProvider).removeAll();
     await _ref.read(pinServiceProvider).clear();
     await _ref.read(settingsRepositoryProvider).eraseAllButAppearance();
 

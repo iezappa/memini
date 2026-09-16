@@ -24,8 +24,8 @@ final musicBrainzSourceProvider = Provider<EnrichmentSource>(
 
 /// The source for a domain, or null where no free API covers it.
 ///
-/// Dining is deliberately absent: no free places API returns photos and
-/// reviews, and a paid one would break the app's local-first, no-account
+/// Dining is deliberately absent: no free places API returns reviews,
+/// and a paid one would break the app's local-first, no-account
 /// promise for the least valuable of the five.
 EnrichmentSource? enrichmentSourceFor(WidgetRef ref, TrackedDomain domain) {
   return switch (domain) {

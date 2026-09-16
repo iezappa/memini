@@ -13,7 +13,6 @@ class Game implements Trackable {
     required this.title,
     required this.happenedOn,
     required this.status,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -30,7 +29,6 @@ class Game implements Trackable {
 
   /// Cover art, either picked by the owner or cached from a lookup.
   @override
-  final String? photoPath;
   @override
   final String? description;
   @override
@@ -60,7 +58,6 @@ class Game implements Trackable {
 
   Game copyWith({
     String? title,
-    String? photoPath,
     String? description,
     double? rating,
     String? review,
@@ -70,7 +67,6 @@ class Game implements Trackable {
     double? hoursPlayed,
     int? releaseYear,
     String? externalId,
-    bool clearPhoto = false,
     bool clearRating = false,
     bool clearHours = false,
     bool clearExternalId = false,
@@ -78,7 +74,6 @@ class Game implements Trackable {
     return Game(
       id: id,
       title: title ?? this.title,
-      photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),
       review: review ?? this.review,
@@ -98,7 +93,6 @@ class GameDraft {
     required this.title,
     required this.happenedOn,
     required this.status,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -111,7 +105,6 @@ class GameDraft {
   final String title;
   final DateTime happenedOn;
   final GameStatus status;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;

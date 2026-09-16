@@ -9,7 +9,6 @@ class Meal implements Trackable {
     required this.id,
     required this.title,
     required this.happenedOn,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -26,7 +25,6 @@ class Meal implements Trackable {
   @override
   final String title;
   @override
-  final String? photoPath;
   @override
   final String? description;
   @override
@@ -55,7 +53,6 @@ class Meal implements Trackable {
 
   Meal copyWith({
     String? title,
-    String? photoPath,
     String? description,
     double? rating,
     String? review,
@@ -64,14 +61,12 @@ class Meal implements Trackable {
     double? price,
     String? company,
     String? location,
-    bool clearPhoto = false,
     bool clearRating = false,
     bool clearPrice = false,
   }) {
     return Meal(
       id: id,
       title: title ?? this.title,
-      photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),
       review: review ?? this.review,
@@ -89,7 +84,6 @@ class MealDraft {
   const MealDraft({
     required this.title,
     required this.happenedOn,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -101,7 +95,6 @@ class MealDraft {
 
   final String title;
   final DateTime happenedOn;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;

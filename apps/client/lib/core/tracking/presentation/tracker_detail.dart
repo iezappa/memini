@@ -6,7 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../theme/theme.dart';
 import '../../theme/tokens.dart';
 
-/// The detail layout every domain shares: cover, title, one line of context,
+/// The detail layout every domain shares: title, one line of context,
 /// the score, then whatever the domain wants to add.
 class TrackerDetailBody extends StatelessWidget {
   const TrackerDetailBody({
@@ -14,8 +14,6 @@ class TrackerDetailBody extends StatelessWidget {
     required this.title,
     required this.happenedOn,
     required this.rating,
-    this.photoPath,
-    this.placeholderIcon = Icons.bookmark_outline,
     this.contextLine,
     this.badge,
     this.description,
@@ -27,8 +25,6 @@ class TrackerDetailBody extends StatelessWidget {
   final String title;
   final DateTime happenedOn;
   final double? rating;
-  final String? photoPath;
-  final IconData placeholderIcon;
 
   /// Shown before the date, e.g. a venue or a franchise.
   final String? contextLine;
@@ -56,15 +52,6 @@ class TrackerDetailBody extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.only(bottom: Gap.xl),
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: EntryPhoto(
-              path: photoPath,
-              width: double.infinity,
-              placeholderIcon: placeholderIcon,
-            ),
-          ),
-          Gap.vLg,
           Text(title, style: context.text.displaySmall),
           Gap.vXs,
           Text([?contextLine, date].join(' · '), style: context.text.bodySmall),

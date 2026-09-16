@@ -26,7 +26,6 @@ class DriftGameRepository implements GameRepository {
   Game _toDomain(GameRow row) => Game(
     id: row.id,
     title: row.title,
-    photoPath: row.photoPath,
     description: row.description,
     rating: row.rating,
     review: row.review,
@@ -85,7 +84,6 @@ class DriftGameRepository implements GameRepository {
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             status: draft.status,
-            photoPath: Value(draft.photoPath),
             description: Value(draft.description),
             rating: Value(draft.rating),
             review: Value(draft.review),
@@ -103,7 +101,6 @@ class DriftGameRepository implements GameRepository {
     await (_db.update(_db.games)..where((g) => g.id.equals(entry.id))).write(
       GamesCompanion(
         title: Value(entry.title.trim()),
-        photoPath: Value(entry.photoPath),
         description: Value(entry.description),
         rating: Value(entry.rating),
         review: Value(entry.review),

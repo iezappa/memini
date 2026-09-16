@@ -4,7 +4,7 @@ import 'package:memini/core/enrichment/domain/enrichment.dart';
 
 void main() {
   group('RawgSource.parseSearch', () {
-    test('maps a game with its cover, year and platforms', () {
+    test('maps a game with its year and platforms', () {
       final results = RawgSource.parseSearch('''
         {"results": [{
           "id": 22511,
@@ -22,7 +22,6 @@ void main() {
       expect(results.single.externalId, '22511');
       expect(results.single.title, 'Outer Wilds');
       expect(results.single.releaseYear, 2019);
-      expect(results.single.imageUrl, 'https://media.rawg.io/outer-wilds.jpg');
       expect(results.single.platforms, 'PC, Nintendo Switch');
     });
 

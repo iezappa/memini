@@ -15,9 +15,8 @@ class TrackerCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
-    this.photoPath,
     this.rating,
-    this.placeholderIcon = Icons.bookmark_outline,
+    this.icon = Icons.bookmark_outline,
     this.pill,
   });
 
@@ -25,9 +24,10 @@ class TrackerCard extends StatelessWidget {
 
   /// The one line under the title: usually a place and a date.
   final String subtitle;
-  final String? photoPath;
   final double? rating;
-  final IconData placeholderIcon;
+
+  /// The domain's icon, shown on a tile before the title.
+  final IconData icon;
 
   /// The domain's own badge, shown under the subtitle when there is one.
   final Widget? pill;
@@ -44,13 +44,7 @@ class TrackerCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              EntryPhoto(
-                path: photoPath,
-                width: 78,
-                height: 78,
-                borderRadius: Radii.field,
-                placeholderIcon: placeholderIcon,
-              ),
+              EntryIcon(icon: icon, borderRadius: Radii.field),
               Gap.hMd,
               Expanded(
                 child: Column(

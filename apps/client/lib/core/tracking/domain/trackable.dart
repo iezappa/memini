@@ -15,7 +15,6 @@ abstract interface class Trackable {
   String get title;
 
   /// Absolute path to a cover image in the app documents directory.
-  String? get photoPath;
   String? get description;
 
   /// Score from [kMinRating] to [kMaxRating], or null when not rated yet.

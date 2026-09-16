@@ -13,7 +13,6 @@ class Viewing implements Trackable {
     required this.title,
     required this.happenedOn,
     required this.kind,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -31,8 +30,6 @@ class Viewing implements Trackable {
 
   /// Poster, either picked by the owner or cached from a lookup.
   @override
-  final String? photoPath;
-
   /// Synopsis — filled by the owner, or by an enrichment lookup.
   @override
   final String? description;
@@ -63,7 +60,6 @@ class Viewing implements Trackable {
 
   Viewing copyWith({
     String? title,
-    String? photoPath,
     String? description,
     double? rating,
     String? review,
@@ -74,7 +70,6 @@ class Viewing implements Trackable {
     String? cast,
     int? season,
     String? externalId,
-    bool clearPhoto = false,
     bool clearRating = false,
     bool clearSeason = false,
     bool clearExternalId = false,
@@ -82,7 +77,6 @@ class Viewing implements Trackable {
     return Viewing(
       id: id,
       title: title ?? this.title,
-      photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),
       review: review ?? this.review,
@@ -103,7 +97,6 @@ class ViewingDraft {
     required this.title,
     required this.happenedOn,
     required this.kind,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -117,7 +110,6 @@ class ViewingDraft {
   final String title;
   final DateTime happenedOn;
   final ViewingKind kind;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;

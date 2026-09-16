@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../../app/providers.dart';
 import '../../../core/enrichment/data/enrichment_providers.dart';
 import '../../../core/enrichment/presentation/enrichment_sheet.dart';
 import '../../../core/theme/tokens.dart';
@@ -37,7 +35,6 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
 
   late DateTime _happenedOn;
   double? _rating;
-  String? _photoPath;
   String? _externalId;
   bool _saving = false;
 
@@ -57,7 +54,6 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
 
     _happenedOn = gig?.happenedOn ?? DateTime.now();
     _rating = gig?.rating;
-    _photoPath = gig?.photoPath;
     _externalId = gig?.externalId;
   }
 
@@ -83,27 +79,8 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
     return value.isEmpty ? null : value;
   }
 
-  Future<void> _pickPhoto() async {
-    final messenger = ScaffoldMessenger.of(context);
-    final failure = AppLocalizations.of(context).photoFailed;
-
-    try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-      );
-      if (picked == null) return;
-
-      final stored = await ref.read(photoStorageProvider).store(picked.path);
-      if (mounted) setState(() => _photoPath = stored);
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(failure)));
-    }
-  }
-
   /// Fills in what the lookup knows, without clobbering what the owner
-  /// already wrote. MusicBrainz carries no cover art, so a gig photo stays
-  /// the owner's own.
+  /// already wrote.
   Future<void> _lookUp() async {
     final source = ref.read(musicBrainzSourceProvider);
 
@@ -139,7 +116,6 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
         GigDraft(
           title: _title.text.trim(),
           happenedOn: _happenedOn,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -157,7 +133,6 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
           id: existing.id,
           title: _title.text.trim(),
           happenedOn: _happenedOn,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -184,15 +159,6 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
       saving: _saving,
       onSave: _save,
       children: [
-        PhotoField(
-          path: _photoPath,
-          onPick: _pickPhoto,
-          onRemove: _photoPath == null
-              ? null
-              : () => setState(() => _photoPath = null),
-          placeholderIcon: Icons.music_note_outlined,
-        ),
-        Gap.vLg,
         TextFormField(
           controller: _title,
           textCapitalization: TextCapitalization.words,

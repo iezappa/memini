@@ -287,17 +287,6 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _photoPathMeta = const VerificationMeta(
-    'photoPath',
-  );
-  @override
-  late final GeneratedColumn<String> photoPath = GeneratedColumn<String>(
-    'photo_path',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
   );
@@ -381,7 +370,6 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -412,12 +400,6 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
       );
     } else if (isInserting) {
       context.missing(_titleMeta);
-    }
-    if (data.containsKey('photo_path')) {
-      context.handle(
-        _photoPathMeta,
-        photoPath.isAcceptableOrUnknown(data['photo_path']!, _photoPathMeta),
-      );
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -491,10 +473,6 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      photoPath: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}photo_path'],
-      ),
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -535,7 +513,6 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
 class RoomRow extends DataClass implements Insertable<RoomRow> {
   final int id;
   final String title;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;
@@ -550,7 +527,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   const RoomRow({
     required this.id,
     required this.title,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -564,9 +540,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || photoPath != null) {
-      map['photo_path'] = Variable<String>(photoPath);
-    }
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
@@ -591,9 +564,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     return RoomsCompanion(
       id: Value(id),
       title: Value(title),
-      photoPath: photoPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(photoPath),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
@@ -622,7 +592,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     return RoomRow(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      photoPath: serializer.fromJson<String?>(json['photoPath']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
@@ -638,7 +607,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'photoPath': serializer.toJson<String?>(photoPath),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
@@ -652,7 +620,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   RoomRow copyWith({
     int? id,
     String? title,
-    Value<String?> photoPath = const Value.absent(),
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
@@ -663,7 +630,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   }) => RoomRow(
     id: id ?? this.id,
     title: title ?? this.title,
-    photoPath: photoPath.present ? photoPath.value : this.photoPath,
     description: description.present ? description.value : this.description,
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
@@ -678,7 +644,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     return RoomRow(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
       description: data.description.present
           ? data.description.value
           : this.description,
@@ -702,7 +667,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     return (StringBuffer('RoomRow(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -718,7 +682,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   int get hashCode => Object.hash(
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -733,7 +696,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
       (other is RoomRow &&
           other.id == this.id &&
           other.title == this.title &&
-          other.photoPath == this.photoPath &&
           other.description == this.description &&
           other.rating == this.rating &&
           other.review == this.review &&
@@ -746,7 +708,6 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
 class RoomsCompanion extends UpdateCompanion<RoomRow> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> photoPath;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
@@ -757,7 +718,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
   const RoomsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -769,7 +729,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
   RoomsCompanion.insert({
     this.id = const Value.absent(),
     required String title,
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -783,7 +742,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
   static Insertable<RoomRow> custom({
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? photoPath,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
@@ -795,7 +753,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (photoPath != null) 'photo_path': photoPath,
       if (description != null) 'description': description,
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
@@ -809,7 +766,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
   RoomsCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? photoPath,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
@@ -821,7 +777,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     return RoomsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      photoPath: photoPath ?? this.photoPath,
       description: description ?? this.description,
       rating: rating ?? this.rating,
       review: review ?? this.review,
@@ -840,9 +795,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (photoPath.present) {
-      map['photo_path'] = Variable<String>(photoPath.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
@@ -873,7 +825,6 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     return (StringBuffer('RoomsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -916,17 +867,6 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-  );
-  static const VerificationMeta _photoPathMeta = const VerificationMeta(
-    'photoPath',
-  );
-  @override
-  late final GeneratedColumn<String> photoPath = GeneratedColumn<String>(
-    'photo_path',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -1012,7 +952,6 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -1044,12 +983,6 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
       );
     } else if (isInserting) {
       context.missing(_titleMeta);
-    }
-    if (data.containsKey('photo_path')) {
-      context.handle(
-        _photoPathMeta,
-        photoPath.isAcceptableOrUnknown(data['photo_path']!, _photoPathMeta),
-      );
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -1121,10 +1054,6 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      photoPath: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}photo_path'],
-      ),
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -1169,7 +1098,6 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
 class MealRow extends DataClass implements Insertable<MealRow> {
   final int id;
   final String title;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;
@@ -1181,7 +1109,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   const MealRow({
     required this.id,
     required this.title,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -1196,9 +1123,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || photoPath != null) {
-      map['photo_path'] = Variable<String>(photoPath);
-    }
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
@@ -1228,9 +1152,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     return MealsCompanion(
       id: Value(id),
       title: Value(title),
-      photoPath: photoPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(photoPath),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
@@ -1262,7 +1183,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     return MealRow(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      photoPath: serializer.fromJson<String?>(json['photoPath']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
@@ -1279,7 +1199,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'photoPath': serializer.toJson<String?>(photoPath),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
@@ -1294,7 +1213,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   MealRow copyWith({
     int? id,
     String? title,
-    Value<String?> photoPath = const Value.absent(),
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
@@ -1306,7 +1224,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   }) => MealRow(
     id: id ?? this.id,
     title: title ?? this.title,
-    photoPath: photoPath.present ? photoPath.value : this.photoPath,
     description: description.present ? description.value : this.description,
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
@@ -1320,7 +1237,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     return MealRow(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
       description: data.description.present
           ? data.description.value
           : this.description,
@@ -1341,7 +1257,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     return (StringBuffer('MealRow(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -1358,7 +1273,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   int get hashCode => Object.hash(
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -1374,7 +1288,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       (other is MealRow &&
           other.id == this.id &&
           other.title == this.title &&
-          other.photoPath == this.photoPath &&
           other.description == this.description &&
           other.rating == this.rating &&
           other.review == this.review &&
@@ -1388,7 +1301,6 @@ class MealRow extends DataClass implements Insertable<MealRow> {
 class MealsCompanion extends UpdateCompanion<MealRow> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> photoPath;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
@@ -1400,7 +1312,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
   const MealsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -1413,7 +1324,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
   MealsCompanion.insert({
     this.id = const Value.absent(),
     required String title,
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -1427,7 +1337,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
   static Insertable<MealRow> custom({
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? photoPath,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
@@ -1440,7 +1349,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (photoPath != null) 'photo_path': photoPath,
       if (description != null) 'description': description,
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
@@ -1455,7 +1363,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
   MealsCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? photoPath,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
@@ -1468,7 +1375,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     return MealsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      photoPath: photoPath ?? this.photoPath,
       description: description ?? this.description,
       rating: rating ?? this.rating,
       review: review ?? this.review,
@@ -1488,9 +1394,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (photoPath.present) {
-      map['photo_path'] = Variable<String>(photoPath.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
@@ -1524,7 +1427,6 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     return (StringBuffer('MealsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -1568,17 +1470,6 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-  );
-  static const VerificationMeta _photoPathMeta = const VerificationMeta(
-    'photoPath',
-  );
-  @override
-  late final GeneratedColumn<String> photoPath = GeneratedColumn<String>(
-    'photo_path',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -1686,7 +1577,6 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -1720,12 +1610,6 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
       );
     } else if (isInserting) {
       context.missing(_titleMeta);
-    }
-    if (data.containsKey('photo_path')) {
-      context.handle(
-        _photoPathMeta,
-        photoPath.isAcceptableOrUnknown(data['photo_path']!, _photoPathMeta),
-      );
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -1812,10 +1696,6 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      photoPath: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}photo_path'],
-      ),
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -1868,7 +1748,6 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
 class GigRow extends DataClass implements Insertable<GigRow> {
   final int id;
   final String title;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;
@@ -1884,7 +1763,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   const GigRow({
     required this.id,
     required this.title,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -1901,9 +1779,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || photoPath != null) {
-      map['photo_path'] = Variable<String>(photoPath);
-    }
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
@@ -1939,9 +1814,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     return GigsCompanion(
       id: Value(id),
       title: Value(title),
-      photoPath: photoPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(photoPath),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
@@ -1979,7 +1851,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     return GigRow(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      photoPath: serializer.fromJson<String?>(json['photoPath']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
@@ -1998,7 +1869,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'photoPath': serializer.toJson<String?>(photoPath),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
@@ -2015,7 +1885,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   GigRow copyWith({
     int? id,
     String? title,
-    Value<String?> photoPath = const Value.absent(),
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
@@ -2029,7 +1898,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   }) => GigRow(
     id: id ?? this.id,
     title: title ?? this.title,
-    photoPath: photoPath.present ? photoPath.value : this.photoPath,
     description: description.present ? description.value : this.description,
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
@@ -2045,7 +1913,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     return GigRow(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
       description: data.description.present
           ? data.description.value
           : this.description,
@@ -2072,7 +1939,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     return (StringBuffer('GigRow(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -2091,7 +1957,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   int get hashCode => Object.hash(
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -2109,7 +1974,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       (other is GigRow &&
           other.id == this.id &&
           other.title == this.title &&
-          other.photoPath == this.photoPath &&
           other.description == this.description &&
           other.rating == this.rating &&
           other.review == this.review &&
@@ -2125,7 +1989,6 @@ class GigRow extends DataClass implements Insertable<GigRow> {
 class GigsCompanion extends UpdateCompanion<GigRow> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> photoPath;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
@@ -2139,7 +2002,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
   const GigsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -2154,7 +2016,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
   GigsCompanion.insert({
     this.id = const Value.absent(),
     required String title,
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -2170,7 +2031,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
   static Insertable<GigRow> custom({
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? photoPath,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
@@ -2185,7 +2045,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (photoPath != null) 'photo_path': photoPath,
       if (description != null) 'description': description,
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
@@ -2202,7 +2061,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
   GigsCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? photoPath,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
@@ -2217,7 +2075,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     return GigsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      photoPath: photoPath ?? this.photoPath,
       description: description ?? this.description,
       rating: rating ?? this.rating,
       review: review ?? this.review,
@@ -2239,9 +2096,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (photoPath.present) {
-      map['photo_path'] = Variable<String>(photoPath.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
@@ -2281,7 +2135,6 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     return (StringBuffer('GigsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -2328,17 +2181,6 @@ class $ViewingsTable extends Viewings
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-  );
-  static const VerificationMeta _photoPathMeta = const VerificationMeta(
-    'photoPath',
-  );
-  @override
-  late final GeneratedColumn<String> photoPath = GeneratedColumn<String>(
-    'photo_path',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -2444,7 +2286,6 @@ class $ViewingsTable extends Viewings
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -2478,12 +2319,6 @@ class $ViewingsTable extends Viewings
       );
     } else if (isInserting) {
       context.missing(_titleMeta);
-    }
-    if (data.containsKey('photo_path')) {
-      context.handle(
-        _photoPathMeta,
-        photoPath.isAcceptableOrUnknown(data['photo_path']!, _photoPathMeta),
-      );
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -2564,10 +2399,6 @@ class $ViewingsTable extends Viewings
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      photoPath: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}photo_path'],
-      ),
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -2625,7 +2456,6 @@ class $ViewingsTable extends Viewings
 class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   final int id;
   final String title;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;
@@ -2644,7 +2474,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   const ViewingRow({
     required this.id,
     required this.title,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -2661,9 +2490,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || photoPath != null) {
-      map['photo_path'] = Variable<String>(photoPath);
-    }
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
@@ -2699,9 +2525,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     return ViewingsCompanion(
       id: Value(id),
       title: Value(title),
-      photoPath: photoPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(photoPath),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
@@ -2737,7 +2560,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     return ViewingRow(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      photoPath: serializer.fromJson<String?>(json['photoPath']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
@@ -2758,7 +2580,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'photoPath': serializer.toJson<String?>(photoPath),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
@@ -2777,7 +2598,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   ViewingRow copyWith({
     int? id,
     String? title,
-    Value<String?> photoPath = const Value.absent(),
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
@@ -2791,7 +2611,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   }) => ViewingRow(
     id: id ?? this.id,
     title: title ?? this.title,
-    photoPath: photoPath.present ? photoPath.value : this.photoPath,
     description: description.present ? description.value : this.description,
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
@@ -2807,7 +2626,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     return ViewingRow(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
       description: data.description.present
           ? data.description.value
           : this.description,
@@ -2834,7 +2652,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     return (StringBuffer('ViewingRow(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -2853,7 +2670,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   int get hashCode => Object.hash(
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -2871,7 +2687,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       (other is ViewingRow &&
           other.id == this.id &&
           other.title == this.title &&
-          other.photoPath == this.photoPath &&
           other.description == this.description &&
           other.rating == this.rating &&
           other.review == this.review &&
@@ -2887,7 +2702,6 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
 class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> photoPath;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
@@ -2901,7 +2715,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   const ViewingsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -2916,7 +2729,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   ViewingsCompanion.insert({
     this.id = const Value.absent(),
     required String title,
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -2933,7 +2745,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   static Insertable<ViewingRow> custom({
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? photoPath,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
@@ -2948,7 +2759,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (photoPath != null) 'photo_path': photoPath,
       if (description != null) 'description': description,
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
@@ -2965,7 +2775,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   ViewingsCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? photoPath,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
@@ -2980,7 +2789,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     return ViewingsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      photoPath: photoPath ?? this.photoPath,
       description: description ?? this.description,
       rating: rating ?? this.rating,
       review: review ?? this.review,
@@ -3002,9 +2810,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (photoPath.present) {
-      map['photo_path'] = Variable<String>(photoPath.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
@@ -3046,7 +2851,6 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     return (StringBuffer('ViewingsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -3092,17 +2896,6 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-  );
-  static const VerificationMeta _photoPathMeta = const VerificationMeta(
-    'photoPath',
-  );
-  @override
-  late final GeneratedColumn<String> photoPath = GeneratedColumn<String>(
-    'photo_path',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
   );
   static const VerificationMeta _descriptionMeta = const VerificationMeta(
     'description',
@@ -3201,7 +2994,6 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
   List<GeneratedColumn> get $columns => [
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -3234,12 +3026,6 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
       );
     } else if (isInserting) {
       context.missing(_titleMeta);
-    }
-    if (data.containsKey('photo_path')) {
-      context.handle(
-        _photoPathMeta,
-        photoPath.isAcceptableOrUnknown(data['photo_path']!, _photoPathMeta),
-      );
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -3317,10 +3103,6 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      photoPath: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}photo_path'],
-      ),
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
@@ -3374,7 +3156,6 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
 class GameRow extends DataClass implements Insertable<GameRow> {
   final int id;
   final String title;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;
@@ -3389,7 +3170,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   const GameRow({
     required this.id,
     required this.title,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -3405,9 +3185,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || photoPath != null) {
-      map['photo_path'] = Variable<String>(photoPath);
-    }
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
@@ -3440,9 +3217,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     return GamesCompanion(
       id: Value(id),
       title: Value(title),
-      photoPath: photoPath == null && nullToAbsent
-          ? const Value.absent()
-          : Value(photoPath),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
@@ -3477,7 +3251,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     return GameRow(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      photoPath: serializer.fromJson<String?>(json['photoPath']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
@@ -3497,7 +3270,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'photoPath': serializer.toJson<String?>(photoPath),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
@@ -3515,7 +3287,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   GameRow copyWith({
     int? id,
     String? title,
-    Value<String?> photoPath = const Value.absent(),
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
@@ -3528,7 +3299,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   }) => GameRow(
     id: id ?? this.id,
     title: title ?? this.title,
-    photoPath: photoPath.present ? photoPath.value : this.photoPath,
     description: description.present ? description.value : this.description,
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
@@ -3543,7 +3313,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     return GameRow(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
-      photoPath: data.photoPath.present ? data.photoPath.value : this.photoPath,
       description: data.description.present
           ? data.description.value
           : this.description,
@@ -3571,7 +3340,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     return (StringBuffer('GameRow(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -3589,7 +3357,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   int get hashCode => Object.hash(
     id,
     title,
-    photoPath,
     description,
     rating,
     review,
@@ -3606,7 +3373,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       (other is GameRow &&
           other.id == this.id &&
           other.title == this.title &&
-          other.photoPath == this.photoPath &&
           other.description == this.description &&
           other.rating == this.rating &&
           other.review == this.review &&
@@ -3621,7 +3387,6 @@ class GameRow extends DataClass implements Insertable<GameRow> {
 class GamesCompanion extends UpdateCompanion<GameRow> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> photoPath;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
@@ -3634,7 +3399,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   const GamesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -3648,7 +3412,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   GamesCompanion.insert({
     this.id = const Value.absent(),
     required String title,
-    this.photoPath = const Value.absent(),
     this.description = const Value.absent(),
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
@@ -3664,7 +3427,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   static Insertable<GameRow> custom({
     Expression<int>? id,
     Expression<String>? title,
-    Expression<String>? photoPath,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
@@ -3678,7 +3440,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (photoPath != null) 'photo_path': photoPath,
       if (description != null) 'description': description,
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
@@ -3694,7 +3455,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   GamesCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? photoPath,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
@@ -3708,7 +3468,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     return GamesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      photoPath: photoPath ?? this.photoPath,
       description: description ?? this.description,
       rating: rating ?? this.rating,
       review: review ?? this.review,
@@ -3729,9 +3488,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
-    }
-    if (photoPath.present) {
-      map['photo_path'] = Variable<String>(photoPath.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
@@ -3770,7 +3526,6 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     return (StringBuffer('GamesCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('photoPath: $photoPath, ')
           ..write('description: $description, ')
           ..write('rating: $rating, ')
           ..write('review: $review, ')
@@ -4070,7 +3825,6 @@ typedef $$FranchisesTableProcessedTableManager =
 typedef $$RoomsTableCreateCompanionBuilder = RoomsCompanion Function({
   Value<int> id,
   required String title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -4082,7 +3836,6 @@ typedef $$RoomsTableCreateCompanionBuilder = RoomsCompanion Function({
 typedef $$RoomsTableUpdateCompanionBuilder = RoomsCompanion Function({
   Value<int> id,
   Value<String> title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -4129,11 +3882,6 @@ class $$RoomsTableFilterComposer extends Composer<_$AppDatabase, $RoomsTable> {
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4210,11 +3958,6 @@ class $$RoomsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
@@ -4283,9 +4026,6 @@ class $$RoomsTableAnnotationComposer
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get photoPath =>
-      $composableBuilder(column: $table.photoPath, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -4365,7 +4105,6 @@ class $$RoomsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -4376,7 +4115,6 @@ class $$RoomsTableTableManager
               }) => RoomsCompanion(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -4389,7 +4127,6 @@ class $$RoomsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -4400,7 +4137,6 @@ class $$RoomsTableTableManager
               }) => RoomsCompanion.insert(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -4475,7 +4211,6 @@ typedef $$RoomsTableProcessedTableManager =
 typedef $$MealsTableCreateCompanionBuilder = MealsCompanion Function({
   Value<int> id,
   required String title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -4488,7 +4223,6 @@ typedef $$MealsTableCreateCompanionBuilder = MealsCompanion Function({
 typedef $$MealsTableUpdateCompanionBuilder = MealsCompanion Function({
   Value<int> id,
   Value<String> title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -4514,11 +4248,6 @@ class $$MealsTableFilterComposer extends Composer<_$AppDatabase, $MealsTable> {
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4582,11 +4311,6 @@ class $$MealsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
@@ -4642,9 +4366,6 @@ class $$MealsTableAnnotationComposer
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get photoPath =>
-      $composableBuilder(column: $table.photoPath, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -4705,7 +4426,6 @@ class $$MealsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -4717,7 +4437,6 @@ class $$MealsTableTableManager
               }) => MealsCompanion(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -4731,7 +4450,6 @@ class $$MealsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -4743,7 +4461,6 @@ class $$MealsTableTableManager
               }) => MealsCompanion.insert(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -4778,7 +4495,6 @@ typedef $$MealsTableProcessedTableManager =
 typedef $$GigsTableCreateCompanionBuilder = GigsCompanion Function({
   Value<int> id,
   required String title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -4793,7 +4509,6 @@ typedef $$GigsTableCreateCompanionBuilder = GigsCompanion Function({
 typedef $$GigsTableUpdateCompanionBuilder = GigsCompanion Function({
   Value<int> id,
   Value<String> title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -4821,11 +4536,6 @@ class $$GigsTableFilterComposer extends Composer<_$AppDatabase, $GigsTable> {
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4898,11 +4608,6 @@ class $$GigsTableOrderingComposer extends Composer<_$AppDatabase, $GigsTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
@@ -4968,9 +4673,6 @@ class $$GigsTableAnnotationComposer
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get photoPath =>
-      $composableBuilder(column: $table.photoPath, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -5041,7 +4743,6 @@ class $$GigsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -5055,7 +4756,6 @@ class $$GigsTableTableManager
               }) => GigsCompanion(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -5071,7 +4771,6 @@ class $$GigsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -5085,7 +4784,6 @@ class $$GigsTableTableManager
               }) => GigsCompanion.insert(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -5122,7 +4820,6 @@ typedef $$GigsTableProcessedTableManager =
 typedef $$ViewingsTableCreateCompanionBuilder = ViewingsCompanion Function({
   Value<int> id,
   required String title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -5137,7 +4834,6 @@ typedef $$ViewingsTableCreateCompanionBuilder = ViewingsCompanion Function({
 typedef $$ViewingsTableUpdateCompanionBuilder = ViewingsCompanion Function({
   Value<int> id,
   Value<String> title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -5166,11 +4862,6 @@ class $$ViewingsTableFilterComposer
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5245,11 +4936,6 @@ class $$ViewingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
@@ -5315,9 +5001,6 @@ class $$ViewingsTableAnnotationComposer
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get photoPath =>
-      $composableBuilder(column: $table.photoPath, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -5391,7 +5074,6 @@ class $$ViewingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -5405,7 +5087,6 @@ class $$ViewingsTableTableManager
               }) => ViewingsCompanion(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -5421,7 +5102,6 @@ class $$ViewingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -5435,7 +5115,6 @@ class $$ViewingsTableTableManager
               }) => ViewingsCompanion.insert(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -5472,7 +5151,6 @@ typedef $$ViewingsTableProcessedTableManager =
 typedef $$GamesTableCreateCompanionBuilder = GamesCompanion Function({
   Value<int> id,
   required String title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -5486,7 +5164,6 @@ typedef $$GamesTableCreateCompanionBuilder = GamesCompanion Function({
 typedef $$GamesTableUpdateCompanionBuilder = GamesCompanion Function({
   Value<int> id,
   Value<String> title,
-  Value<String?> photoPath,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
@@ -5513,11 +5190,6 @@ class $$GamesTableFilterComposer extends Composer<_$AppDatabase, $GamesTable> {
 
   ColumnFilters<String> get title => $composableBuilder(
     column: $table.title,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5587,11 +5259,6 @@ class $$GamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get photoPath => $composableBuilder(
-    column: $table.photoPath,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get description => $composableBuilder(
     column: $table.description,
     builder: (column) => ColumnOrderings(column),
@@ -5652,9 +5319,6 @@ class $$GamesTableAnnotationComposer
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
-
-  GeneratedColumn<String> get photoPath =>
-      $composableBuilder(column: $table.photoPath, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
@@ -5724,7 +5388,6 @@ class $$GamesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -5737,7 +5400,6 @@ class $$GamesTableTableManager
               }) => GamesCompanion(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,
@@ -5752,7 +5414,6 @@ class $$GamesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> photoPath = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
@@ -5765,7 +5426,6 @@ class $$GamesTableTableManager
               }) => GamesCompanion.insert(
                 id: id,
                 title: title,
-                photoPath: photoPath,
                 description: description,
                 rating: rating,
                 review: review,

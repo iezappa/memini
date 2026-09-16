@@ -10,7 +10,6 @@ class Gig implements Trackable {
     required this.id,
     required this.title,
     required this.happenedOn,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -29,7 +28,6 @@ class Gig implements Trackable {
   @override
   final String title;
   @override
-  final String? photoPath;
   @override
   final String? description;
   @override
@@ -58,7 +56,6 @@ class Gig implements Trackable {
 
   Gig copyWith({
     String? title,
-    String? photoPath,
     String? description,
     double? rating,
     String? review,
@@ -69,14 +66,12 @@ class Gig implements Trackable {
     String? setlist,
     String? company,
     String? externalId,
-    bool clearPhoto = false,
     bool clearRating = false,
     bool clearExternalId = false,
   }) {
     return Gig(
       id: id,
       title: title ?? this.title,
-      photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),
       review: review ?? this.review,
@@ -96,7 +91,6 @@ class GigDraft {
   const GigDraft({
     required this.title,
     required this.happenedOn,
-    this.photoPath,
     this.description,
     this.rating,
     this.review,
@@ -110,7 +104,6 @@ class GigDraft {
 
   final String title;
   final DateTime happenedOn;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;

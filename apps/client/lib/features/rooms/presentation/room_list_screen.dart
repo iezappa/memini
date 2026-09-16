@@ -74,9 +74,8 @@ class RoomListScreen extends ConsumerWidget {
         return TrackerCard(
           title: room.title,
           subtitle: franchise == null ? date : '$franchise · $date',
-          photoPath: room.photoPath,
           rating: room.rating,
-          placeholderIcon: Icons.meeting_room_outlined,
+          icon: Icons.meeting_room_outlined,
           pill: OutcomePill(
             escaped: room.escaped,
             timeLeftMinutes: room.timeLeftMinutes,

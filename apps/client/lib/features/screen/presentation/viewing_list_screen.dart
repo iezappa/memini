@@ -65,9 +65,8 @@ class ViewingListScreen extends ConsumerWidget {
         return TrackerCard(
           title: viewing.title,
           subtitle: year == null ? date : '$year · $date',
-          photoPath: viewing.photoPath,
           rating: viewing.rating,
-          placeholderIcon: Icons.movie_outlined,
+          icon: Icons.movie_outlined,
           pill: _KindPill(viewing: viewing),
           onTap: () => context.push('/viewings/${viewing.id}'),
         );

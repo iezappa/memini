@@ -74,8 +74,6 @@ class GameDetailScreen extends ConsumerWidget {
               title: value.title,
               happenedOn: value.happenedOn,
               rating: value.rating,
-              photoPath: value.photoPath,
-              placeholderIcon: Icons.sports_esports_outlined,
               contextLine: value.releaseYear?.toString(),
               badge: Text(gameStatusLabel(l10n, value.status)),
               description: value.description,

@@ -7,54 +7,6 @@ import '../../theme/theme.dart';
 import '../../theme/tokens.dart';
 import '../domain/trackable.dart';
 
-/// Cover picker, identical in all five forms.
-class PhotoField extends StatelessWidget {
-  const PhotoField({
-    super.key,
-    required this.path,
-    required this.onPick,
-    required this.onRemove,
-    this.placeholderIcon = Icons.bookmark_outline,
-  });
-
-  final String? path;
-  final VoidCallback onPick;
-  final VoidCallback? onRemove;
-  final IconData placeholderIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Gap.vMd,
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: EntryPhoto(
-            path: path,
-            width: double.infinity,
-            placeholderIcon: placeholderIcon,
-          ),
-        ),
-        Gap.vSm,
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: onPick,
-              icon: const Icon(Icons.image_outlined, size: 18),
-              label: Text(path == null ? l10n.photoAdd : l10n.photoReplace),
-            ),
-            if (onRemove != null)
-              TextButton(onPressed: onRemove, child: Text(l10n.photoRemove)),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
 /// The 0–10 slider, with an explicit way back to "not rated".
 ///
 /// Unrated has to stay reachable: a score of zero is a verdict, and silently

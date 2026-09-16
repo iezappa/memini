@@ -48,7 +48,6 @@ void main() {
         title: 'Blade Runner 2049',
         kind: ViewingKind.film,
         happenedOn: DateTime(2026, 3, 14, 20),
-        photoPath: '/poster.jpg',
         description: 'A blade runner unearths a secret',
         rating: 9,
         review: 'Deakins earned that Oscar',

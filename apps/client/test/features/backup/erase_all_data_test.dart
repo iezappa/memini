@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +13,6 @@ import 'package:memini/features/franchises/domain/franchise.dart';
 import 'package:memini/features/rooms/data/drift_room_repository.dart';
 import 'package:memini/features/rooms/domain/room.dart';
 import 'package:memini/features/security/data/pin_service.dart';
-import 'package:memini/features/shared/photo_storage.dart';
 import 'package:memini/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,8 +23,6 @@ void main() {
   late FakeBackupFiles files;
   late SharedPreferences prefs;
   late InMemorySecureStore secure;
-  late Directory documents;
-  late File photo;
   late ProviderContainer container;
   late int restarts;
 
@@ -48,14 +43,7 @@ void main() {
     files = FakeBackupFiles();
     secure = InMemorySecureStore();
     await PinService(secure).setPin('1234');
-    documents = Directory.systemTemp.createTempSync('memini_erase_');
     restarts = 0;
-
-    final photos = PhotoStorage(documentsDirectory: () async => documents);
-    final source = File('${documents.path}/picked.jpg')
-      ..writeAsBytesSync([1, 2, 3]);
-    photo = File((await photos.store(source.path))!);
-    source.deleteSync();
 
     container = ProviderContainer(
       overrides: [
@@ -63,7 +51,6 @@ void main() {
         backupFilesProvider.overrideWithValue(files),
         sharedPreferencesProvider.overrideWithValue(prefs),
         pinServiceProvider.overrideWithValue(PinService(secure)),
-        photoStorageProvider.overrideWithValue(photos),
         restartAppProvider.overrideWithValue(() => restarts++),
       ],
     );
@@ -74,7 +61,6 @@ void main() {
       RoomDraft(
         title: 'The Vault',
         franchiseId: franchise.id,
-        photoPath: photo.path,
         happenedOn: DateTime(2026, 3, 14),
         escaped: true,
       ),
@@ -85,7 +71,6 @@ void main() {
   tearDown(() async {
     container.dispose();
     await db.close();
-    if (documents.existsSync()) documents.deleteSync(recursive: true);
   });
 
   group('EraseAllDataActions', () {
@@ -95,12 +80,6 @@ void main() {
       expect(await db.select(db.rooms).get(), isEmpty);
       expect(await db.select(db.franchises).get(), isEmpty);
       expect(await db.select(db.meals).get(), isEmpty);
-    });
-
-    test('deletes the photos it had copied in', () async {
-      await container.read(eraseAllDataActionsProvider).eraseEverything();
-
-      expect(photo.existsSync(), isFalse);
     });
 
     test('removes the PIN', () async {

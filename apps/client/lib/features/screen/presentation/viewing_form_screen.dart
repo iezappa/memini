@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../../app/providers.dart';
 import '../../../core/enrichment/data/enrichment_providers.dart';
 import '../../../core/enrichment/presentation/enrichment_sheet.dart';
 import '../../../core/theme/tokens.dart';
@@ -39,7 +37,6 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
   late DateTime _happenedOn;
   late ViewingKind _kind;
   double? _rating;
-  String? _photoPath;
   String? _externalId;
   bool _saving = false;
 
@@ -61,7 +58,6 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
     _happenedOn = viewing?.happenedOn ?? DateTime.now();
     _kind = viewing?.kind ?? ViewingKind.film;
     _rating = viewing?.rating;
-    _photoPath = viewing?.photoPath;
     _externalId = viewing?.externalId;
   }
 
@@ -90,24 +86,6 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
   /// leave a stale number behind after switching the kind.
   bool get _takesSeason =>
       _kind == ViewingKind.series || _kind == ViewingKind.miniseries;
-
-  Future<void> _pickPhoto() async {
-    final messenger = ScaffoldMessenger.of(context);
-    final failure = AppLocalizations.of(context).photoFailed;
-
-    try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-      );
-      if (picked == null) return;
-
-      final stored = await ref.read(photoStorageProvider).store(picked.path);
-      if (mounted) setState(() => _photoPath = stored);
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(failure)));
-    }
-  }
 
   /// Fills in what the lookup knows, without clobbering what the owner
   /// already wrote: only empty fields are filled, and the rating and review
@@ -142,16 +120,10 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
       _cast.text = picked.cast!;
     }
 
-    final poster = picked.imageUrl;
-    final stored = (_photoPath == null && poster != null)
-        ? await ref.read(photoStorageProvider).storeFromUrl(poster)
-        : null;
-
     if (!mounted) return;
     setState(() {
       _title.text = picked.title;
       _externalId = picked.externalId;
-      if (stored != null) _photoPath = stored;
     });
   }
 
@@ -171,7 +143,6 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
           title: _title.text.trim(),
           happenedOn: _happenedOn,
           kind: _kind,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -189,7 +160,6 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
           title: _title.text.trim(),
           happenedOn: _happenedOn,
           kind: _kind,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -215,15 +185,6 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
       saving: _saving,
       onSave: _save,
       children: [
-        PhotoField(
-          path: _photoPath,
-          onPick: _pickPhoto,
-          onRemove: _photoPath == null
-              ? null
-              : () => setState(() => _photoPath = null),
-          placeholderIcon: Icons.movie_outlined,
-        ),
-        Gap.vLg,
         TextFormField(
           controller: _title,
           textCapitalization: TextCapitalization.words,

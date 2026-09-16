@@ -79,9 +79,8 @@ class GameListScreen extends ConsumerWidget {
         return TrackerCard(
           title: game.title,
           subtitle: platform == null ? date : '$platform · $date',
-          photoPath: game.photoPath,
           rating: game.rating,
-          placeholderIcon: Icons.sports_esports_outlined,
+          icon: Icons.sports_esports_outlined,
           pill: _StatusPill(game: game),
           onTap: () => context.push('/games/${game.id}'),
         );

@@ -48,7 +48,6 @@ void main() {
         title: 'Outer Wilds',
         status: GameStatus.hundredPercent,
         happenedOn: DateTime(2026, 3, 14, 2),
-        photoPath: '/cover.jpg',
         description: 'A 22 minute loop',
         rating: 10,
         review: 'Nothing else is like it',

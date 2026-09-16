@@ -60,9 +60,8 @@ class MealListScreen extends ConsumerWidget {
         return TrackerCard(
           title: meal.title,
           subtitle: where == null ? date : '$where · $date',
-          photoPath: meal.photoPath,
           rating: meal.rating,
-          placeholderIcon: Icons.restaurant_outlined,
+          icon: Icons.restaurant_outlined,
           pill: meal.dish == null ? null : _DishPill(dish: meal.dish!),
           onTap: () => context.push('/meals/${meal.id}'),
         );

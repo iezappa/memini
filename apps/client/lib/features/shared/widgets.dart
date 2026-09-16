@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/theme.dart';
@@ -151,55 +148,33 @@ class OutcomePill extends StatelessWidget {
   }
 }
 
-/// A stored room photo, or a quiet placeholder when there is none.
-/// Cover image for any tracked entry, falling back to a domain icon.
-class EntryPhoto extends StatelessWidget {
-  const EntryPhoto({
+/// The domain's icon on a quiet tile, marking what kind of entry a row is.
+class EntryIcon extends StatelessWidget {
+  const EntryIcon({
     super.key,
-    required this.path,
-    this.width,
-    this.height,
+    required this.icon,
+    this.size = 78,
     this.borderRadius = Radii.card,
-    this.placeholderIcon = Icons.bookmark_outline,
   });
 
-  final String? path;
-  final double? width;
-  final double? height;
+  final IconData icon;
+  final double size;
   final BorderRadius borderRadius;
-
-  /// Shown when there is no photo, or the file behind it is gone.
-  final IconData placeholderIcon;
 
   @override
   Widget build(BuildContext context) {
-    final placeholder = Container(
-      width: width,
-      height: height,
+    return Container(
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerHighest,
         borderRadius: borderRadius,
         border: Border.all(color: context.semantics.hairline),
       ),
       child: Icon(
-        placeholderIcon,
+        icon,
         color: context.semantics.muted.withValues(alpha: 0.6),
         size: 28,
-      ),
-    );
-
-    final file = path;
-    if (file == null || kIsWeb) return placeholder;
-
-    return ClipRRect(
-      borderRadius: borderRadius,
-      child: Image.file(
-        File(file),
-        width: width,
-        height: height,
-        fit: BoxFit.cover,
-        // The file can be gone after a restore from another device's backup.
-        errorBuilder: (_, _, _) => placeholder,
       ),
     );
   }

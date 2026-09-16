@@ -46,7 +46,6 @@ dependencies:
   crypto: ^3.0.7
   intl: ^0.20.3
   url_launcher: ^6.3.2
-  image_picker: ^1.2.3
   file_picker: ^12.1.2
   share_plus: ^13.3.0
   http: ^1.6.0

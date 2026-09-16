@@ -120,18 +120,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldTimeLeftHint => 'Only if you escaped';
 
   @override
-  String get photoAdd => 'Add photo';
-
-  @override
-  String get photoReplace => 'Replace photo';
-
-  @override
-  String get photoRemove => 'Remove photo';
-
-  @override
-  String get photoFailed => 'Could not load that image.';
-
-  @override
   String get franchiseHint => 'Type a name; it is created if new';
 
   @override
@@ -323,7 +311,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorial1Body =>
-      'Log escape rooms, meals, concerts, films, series and games: a photo, the date and the details that matter for each one.';
+      'Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one.';
 
   @override
   String get tutorial2Title => 'Score them like a critic';
@@ -745,7 +733,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLookupsBody =>
-      'Optional. Paste your own free keys to fill in covers and details automatically. Memini works fully without them.';
+      'Optional. Paste your own free keys to fill in details automatically. Memini works fully without them.';
 
   @override
   String get settingsTmdbKey => 'TMDB key (films and series)';
@@ -849,7 +837,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eraseAllBody =>
-      'Every entry, photo and franchise on this device is deleted, along with your PIN, your name, your lookup keys and your settings; only the language and the appearance are kept. The app then starts over from the welcome screens. It cannot be undone, and no copy exists anywhere else: export first if you might want any of it back.';
+      'Every entry and franchise on this device is deleted, along with your PIN, your name, your lookup keys and your settings; only the language and the appearance are kept. The app then starts over from the welcome screens. It cannot be undone, and no copy exists anywhere else: export first if you might want any of it back.';
 
   @override
   String get eraseAllConfirmWord => 'DELETE';

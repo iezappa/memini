@@ -147,7 +147,6 @@ class BackupDocument {
   static Map<String, dynamic> _commonJson(Trackable entry) => {
     'id': entry.id,
     'title': entry.title,
-    'photoPath': entry.photoPath,
     'description': entry.description,
     'rating': entry.rating,
     'review': entry.review,
@@ -235,7 +234,6 @@ class BackupDocument {
     return _Common(
       id: id,
       title: title,
-      photoPath: json['photoPath'] as String?,
       description: json['description'] as String?,
       rating: rating,
       review: json['review'] as String?,
@@ -264,7 +262,6 @@ class BackupDocument {
     return Room(
       id: common.id,
       title: common.title,
-      photoPath: common.photoPath,
       description: common.description,
       rating: common.rating,
       review: common.review,
@@ -281,7 +278,6 @@ class BackupDocument {
     return Meal(
       id: common.id,
       title: common.title,
-      photoPath: common.photoPath,
       description: common.description,
       rating: common.rating,
       review: common.review,
@@ -299,7 +295,6 @@ class BackupDocument {
     return Gig(
       id: common.id,
       title: common.title,
-      photoPath: common.photoPath,
       description: common.description,
       rating: common.rating,
       review: common.review,
@@ -319,7 +314,6 @@ class BackupDocument {
     return Viewing(
       id: common.id,
       title: common.title,
-      photoPath: common.photoPath,
       description: common.description,
       rating: common.rating,
       review: common.review,
@@ -339,7 +333,6 @@ class BackupDocument {
     return Game(
       id: common.id,
       title: common.title,
-      photoPath: common.photoPath,
       description: common.description,
       rating: common.rating,
       review: common.review,
@@ -365,7 +358,6 @@ class _Common {
   const _Common({
     required this.id,
     required this.title,
-    required this.photoPath,
     required this.description,
     required this.rating,
     required this.review,
@@ -374,7 +366,6 @@ class _Common {
 
   final int id;
   final String title;
-  final String? photoPath;
   final String? description;
   final double? rating;
   final String? review;

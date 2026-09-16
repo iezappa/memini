@@ -26,7 +26,6 @@ class DriftViewingRepository implements ViewingRepository {
   Viewing _toDomain(ViewingRow row) => Viewing(
     id: row.id,
     title: row.title,
-    photoPath: row.photoPath,
     description: row.description,
     rating: row.rating,
     review: row.review,
@@ -82,7 +81,6 @@ class DriftViewingRepository implements ViewingRepository {
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             kind: draft.kind,
-            photoPath: Value(draft.photoPath),
             description: Value(draft.description),
             rating: Value(draft.rating),
             review: Value(draft.review),
@@ -101,7 +99,6 @@ class DriftViewingRepository implements ViewingRepository {
     await (_db.update(_db.viewings)..where((v) => v.id.equals(entry.id))).write(
       ViewingsCompanion(
         title: Value(entry.title.trim()),
-        photoPath: Value(entry.photoPath),
         description: Value(entry.description),
         rating: Value(entry.rating),
         review: Value(entry.review),

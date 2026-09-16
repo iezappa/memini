@@ -73,8 +73,6 @@ class MealDetailScreen extends ConsumerWidget {
               title: value.title,
               happenedOn: value.happenedOn,
               rating: value.rating,
-              photoPath: value.photoPath,
-              placeholderIcon: Icons.restaurant_outlined,
               contextLine: value.location,
               description: value.description,
               review: value.review,

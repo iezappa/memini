@@ -120,18 +120,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fieldTimeLeftHint => 'Solo si escapaste';
 
   @override
-  String get photoAdd => 'Agregar foto';
-
-  @override
-  String get photoReplace => 'Cambiar foto';
-
-  @override
-  String get photoRemove => 'Quitar foto';
-
-  @override
-  String get photoFailed => 'No se pudo cargar esa imagen.';
-
-  @override
   String get franchiseHint => 'Escribí un nombre; se crea si es nueva';
 
   @override
@@ -324,7 +312,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tutorial1Body =>
-      'Registrá salas de escape, comidas, recitales, películas, series y juegos: una foto, la fecha y los datos que importan en cada caso.';
+      'Registrá salas de escape, comidas, recitales, películas, series y juegos: la fecha y los datos que importan en cada caso.';
 
   @override
   String get tutorial2Title => 'Puntuálas como un crítico';
@@ -743,7 +731,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsLookupsBody =>
-      'Opcional. Pegá tus propias claves gratuitas para completar portadas y datos automáticamente. Memini funciona completo sin ellas.';
+      'Opcional. Pegá tus propias claves gratuitas para completar datos automáticamente. Memini funciona completo sin ellas.';
 
   @override
   String get settingsTmdbKey => 'Clave de TMDB (películas y series)';
@@ -849,7 +837,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eraseAllBody =>
-      'Se borran todas las entradas, fotos y franquicias de este dispositivo, junto con tu PIN, tu nombre, tus claves de búsqueda y tus ajustes; solo se conservan el idioma y la apariencia. Después la app vuelve a empezar desde la bienvenida. No se puede deshacer y no existe ninguna copia en otro lado: exportá antes si podrías querer algo de vuelta.';
+      'Se borran todas las entradas y franquicias de este dispositivo, junto con tu PIN, tu nombre, tus claves de búsqueda y tus ajustes; solo se conservan el idioma y la apariencia. Después la app vuelve a empezar desde la bienvenida. No se puede deshacer y no existe ninguna copia en otro lado: exportá antes si podrías querer algo de vuelta.';
 
   @override
   String get eraseAllConfirmWord => 'BORRAR';

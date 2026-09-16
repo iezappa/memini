@@ -45,7 +45,6 @@ void main() {
       MealDraft(
         title: 'Don Julio',
         happenedOn: DateTime(2026, 3, 14, 21, 30),
-        photoPath: '/p.jpg',
         description: 'Parrilla',
         rating: 9.5,
         review: 'The best bife I have had',
@@ -59,7 +58,6 @@ void main() {
     final reloaded = await repository.findById(created.id);
 
     expect(reloaded!.title, 'Don Julio');
-    expect(reloaded.photoPath, '/p.jpg');
     expect(reloaded.description, 'Parrilla');
     expect(reloaded.rating, 9.5);
     expect(reloaded.review, 'The best bife I have had');

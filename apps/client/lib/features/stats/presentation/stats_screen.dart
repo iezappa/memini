@@ -131,12 +131,10 @@ class _StatsBody extends ConsumerWidget {
                   padding: const EdgeInsets.all(Gap.md),
                   child: Row(
                     children: [
-                      EntryPhoto(
-                        path: stats.best!.entry.photoPath,
-                        width: 56,
-                        height: 56,
+                      EntryIcon(
+                        icon: stats.best!.domain.icon,
+                        size: 56,
                         borderRadius: Radii.field,
-                        placeholderIcon: stats.best!.domain.icon,
                       ),
                       Gap.hMd,
                       Expanded(

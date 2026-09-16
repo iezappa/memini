@@ -40,7 +40,6 @@ class BackupService {
           Room(
             id: row.id,
             title: row.title,
-            photoPath: row.photoPath,
             description: row.description,
             franchiseId: row.franchiseId,
             rating: row.rating,
@@ -55,7 +54,6 @@ class BackupService {
           Meal(
             id: row.id,
             title: row.title,
-            photoPath: row.photoPath,
             description: row.description,
             rating: row.rating,
             review: row.review,
@@ -71,7 +69,6 @@ class BackupService {
           Gig(
             id: row.id,
             title: row.title,
-            photoPath: row.photoPath,
             description: row.description,
             rating: row.rating,
             review: row.review,
@@ -89,7 +86,6 @@ class BackupService {
           Viewing(
             id: row.id,
             title: row.title,
-            photoPath: row.photoPath,
             description: row.description,
             rating: row.rating,
             review: row.review,
@@ -107,7 +103,6 @@ class BackupService {
           Game(
             id: row.id,
             title: row.title,
-            photoPath: row.photoPath,
             description: row.description,
             rating: row.rating,
             review: row.review,
@@ -218,7 +213,6 @@ class BackupService {
             RoomsCompanion.insert(
               id: Value(r.id),
               title: r.title,
-              photoPath: Value(r.photoPath),
               description: Value(r.description),
               franchiseId: Value(r.franchiseId),
               rating: Value(r.rating),
@@ -233,7 +227,6 @@ class BackupService {
             MealsCompanion.insert(
               id: Value(m.id),
               title: m.title,
-              photoPath: Value(m.photoPath),
               description: Value(m.description),
               rating: Value(m.rating),
               review: Value(m.review),
@@ -249,7 +242,6 @@ class BackupService {
             GigsCompanion.insert(
               id: Value(g.id),
               title: g.title,
-              photoPath: Value(g.photoPath),
               description: Value(g.description),
               rating: Value(g.rating),
               review: Value(g.review),
@@ -267,7 +259,6 @@ class BackupService {
             ViewingsCompanion.insert(
               id: Value(v.id),
               title: v.title,
-              photoPath: Value(v.photoPath),
               description: Value(v.description),
               rating: Value(v.rating),
               review: Value(v.review),
@@ -285,7 +276,6 @@ class BackupService {
             GamesCompanion.insert(
               id: Value(g.id),
               title: g.title,
-              photoPath: Value(g.photoPath),
               description: Value(g.description),
               rating: Value(g.rating),
               review: Value(g.review),

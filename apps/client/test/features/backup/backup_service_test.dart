@@ -115,6 +115,30 @@ void main() {
     expect(survivors.single.title, 'The Vault');
   });
 
+  test(
+    'an older backup that still names photos imports without them',
+    () async {
+      // What builds with photos wrote: every entry carried a photoPath.
+      const legacy =
+          '{"version": 2, "exportedAt": "2026-01-01T00:00:00.000",'
+          ' "franchises": [], "rooms": [{"id": 1, "title": "The Vault",'
+          ' "photoPath": "/data/room_photos/1.jpg", "happenedOn":'
+          ' "2026-03-14T00:00:00.000", "escaped": true}]}';
+
+      final document = await service.import(legacy);
+
+      expect(document.rooms, hasLength(1));
+      final restored = await rooms.list(const RoomFilter());
+      expect(restored.single.title, 'The Vault');
+    },
+  );
+
+  test('an export no longer mentions photos', () async {
+    await seed();
+
+    expect(await service.exportJson(), isNot(contains('photoPath')));
+  });
+
   test('exports CSV with one line per room', () async {
     await seed();
 

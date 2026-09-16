@@ -26,7 +26,6 @@ class DriftRoomRepository implements RoomRepository {
   Room _toDomain(RoomRow row) => Room(
     id: row.id,
     title: row.title,
-    photoPath: row.photoPath,
     description: row.description,
     franchiseId: row.franchiseId,
     rating: row.rating,
@@ -81,7 +80,6 @@ class DriftRoomRepository implements RoomRepository {
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             escaped: draft.escaped,
-            photoPath: Value(draft.photoPath),
             description: Value(draft.description),
             franchiseId: Value(draft.franchiseId),
             rating: Value(draft.rating),
@@ -97,7 +95,6 @@ class DriftRoomRepository implements RoomRepository {
     await (_db.update(_db.rooms)..where((r) => r.id.equals(entry.id))).write(
       RoomsCompanion(
         title: Value(entry.title.trim()),
-        photoPath: Value(entry.photoPath),
         description: Value(entry.description),
         franchiseId: Value(entry.franchiseId),
         rating: Value(entry.rating),

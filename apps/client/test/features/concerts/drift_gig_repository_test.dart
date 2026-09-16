@@ -44,7 +44,6 @@ void main() {
       GigDraft(
         title: 'Radiohead',
         happenedOn: DateTime(2026, 3, 14, 22),
-        photoPath: '/p.jpg',
         description: 'The OK Computer tour',
         rating: 10,
         review: 'Paranoid Android live is another thing',

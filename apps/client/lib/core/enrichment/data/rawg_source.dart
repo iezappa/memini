@@ -93,7 +93,6 @@ class RawgSource implements EnrichmentSource {
         EnrichmentSuggestion(
           externalId: '$id',
           title: name,
-          imageUrl: raw['background_image'] as String?,
           releaseYear: _yearOf(raw['released'] as String?),
           platforms: platforms.isEmpty ? null : platforms.join(', '),
         ),

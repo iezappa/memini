@@ -80,8 +80,6 @@ class ViewingDetailScreen extends ConsumerWidget {
               title: value.title,
               happenedOn: value.happenedOn,
               rating: value.rating,
-              photoPath: value.photoPath,
-              placeholderIcon: Icons.movie_outlined,
               contextLine: value.releaseYear?.toString(),
               badge: Text(viewingKindLabel(l10n, value.kind)),
               description: value.description,

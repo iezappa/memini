@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/providers.dart';
@@ -35,11 +34,7 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
   late DateTime _playedOn;
   late bool _escaped;
   late double? _rating;
-  String? _photoPath;
 
-  /// The photo path the room had when the screen opened, so replacing a photo
-  /// can delete the old file only once the save actually goes through.
-  String? _originalPhotoPath;
   bool _saving = false;
 
   @override
@@ -58,8 +53,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
     _playedOn = room?.happenedOn ?? DateTime.now();
     _escaped = room?.escaped ?? true;
     _rating = room?.rating;
-    _photoPath = room?.photoPath;
-    _originalPhotoPath = room?.photoPath;
 
     final franchiseId = room?.franchiseId;
     if (franchiseId != null) {
@@ -86,24 +79,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
   String? _trimmedOrNull(TextEditingController controller) {
     final value = controller.text.trim();
     return value.isEmpty ? null : value;
-  }
-
-  Future<void> _pickPhoto() async {
-    final messenger = ScaffoldMessenger.of(context);
-    final failure = AppLocalizations.of(context).photoFailed;
-
-    try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-      );
-      if (picked == null) return;
-
-      final stored = await ref.read(photoStorageProvider).store(picked.path);
-      if (mounted) setState(() => _photoPath = stored);
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(failure)));
-    }
   }
 
   Future<void> _pickDate() async {
@@ -139,7 +114,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
       await repository.create(
         RoomDraft(
           title: _name.text,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           franchiseId: franchiseId,
           rating: _rating,
@@ -154,7 +128,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
         Room(
           id: existing.id,
           title: _name.text,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           franchiseId: franchiseId,
           rating: _rating,
@@ -164,10 +137,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
           timeLeftMinutes: timeLeft,
         ),
       );
-
-      if (_originalPhotoPath != null && _originalPhotoPath != _photoPath) {
-        await ref.read(photoStorageProvider).remove(_originalPhotoPath);
-      }
     }
 
     if (mounted) navigator.pop(true);
@@ -193,14 +162,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
             child: ListView(
               padding: const EdgeInsets.only(bottom: Gap.xl),
               children: [
-                _PhotoField(
-                  path: _photoPath,
-                  onPick: _pickPhoto,
-                  onRemove: _photoPath == null
-                      ? null
-                      : () => setState(() => _photoPath = null),
-                ),
-                Gap.vLg,
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.sentences,
@@ -281,46 +242,6 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PhotoField extends StatelessWidget {
-  const _PhotoField({
-    required this.path,
-    required this.onPick,
-    required this.onRemove,
-  });
-
-  final String? path;
-  final VoidCallback onPick;
-  final VoidCallback? onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Gap.vMd,
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: EntryPhoto(path: path, width: double.infinity),
-        ),
-        Gap.vSm,
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: onPick,
-              icon: const Icon(Icons.image_outlined, size: 18),
-              label: Text(path == null ? l10n.photoAdd : l10n.photoReplace),
-            ),
-            if (onRemove != null)
-              TextButton(onPressed: onRemove, child: Text(l10n.photoRemove)),
-          ],
-        ),
-      ],
     );
   }
 }

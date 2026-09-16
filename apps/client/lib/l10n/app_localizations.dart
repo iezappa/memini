@@ -290,30 +290,6 @@ abstract class AppLocalizations {
   /// **'Only if you escaped'**
   String get fieldTimeLeftHint;
 
-  /// No description provided for @photoAdd.
-  ///
-  /// In en, this message translates to:
-  /// **'Add photo'**
-  String get photoAdd;
-
-  /// No description provided for @photoReplace.
-  ///
-  /// In en, this message translates to:
-  /// **'Replace photo'**
-  String get photoReplace;
-
-  /// No description provided for @photoRemove.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove photo'**
-  String get photoRemove;
-
-  /// No description provided for @photoFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not load that image.'**
-  String get photoFailed;
-
   /// No description provided for @franchiseHint.
   ///
   /// In en, this message translates to:
@@ -671,7 +647,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorial1Body.
   ///
   /// In en, this message translates to:
-  /// **'Log escape rooms, meals, concerts, films, series and games: a photo, the date and the details that matter for each one.'**
+  /// **'Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one.'**
   String get tutorial1Body;
 
   /// No description provided for @tutorial2Title.
@@ -1409,7 +1385,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsLookupsBody.
   ///
   /// In en, this message translates to:
-  /// **'Optional. Paste your own free keys to fill in covers and details automatically. Memini works fully without them.'**
+  /// **'Optional. Paste your own free keys to fill in details automatically. Memini works fully without them.'**
   String get settingsLookupsBody;
 
   /// No description provided for @settingsTmdbKey.
@@ -1595,7 +1571,7 @@ abstract class AppLocalizations {
   /// No description provided for @eraseAllBody.
   ///
   /// In en, this message translates to:
-  /// **'Every entry, photo and franchise on this device is deleted, along with your PIN, your name, your lookup keys and your settings; only the language and the appearance are kept. The app then starts over from the welcome screens. It cannot be undone, and no copy exists anywhere else: export first if you might want any of it back.'**
+  /// **'Every entry and franchise on this device is deleted, along with your PIN, your name, your lookup keys and your settings; only the language and the appearance are kept. The app then starts over from the welcome screens. It cannot be undone, and no copy exists anywhere else: export first if you might want any of it back.'**
   String get eraseAllBody;
 
   /// No description provided for @eraseAllConfirmWord.

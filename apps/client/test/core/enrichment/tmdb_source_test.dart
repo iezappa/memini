@@ -21,10 +21,6 @@ void main() {
       expect(results.single.title, 'Blade Runner 2049');
       expect(results.single.description, 'A blade runner unearths a secret.');
       expect(results.single.releaseYear, 2017);
-      expect(
-        results.single.imageUrl,
-        '${TmdbSource.posterBase}/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg',
-      );
     });
 
     test('a series carries "name" and "first_air_date", not "title"', () {
@@ -61,17 +57,6 @@ void main() {
       ''');
 
       expect(results.single.releaseYear, isNull);
-    });
-
-    test('a missing poster leaves the image null, not a broken URL', () {
-      final results = TmdbSource.parseSearch('''
-        {"results": [{
-          "id": 1, "media_type": "movie", "title": "No poster",
-          "poster_path": null
-        }]}
-      ''');
-
-      expect(results.single.imageUrl, isNull);
     });
 
     test('an empty overview stays null rather than blanking a description', () {

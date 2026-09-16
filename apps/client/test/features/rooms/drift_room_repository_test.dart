@@ -50,7 +50,6 @@ void main() {
     final created = await repository.create(
       RoomDraft(
         title: 'The Vault',
-        photoPath: '/p.jpg',
         description: 'A bank heist',
         rating: 9.5,
         review: 'Best one yet',
@@ -63,7 +62,6 @@ void main() {
     final reloaded = await repository.findById(created.id);
 
     expect(reloaded!.title, 'The Vault');
-    expect(reloaded.photoPath, '/p.jpg');
     expect(reloaded.description, 'A bank heist');
     expect(reloaded.rating, 9.5);
     expect(reloaded.review, 'Best one yet');

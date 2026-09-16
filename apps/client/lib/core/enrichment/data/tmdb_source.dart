@@ -20,10 +20,6 @@ class TmdbSource implements EnrichmentSource {
 
   static const _host = 'api.themoviedb.org';
 
-  /// w500 is the smallest poster that still looks right on a detail screen;
-  /// the full-size original would be several megabytes per entry.
-  static const posterBase = 'https://image.tmdb.org/t/p/w500';
-
   @override
   String get attribution => 'TMDB';
 
@@ -88,7 +84,6 @@ class TmdbSource implements EnrichmentSource {
       if (title == null || title.trim().isEmpty || id is! int) continue;
 
       final date = (raw['release_date'] ?? raw['first_air_date']) as String?;
-      final posterPath = raw['poster_path'] as String?;
       final overview = raw['overview'] as String?;
 
       suggestions.add(
@@ -98,7 +93,6 @@ class TmdbSource implements EnrichmentSource {
           description: (overview == null || overview.trim().isEmpty)
               ? null
               : overview,
-          imageUrl: posterPath == null ? null : '$posterBase$posterPath',
           releaseYear: _yearOf(date),
         ),
       );

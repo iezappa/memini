@@ -36,7 +36,6 @@ class RoomDetailScreen extends ConsumerWidget {
     if (!confirmed) return;
 
     await ref.read(roomRepositoryProvider).delete(room.id);
-    await ref.read(photoStorageProvider).remove(room.photoPath);
     navigator.pop();
   }
 
@@ -105,11 +104,6 @@ class _RoomBody extends ConsumerWidget {
       child: ListView(
         padding: const EdgeInsets.only(bottom: Gap.xl),
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: EntryPhoto(path: room.photoPath, width: double.infinity),
-          ),
-          Gap.vLg,
           Text(room.title, style: context.text.displaySmall),
           Gap.vXs,
           Text(

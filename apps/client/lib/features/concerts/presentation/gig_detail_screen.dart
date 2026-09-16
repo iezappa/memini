@@ -74,8 +74,6 @@ class GigDetailScreen extends ConsumerWidget {
               title: value.title,
               happenedOn: value.happenedOn,
               rating: value.rating,
-              photoPath: value.photoPath,
-              placeholderIcon: Icons.music_note_outlined,
               contextLine: [?value.venue, ?value.city].join(', ').ifEmptyNull(),
               description: value.description,
               review: value.review,

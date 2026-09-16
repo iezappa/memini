@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../../../app/providers.dart';
 import '../../../core/enrichment/data/enrichment_providers.dart';
 import '../../../core/enrichment/presentation/enrichment_sheet.dart';
 import '../../../core/theme/tokens.dart';
@@ -38,7 +36,6 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
   late DateTime _happenedOn;
   late GameStatus _status;
   double? _rating;
-  String? _photoPath;
   String? _externalId;
   bool _saving = false;
 
@@ -61,7 +58,6 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
     _happenedOn = game?.happenedOn ?? DateTime.now();
     _status = game?.status ?? GameStatus.finished;
     _rating = game?.rating;
-    _photoPath = game?.photoPath;
     _externalId = game?.externalId;
   }
 
@@ -83,24 +79,6 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
   String? _trimmedOrNull(TextEditingController controller) {
     final value = controller.text.trim();
     return value.isEmpty ? null : value;
-  }
-
-  Future<void> _pickPhoto() async {
-    final messenger = ScaffoldMessenger.of(context);
-    final failure = AppLocalizations.of(context).photoFailed;
-
-    try {
-      final picked = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-      );
-      if (picked == null) return;
-
-      final stored = await ref.read(photoStorageProvider).store(picked.path);
-      if (mounted) setState(() => _photoPath = stored);
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(failure)));
-    }
   }
 
   /// Fills in what the lookup knows, without clobbering what the owner
@@ -135,16 +113,10 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
       _platform.text = picked.platforms!;
     }
 
-    final cover = picked.imageUrl;
-    final stored = (_photoPath == null && cover != null)
-        ? await ref.read(photoStorageProvider).storeFromUrl(cover)
-        : null;
-
     if (!mounted) return;
     setState(() {
       _title.text = picked.title;
       _externalId = picked.externalId;
-      if (stored != null) _photoPath = stored;
     });
   }
 
@@ -168,7 +140,6 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
           title: _title.text.trim(),
           happenedOn: _happenedOn,
           status: _status,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -185,7 +156,6 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
           title: _title.text.trim(),
           happenedOn: _happenedOn,
           status: _status,
-          photoPath: _photoPath,
           description: _trimmedOrNull(_description),
           rating: _rating,
           review: _trimmedOrNull(_review),
@@ -210,15 +180,6 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
       saving: _saving,
       onSave: _save,
       children: [
-        PhotoField(
-          path: _photoPath,
-          onPick: _pickPhoto,
-          onRemove: _photoPath == null
-              ? null
-              : () => setState(() => _photoPath = null),
-          placeholderIcon: Icons.sports_esports_outlined,
-        ),
-        Gap.vLg,
         TextFormField(
           controller: _title,
           textCapitalization: TextCapitalization.words,

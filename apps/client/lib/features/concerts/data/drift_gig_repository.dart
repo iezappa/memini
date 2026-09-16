@@ -26,7 +26,6 @@ class DriftGigRepository implements GigRepository {
   Gig _toDomain(GigRow row) => Gig(
     id: row.id,
     title: row.title,
-    photoPath: row.photoPath,
     description: row.description,
     rating: row.rating,
     review: row.review,
@@ -81,7 +80,6 @@ class DriftGigRepository implements GigRepository {
           GigsCompanion.insert(
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
-            photoPath: Value(draft.photoPath),
             description: Value(draft.description),
             rating: Value(draft.rating),
             review: Value(draft.review),
@@ -101,7 +99,6 @@ class DriftGigRepository implements GigRepository {
     await (_db.update(_db.gigs)..where((g) => g.id.equals(entry.id))).write(
       GigsCompanion(
         title: Value(entry.title.trim()),
-        photoPath: Value(entry.photoPath),
         description: Value(entry.description),
         rating: Value(entry.rating),
         review: Value(entry.review),

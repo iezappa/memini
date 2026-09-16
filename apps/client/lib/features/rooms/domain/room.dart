@@ -7,7 +7,6 @@ class Room implements Trackable {
     required this.title,
     required this.happenedOn,
     required this.escaped,
-    this.photoPath,
     this.description,
     this.franchiseId,
     this.rating,
@@ -20,7 +19,6 @@ class Room implements Trackable {
   @override
   final String title;
   @override
-  final String? photoPath;
   @override
   final String? description;
   @override
@@ -42,7 +40,6 @@ class Room implements Trackable {
 
   Room copyWith({
     String? title,
-    String? photoPath,
     String? description,
     int? franchiseId,
     double? rating,
@@ -50,7 +47,6 @@ class Room implements Trackable {
     DateTime? happenedOn,
     bool? escaped,
     int? timeLeftMinutes,
-    bool clearPhoto = false,
     bool clearFranchise = false,
     bool clearRating = false,
     bool clearTimeLeft = false,
@@ -58,7 +54,6 @@ class Room implements Trackable {
     return Room(
       id: id,
       title: title ?? this.title,
-      photoPath: clearPhoto ? null : (photoPath ?? this.photoPath),
       description: description ?? this.description,
       franchiseId: clearFranchise ? null : (franchiseId ?? this.franchiseId),
       rating: clearRating ? null : (rating ?? this.rating),
@@ -78,7 +73,6 @@ class RoomDraft {
     required this.title,
     required this.happenedOn,
     required this.escaped,
-    this.photoPath,
     this.description,
     this.franchiseId,
     this.rating,
@@ -87,7 +81,6 @@ class RoomDraft {
   });
 
   final String title;
-  final String? photoPath;
   final String? description;
   final int? franchiseId;
   final double? rating;

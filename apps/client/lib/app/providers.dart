@@ -18,7 +18,6 @@ import '../features/rooms/data/drift_room_repository.dart';
 import '../features/rooms/domain/room.dart';
 import '../features/rooms/domain/room_repository.dart';
 import '../features/security/data/pin_service.dart';
-import '../features/shared/photo_storage.dart';
 import '../features/stats/domain/room_stats.dart';
 
 /// Overridden in main() once the async singletons are ready, so no widget
@@ -74,10 +73,6 @@ final backupServiceProvider = Provider<BackupService>(
 
 final pinServiceProvider = Provider<PinService>(
   (ref) => PinService(const FlutterSecureStore()),
-);
-
-final photoStorageProvider = Provider<PhotoStorage>(
-  (ref) => const PhotoStorage(),
 );
 
 /// The live filter of the collection screen.

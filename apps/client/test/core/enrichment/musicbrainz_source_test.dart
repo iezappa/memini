@@ -22,17 +22,6 @@ void main() {
       expect(results.single.releaseYear, 1991);
     });
 
-    test(
-      'carries no cover art, because art is keyed by release not artist',
-      () {
-        final results = MusicBrainzSource.parseSearch('''
-        {"artists": [{"id": "x", "name": "Spinetta"}]}
-      ''');
-
-        expect(results.single.imageUrl, isNull);
-      },
-    );
-
     test('a full begin date still yields just the year', () {
       final results = MusicBrainzSource.parseSearch('''
         {"artists": [{

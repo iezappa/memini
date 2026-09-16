@@ -9,6 +9,8 @@ import '../../features/games/domain/game.dart';
 import '../../features/rooms/data/room_tables.dart';
 import '../../features/screen/data/viewing_tables.dart';
 import '../../features/screen/domain/viewing.dart';
+import 'app_database.steps.dart';
+import 'legacy_photos.dart';
 import 'storage_durability.dart';
 
 part 'app_database.g.dart';
@@ -16,7 +18,8 @@ part 'app_database.g.dart';
 @DriftDatabase(tables: [Franchises, Rooms, Meals, Gigs, Viewings, Games])
 class AppDatabase extends _$AppDatabase {
   AppDatabase({void Function(StorageDurability)? onStorageChosen})
-    : super(
+    : onPhotosDropped = deleteLegacyPhotos,
+      super(
         driftDatabase(
           name: storeName,
           web: DriftWebOptions(
@@ -39,11 +42,15 @@ class AppDatabase extends _$AppDatabase {
   static final sqlite3WasmUri = Uri.parse('sqlite3.wasm');
   static final driftWorkerUri = Uri.parse('drift_worker.js');
 
-  AppDatabase.forTesting(super.executor);
+  AppDatabase.forTesting(super.executor, {this.onPhotosDropped});
+
+  /// Runs once, after a store from before v3 has been upgraded, to remove the
+  /// photo files its rows used to point at.
+  final Future<void> Function()? onPhotosDropped;
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 2;
+  static const currentSchemaVersion = 3;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -59,8 +66,34 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(viewings);
         await m.createTable(games);
       }
+
+      await m.runMigrationSteps(
+        from: from < 2 ? 2 : from,
+        to: to,
+        steps: migrationSteps(
+          // v3 removed photos: every tracked table loses its photo_path.
+          // Each table is rebuilt from its v3 shape, which works on every
+          // SQLite build, including those without ALTER TABLE DROP COLUMN.
+          from2To3: (m, schema) async {
+            await m.alterTable(TableMigration(schema.rooms));
+            await m.alterTable(TableMigration(schema.meals));
+            await m.alterTable(TableMigration(schema.gigs));
+            await m.alterTable(TableMigration(schema.viewings));
+            await m.alterTable(TableMigration(schema.games));
+          },
+        ),
+      );
     },
     beforeOpen: (details) async {
+      final before = details.versionBefore;
+      if (before != null && before < 3) {
+        try {
+          await onPhotosDropped?.call();
+        } catch (_) {
+          // Leftover files only cost space; the upgrade itself is done.
+        }
+      }
+
       // SQLite disables foreign keys per connection, so every
       // onDelete action would silently do nothing without this.
       await customStatement('PRAGMA foreign_keys = ON');
