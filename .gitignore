@@ -14,3 +14,8 @@ Thumbs.db
 # the project.
 # https://github.com/iezappa/standardizer_multiplatform
 Estandarización/
+
+# Android release signing. Never committed: see docs/SIGNING.md.
+key.properties
+*.jks
+*.keystore
