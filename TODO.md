@@ -49,6 +49,49 @@ Last checked against it: **2026-09-01**.
       with no key at all, and a key would buy console coverage and guaranteed
       posters. That also closes the missing "get a key" affordance above.
 
+- [ ] **P1 — Create the release keystore and record its fingerprint.**
+      `docs/SIGNING.md` still says `SHA-256: PENDING`; until it is filled in,
+      `tool/release_apk.sh` stops after printing the certificate it built with.
+      The failing release build without `key.properties` has not been run
+      here (no Android SDK on the machine that made the change).
+
+- [ ] **P1 — Check the data-safety flows in a real browser.** The storage
+      banner, `navigator.storage.persist()`, and saving/picking the `.zip`
+      backup through `share_plus` / `file_picker` on the web are covered by
+      widget tests with fakes only. Walk them on the published site.
+
+- [ ] **P1 — Release workflow.** GitHub releases are still created by hand
+      (`docs/RELEASING.md`), and CI does not run `tool/release_apk_test.sh`.
+
+- [ ] **P2 — Integration coverage for erase and import.** Both are widget-
+      and unit-tested; neither is driven end to end on a real database file.
+
+- [ ] **P2 — Backup memory use.** The zip is built and read in memory, photos
+      included. Fine for a personal log; a very large photo library would want
+      a streamed archive.
+
+- [ ] **P2 — Franchise logos in the backup.** `logoPath` still travels as a
+      device path; nothing in the app sets it today, so no file is copied.
+
+## Resolved
+
+- [x] **P0 — Release signing.** Releases are signed with a fixed keystore and
+      the build refuses to produce one without `android/key.properties`
+      (`docs/SIGNING.md`, `docs/RELEASING.md`, `tool/release_apk.sh`).
+- [x] **P0 — Web storage durability.** The storage drift lands on is reported,
+      a banner warns on IndexedDB or memory, and persistence is requested.
+- [x] **P0 — A store that will not open.** A recovery screen offers importing a
+      backup or resetting the database, both confirmed, never automatic.
+- [x] **P0 — Backup notice (§5.A).** Acknowledged in onboarding, shown once to
+      existing users, always visible in Settings → Your data.
+- [x] **P0 — Export reminder.** After 30 days without an export (or never,
+      once there is data), snoozable for 7 days.
+- [x] **P0 — Delete all my data.** Typed confirmation, export first, wipes
+      tables, photos, PIN and every preference but language/theme/accent.
+- [x] **P0 — Export before import.** The import confirmation offers it.
+- [x] **P0 — Photos in the backup.** One `.zip` with `backup.json` and
+      `photos/`; old plain JSON backups still import.
+
 ---
 
 ## To re-check against the standard
@@ -61,8 +104,9 @@ standard changes, or before a release.
       the disclaimer printed in full. `test/features/settings/settings_screen_test.dart`
       asserts this, so a drift fails the suite rather than waiting to be noticed.
 - [ ] **§2.1 Product patterns.** i18n through ARB files, onboarding shown once,
-      local PIN, disclaimer accepted at onboarding and visible in settings,
-      JSON import/export.
+      local PIN, disclaimer and backup notice accepted at onboarding and visible
+      in settings, backup import/export (zip with photos; plain JSON still
+      imports), export reminder, delete all data.
 - [ ] **§5 CI.** `ci.yml` runs format, analyse, test and a web build. Add a
       platform to the matrix when a new target starts shipping.
 - [ ] **§7 Testing.** Widget tests for the screens, `integration_test` for the
