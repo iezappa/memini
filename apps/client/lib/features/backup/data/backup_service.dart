@@ -9,6 +9,8 @@ import '../../franchises/domain/franchise.dart';
 import '../../games/domain/game.dart';
 import '../../rooms/domain/room.dart';
 import '../../screen/domain/viewing.dart';
+import '../../shared/photo_storage.dart';
+import '../domain/backup_archive.dart';
 import '../domain/backup_document.dart';
 import '../domain/entries_csv.dart';
 
@@ -18,9 +20,10 @@ import '../domain/entries_csv.dart';
 /// would have to invent a conflict rule for every field, and a personal
 /// tracker has no such rule. The caller must confirm before calling [import].
 class BackupService {
-  BackupService(this._db);
+  BackupService(this._db, {this._photos = const PhotoStorage()});
 
   final AppDatabase _db;
+  final PhotoStorage _photos;
 
   Future<BackupDocument> read() async {
     final franchiseRows = await _db.select(_db.franchises).get();
@@ -122,8 +125,119 @@ class BackupService {
     );
   }
 
-  Future<String> exportJson() async =>
-      const JsonEncoder.withIndent('  ').convert((await read()).toJson());
+  Future<String> exportJson() async => _encode((await read()).toJson());
+
+  static String _encode(Map<String, dynamic> json) =>
+      const JsonEncoder.withIndent('  ').convert(json);
+
+  /// The full backup as one zip: the document and every photo it can find.
+  ///
+  /// A photo whose file is gone is left out and counted rather than failing
+  /// the export: the rest of the record is worth more than one missing image.
+  Future<BackupExport> exportArchive() async {
+    final json = (await read()).toJson();
+    final photos = <String, Uint8List>{};
+    var missing = 0;
+
+    for (final entry in _entriesOf(json)) {
+      final path = entry['photoPath'] as String?;
+      if (path == null) continue;
+
+      final bytes = await _photos.read(path);
+      if (bytes == null) {
+        entry['photoPath'] = null;
+        missing++;
+        continue;
+      }
+      final name =
+          '${BackupArchive.photoFolder}${photos.length}${_extensionOf(path)}';
+      photos[name] = bytes;
+      entry['photoPath'] = name;
+    }
+
+    return BackupExport(
+      bytes: BackupArchive.encode(_encode(json), photos),
+      missingPhotos: missing,
+    );
+  }
+
+  static Iterable<Map<String, dynamic>> _entriesOf(Map<String, dynamic> json) =>
+      [
+        for (final list in BackupArchive.entryLists)
+          ...((json[list] as List<dynamic>?) ?? const [])
+              .cast<Map<String, dynamic>>(),
+      ];
+
+  static String _extensionOf(String path) {
+    final name = path.split(RegExp(r'[/\\]')).last;
+    final dot = name.lastIndexOf('.');
+    if (dot <= 0 || name.length - dot > 5) return '.jpg';
+    return name.substring(dot);
+  }
+
+  /// Reads a backup file — a zip with photos, or an older plain JSON file —
+  /// and validates it without touching anything stored.
+  static ParsedBackup parseFile(List<int> bytes) {
+    if (BackupArchive.looksLikeZip(bytes)) {
+      final (:json, :photos) = BackupArchive.decode(bytes);
+      return ParsedBackup._(_decodeObject(json), photos, fromArchive: true);
+    }
+
+    final String text;
+    try {
+      text = utf8.decode(bytes);
+    } on FormatException {
+      throw const BackupFormatException('not-json');
+    }
+    return ParsedBackup._(_decodeObject(text), const {}, fromArchive: false);
+  }
+
+  static Map<String, dynamic> _decodeObject(String contents) {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(contents);
+    } on FormatException {
+      throw const BackupFormatException('not-json');
+    }
+    // Validates the whole document up front; the result is rebuilt after the
+    // photos have somewhere to live.
+    BackupDocument.fromJson(decoded);
+    return decoded! as Map<String, dynamic>;
+  }
+
+  /// Parses and restores a backup file. See [parseFile] and [restoreParsed].
+  Future<BackupDocument> importFile(List<int> bytes) async =>
+      restoreParsed(parseFile(bytes));
+
+  /// Stores the photos a parsed backup carries, then replaces everything.
+  ///
+  /// Photos go in first, so the rows can point at them. Once the rows are in,
+  /// the photos of the data that was replaced are deleted.
+  Future<BackupDocument> restoreParsed(ParsedBackup backup) async {
+    final json = backup._json;
+    if (backup.fromArchive) {
+      for (final entry in _entriesOf(json)) {
+        final name = entry['photoPath'] as String?;
+        final bytes = name == null ? null : backup._photos[name];
+        entry['photoPath'] = bytes == null
+            ? null
+            : await _photos.storeBytes(bytes, extension: _extensionOf(name!));
+      }
+    }
+
+    final document = BackupDocument.fromJson(json);
+    await restore(document);
+    try {
+      await _photos.removeAllExcept({
+        for (final entry in _entriesOf(json))
+          if (entry['photoPath'] case final String path) path,
+      });
+    } on Object {
+      // Housekeeping only: the restore itself is already in, and a leftover
+      // file is harmless. The next restore gets another chance at it.
+    }
+    return document;
+  }
 
   /// One CSV file per domain, keyed by a file-name stem.
   ///
@@ -300,4 +414,23 @@ class BackupService {
       });
     });
   }
+}
+
+/// A finished export: the file, and how many photos had to be left out.
+class BackupExport {
+  const BackupExport({required this.bytes, required this.missingPhotos});
+
+  final Uint8List bytes;
+  final int missingPhotos;
+}
+
+/// A backup file that has been read and validated, not yet restored.
+class ParsedBackup {
+  const ParsedBackup._(this._json, this._photos, {required this.fromArchive});
+
+  final Map<String, dynamic> _json;
+  final Map<String, Uint8List> _photos;
+
+  /// A zip, whose photo paths name files inside it.
+  final bool fromArchive;
 }

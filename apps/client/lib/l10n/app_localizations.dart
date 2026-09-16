@@ -533,7 +533,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportJson.
   ///
   /// In en, this message translates to:
-  /// **'Export backup (JSON)'**
+  /// **'Export backup (with photos)'**
   String get exportJson;
 
   /// No description provided for @exportCsv.
@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @importWarningBody.
   ///
   /// In en, this message translates to:
-  /// **'Importing replaces every room and franchise currently stored. Export a backup first if you want to keep them.'**
+  /// **'Importing replaces every entry, photo and franchise currently stored. Export a backup first if you want to keep them.'**
   String get importWarningBody;
 
   /// No description provided for @importConfirm.
@@ -1621,6 +1621,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete everything'**
   String get eraseAllAction;
+
+  /// No description provided for @exportMissingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 photo could not be found and was left out.} other{{count} photos could not be found and were left out.}}'**
+  String exportMissingPhotos(int count);
 }
 
 class _AppLocalizationsDelegate

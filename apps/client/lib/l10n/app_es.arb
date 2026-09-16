@@ -79,11 +79,11 @@
   "pinUnlock": "Desbloquear",
   "settingsData": "Tus datos",
   "settingsSupport": "Apoyo",
-  "exportJson": "Exportar backup (JSON)",
+  "exportJson": "Exportar backup (con fotos)",
   "exportCsv": "Exportar como planilla (CSV)",
   "importJson": "Importar backup",
   "importWarningTitle": "¿Reemplazar todo?",
-  "importWarningBody": "Importar reemplaza todas las salas y franquicias guardadas. Exportá un backup primero si querés conservarlas.",
+  "importWarningBody": "Importar reemplaza todas las entradas, fotos y franquicias guardadas. Exportá un backup primero si querés conservarlas.",
   "importConfirm": "Reemplazar",
   "importDone": "{count, plural, =1{1 sala restaurada} other{{count} salas restauradas}}",
   "importFailed": "Ese archivo no es un backup válido de Memini.",
@@ -309,5 +309,6 @@
   "eraseAllConfirmWord": "BORRAR",
   "eraseAllTypeToConfirm": "Escribí {word} para confirmar",
   "eraseAllExportFirst": "Exportar antes",
-  "eraseAllAction": "Borrar todo"
+  "eraseAllAction": "Borrar todo",
+  "exportMissingPhotos": "{count, plural, =1{No se encontró 1 foto y quedó afuera.} other{No se encontraron {count} fotos y quedaron afuera.}}"
 }

@@ -38,7 +38,12 @@ class BackupDocument {
   ///
   /// v2 added the four domains beyond escape rooms. A v1 file still restores
   /// cleanly: its missing lists simply read as empty.
-  static const currentVersion = 2;
+  ///
+  /// v3 travels inside a zip with the photos next to it, and an entry's
+  /// `photoPath` names its file inside that zip (`photos/0.jpg`) instead of a
+  /// path on the device that exported it. A plain v1 or v2 JSON file still
+  /// imports, without photos.
+  static const currentVersion = 3;
 
   final int version;
   final DateTime exportedAt;

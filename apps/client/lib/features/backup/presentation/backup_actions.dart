@@ -28,6 +28,18 @@ enum RestoreOutcome {
   failed,
 }
 
+/// How a full export ended.
+class ExportResult {
+  const ExportResult({required this.saved, this.missingPhotos = 0});
+
+  const ExportResult.failed() : saved = false, missingPhotos = 0;
+
+  final bool saved;
+
+  /// Photos whose file was gone, left out of an export that still succeeded.
+  final int missingPhotos;
+}
+
 /// Export entry points shared by every place that offers one, so an export
 /// from a banner and one from settings cannot drift apart.
 class BackupActions {
@@ -37,22 +49,22 @@ class BackupActions {
 
   static String _stamp(DateTime now) => now.toIso8601String().split('T').first;
 
-  /// The full backup. False when the file could not be handed over.
-  Future<bool> exportBackup() async {
+  /// The full backup, as one zip with the photos inside.
+  Future<ExportResult> exportBackup() async {
     try {
-      final json = await _ref.read(backupServiceProvider).exportJson();
+      final export = await _ref.read(backupServiceProvider).exportArchive();
       final now = _ref.read(clockProvider)();
       final saved = await _ref.read(backupFilesProvider).save({
-        'memini-backup-${_stamp(now)}.json': utf8.encode(json),
+        'memini-backup-${_stamp(now)}.zip': export.bytes,
       });
-      if (!saved) return false;
+      if (!saved) return const ExportResult.failed();
 
       // Only the full backup counts: a CSV cannot be imported back.
       await _ref.read(settingsRepositoryProvider).recordExport(now);
       _ref.invalidate(backupReminderProvider);
-      return true;
+      return ExportResult(saved: true, missingPhotos: export.missingPhotos);
     } on Object {
-      return false;
+      return const ExportResult.failed();
     }
   }
 
@@ -101,12 +113,10 @@ class DatabaseRecoveryActions {
     final bytes = await _ref.read(backupFilesProvider).open();
     if (bytes == null) return RestoreOutcome.cancelled;
 
-    final BackupDocument document;
+    final ParsedBackup backup;
     try {
-      document = BackupService.parse(utf8.decode(bytes));
+      backup = BackupService.parseFile(bytes);
     } on BackupFormatException {
-      return RestoreOutcome.rejected;
-    } on FormatException {
       return RestoreOutcome.rejected;
     }
 
@@ -115,7 +125,7 @@ class DatabaseRecoveryActions {
       // A connection that failed to open stays failed, so the restore needs
       // a new one on the new, empty store.
       _ref.invalidate(databaseProvider);
-      await _ref.read(backupServiceProvider).restore(document);
+      await _ref.read(backupServiceProvider).restoreParsed(backup);
       _ref.read(restartAppProvider)();
       return RestoreOutcome.restored;
     } on Object {
