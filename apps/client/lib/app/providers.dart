@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/database/app_database.dart';
+import '../core/database/database_health.dart';
+import '../core/database/storage_durability.dart';
 import '../core/settings/settings_repository.dart';
 import '../core/tracking/presentation/tracking_filter_controller.dart';
 import '../features/backup/data/backup_service.dart';
@@ -26,10 +28,33 @@ final sharedPreferencesProvider = Provider<SharedPreferences>(
 );
 
 final databaseProvider = Provider<AppDatabase>((ref) {
-  final db = AppDatabase();
+  final db = AppDatabase(
+    // Reported once the browser build has chosen its storage, which is
+    // whenever the first query opens the connection.
+    onStorageChosen: (durability) {
+      try {
+        ref.read(storageDurabilityProvider.notifier).state = durability;
+      } on StateError {
+        // The scope was thrown away before the database finished opening.
+      }
+    },
+  );
   ref.onDispose(db.close);
   return db;
 });
+
+/// What the store underneath the database can be trusted with.
+///
+/// Durable until told otherwise: native platforms never report, and a web
+/// build that has not opened yet has nothing to warn about.
+final storageDurabilityProvider = StateProvider<StorageDurability>(
+  (ref) => StorageDurability.durable,
+);
+
+/// Whether the database opened, checked once per app start.
+final databaseHealthProvider = FutureProvider<DatabaseHealth>(
+  (ref) => probeDatabase(ref.watch(databaseProvider)),
+);
 
 final settingsRepositoryProvider = Provider<SettingsRepository>(
   (ref) => SettingsRepository(ref.watch(sharedPreferencesProvider)),

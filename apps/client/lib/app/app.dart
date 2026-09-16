@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme/theme.dart';
+import '../features/backup/presentation/database_gate.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/security/presentation/lock_screen.dart';
 import '../l10n/app_localizations.dart';
@@ -34,6 +35,7 @@ class MeminiApp extends ConsumerWidget {
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
+        builder: _gated,
         home: locked ? const LockScreen() : const OnboardingScreen(),
       );
     }
@@ -47,7 +49,13 @@ class MeminiApp extends ConsumerWidget {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      builder: _gated,
       routerConfig: ref.watch(routerProvider),
     );
   }
+
+  /// The database gate goes over everything: there is no point greeting, or
+  /// unlocking, an app whose store would not open.
+  static Widget _gated(BuildContext context, Widget? child) =>
+      DatabaseGate(child: child ?? const SizedBox.shrink());
 }

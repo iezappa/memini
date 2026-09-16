@@ -50,6 +50,8 @@ dependencies:
   file_picker: ^12.1.2
   share_plus: ^13.3.0
   http: ^1.6.0
+  # `navigator.storage.persist()` on the web build.
+  web: ^1.1.1
 
 dev_dependencies:
   flutter_test:

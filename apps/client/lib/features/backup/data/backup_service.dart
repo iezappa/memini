@@ -147,15 +147,25 @@ class BackupService {
   /// everything currently stored. Throws [BackupFormatException] otherwise,
   /// leaving the database untouched.
   Future<BackupDocument> import(String contents) async {
+    final document = parse(contents);
+    await restore(document);
+    return document;
+  }
+
+  /// Decodes and validates [contents] without touching the database, so a
+  /// caller can refuse a bad file before deleting anything.
+  static BackupDocument parse(String contents) {
     final Object? decoded;
     try {
       decoded = jsonDecode(contents);
     } on FormatException {
       throw const BackupFormatException('not-json');
     }
+    return BackupDocument.fromJson(decoded);
+  }
 
-    final document = BackupDocument.fromJson(decoded);
-
+  /// Replaces everything stored with [document], in one transaction.
+  Future<void> restore(BackupDocument document) async {
     await _db.transaction(() async {
       // Rooms first: they reference franchises, and the foreign key would
       // block deleting a franchise that still has rooms pointing at it.
@@ -261,7 +271,5 @@ class BackupService {
         ]);
       });
     });
-
-    return document;
   }
 }

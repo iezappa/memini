@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
 import 'app/providers.dart';
+import 'core/app/app_restart.dart';
+import 'core/database/persistent_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,8 +15,12 @@ Future<void> main() async {
   // once here instead of leaking a FutureProvider into every widget.
   final prefs = await SharedPreferences.getInstance();
 
+  // Not awaited: the browser may take its time, or prompt, and a launch must
+  // not wait on either. A no-op outside the web.
+  unawaited(requestPersistentStorage());
+
   runApp(
-    ProviderScope(
+    AppRestartScope(
       overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const MeminiApp(),
     ),

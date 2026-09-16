@@ -1441,6 +1441,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bands use MusicBrainz, which needs no key.'**
   String get settingsMusicBrainzNote;
+
+  /// No description provided for @storageDegradedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This browser keeps your data in storage that may be lost on a reload or when browser data is cleared. Export a backup now.'**
+  String get storageDegradedWarning;
+
+  /// No description provided for @storageVolatileWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This browser cannot store your data: everything you record will be lost when you close this tab. Export a backup before you leave.'**
+  String get storageVolatileWarning;
+
+  /// No description provided for @storageExportNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Export now'**
+  String get storageExportNow;
+
+  /// No description provided for @storageWarningDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get storageWarningDismiss;
+
+  /// No description provided for @recoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The local database could not be opened'**
+  String get recoveryTitle;
+
+  /// No description provided for @recoveryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The data stored on this device could not be read, so the app cannot start normally. You can restore a backup file, or start over with an empty database.'**
+  String get recoveryBody;
+
+  /// No description provided for @recoveryImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a backup'**
+  String get recoveryImport;
+
+  /// No description provided for @recoveryReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset local database'**
+  String get recoveryReset;
+
+  /// No description provided for @recoveryImportConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a backup?'**
+  String get recoveryImportConfirmTitle;
+
+  /// No description provided for @recoveryImportConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The unreadable database on this device will be permanently deleted and replaced by what the backup file holds. It cannot be undone.'**
+  String get recoveryImportConfirmBody;
+
+  /// No description provided for @recoveryResetConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset the local database?'**
+  String get recoveryResetConfirmTitle;
+
+  /// No description provided for @recoveryResetConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything stored on this device will be permanently deleted and the app will start empty. It cannot be undone.'**
+  String get recoveryResetConfirmBody;
+
+  /// No description provided for @recoveryResetConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get recoveryResetConfirmAction;
 }
 
 class _AppLocalizationsDelegate

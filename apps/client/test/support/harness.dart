@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:memini/app/providers.dart';
 import 'package:memini/core/database/app_database.dart';
+import 'package:memini/features/backup/presentation/backup_files.dart';
 import 'package:memini/features/security/data/pin_service.dart';
 import 'package:memini/core/theme/theme.dart';
 import 'package:memini/l10n/app_localizations.dart';
@@ -140,4 +143,22 @@ class InMemorySecureStore implements SecureStore {
 
   @override
   Future<void> delete(String key) async => _values.remove(key);
+}
+
+/// Backup files, in memory: what was saved, and what the picker hands back.
+class FakeBackupFiles implements BackupFiles {
+  /// Every file saved so far, by name.
+  final saved = <String, Uint8List>{};
+
+  /// What the next [open] returns; null is the user backing out.
+  Uint8List? toOpen;
+
+  @override
+  Future<bool> save(Map<String, Uint8List> files) async {
+    saved.addAll(files);
+    return true;
+  }
+
+  @override
+  Future<Uint8List?> open() async => toOpen;
 }

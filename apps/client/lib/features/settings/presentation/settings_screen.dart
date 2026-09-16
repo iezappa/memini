@@ -1,19 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../app/providers.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../backup/domain/backup_document.dart';
+import '../../backup/presentation/backup_actions.dart';
 import '../../onboarding/presentation/onboarding_screen.dart';
 import '../../shared/support_actions.dart';
 import '../../shared/widgets.dart';
@@ -505,47 +501,14 @@ class _DataSection extends ConsumerWidget {
   }) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final service = ref.read(backupServiceProvider);
-    final stamp = DateTime.now().toIso8601String().split('T').first;
+    final actions = ref.read(backupActionsProvider);
 
-    try {
-      // JSON is one document; CSV is one sheet per domain, because five
-      // shapes cannot share a header without inventing empty columns.
-      final files = asCsv
-          ? {
-              for (final entry in (await service.exportCsv()).entries)
-                'memini-${entry.key}-$stamp.csv': entry.value,
-            }
-          : {'memini-backup-$stamp.json': await service.exportJson()};
-
-      if (kIsWeb) {
-        // No file system to write to; hand the text to the share sheet, with
-        // each sheet named so a multi-file CSV export stays readable.
-        await SharePlus.instance.share(
-          ShareParams(
-            text: files.length == 1
-                ? files.values.first
-                : files.entries.map((e) => '# ${e.key}\n${e.value}').join('\n'),
-            subject: files.keys.first,
-          ),
-        );
-      } else {
-        final directory = await getApplicationDocumentsDirectory();
-        final written = <XFile>[];
-        for (final entry in files.entries) {
-          final file = File('${directory.path}/${entry.key}');
-          await file.writeAsString(entry.value);
-          written.add(XFile(file.path));
-        }
-        await SharePlus.instance.share(
-          ShareParams(files: written, subject: files.keys.first),
-        );
-      }
-
-      messenger.showSnackBar(SnackBar(content: Text(l10n.exportDone)));
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.exportFailed)));
-    }
+    final saved = asCsv
+        ? await actions.exportCsv()
+        : await actions.exportBackup();
+    messenger.showSnackBar(
+      SnackBar(content: Text(saved ? l10n.exportDone : l10n.exportFailed)),
+    );
   }
 
   Future<void> _import(BuildContext context, WidgetRef ref) async {
@@ -572,14 +535,12 @@ class _DataSection extends ConsumerWidget {
     if (confirmed != true) return;
 
     try {
-      final file = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-      );
-      if (file == null) return;
+      final bytes = await ref.read(backupFilesProvider).open();
+      if (bytes == null) return;
 
-      final contents = utf8.decode(await file.readAsBytes());
-      final document = await ref.read(backupServiceProvider).import(contents);
+      final document = await ref
+          .read(backupServiceProvider)
+          .import(utf8.decode(bytes));
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.importDone(document.rooms.length))),
       );
