@@ -8,23 +8,20 @@ import 'backup_actions.dart';
 ///
 /// Shared by every place that offers an export, so the banner, the erase
 /// dialog and settings cannot describe the same outcome in different words.
-Future<ExportResult> exportBackupWithFeedback(
+Future<bool> exportBackupWithFeedback(
   BuildContext context,
   WidgetRef ref,
 ) async {
   final l10n = AppLocalizations.of(context);
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final result = await ref.read(backupActionsProvider).exportBackup();
-  final message = !result.saved
-      ? l10n.exportFailed
-      : result.missingPhotos == 0
-      ? l10n.exportDone
-      : '${l10n.exportDone} ${l10n.exportMissingPhotos(result.missingPhotos)}';
+  final saved = await ref.read(backupActionsProvider).exportBackup();
 
   // The previous message is about a run that already finished; leaving it
   // queued would show stale news before the news that was asked for.
   messenger
     ?..clearSnackBars()
-    ..showSnackBar(SnackBar(content: Text(message)));
-  return result;
+    ..showSnackBar(
+      SnackBar(content: Text(saved ? l10n.exportDone : l10n.exportFailed)),
+    );
+  return saved;
 }

@@ -176,7 +176,7 @@ void main() {
     expect(notice, findsOneWidget);
     expect(
       tester.getTopLeft(notice).dy,
-      lessThan(tester.getTopLeft(find.text('Export backup (with photos)')).dy),
+      lessThan(tester.getTopLeft(find.text('Export backup (JSON)')).dy),
     );
 
     await unmount(tester);
@@ -209,7 +209,7 @@ void main() {
     await tester.tap(find.text('Export current data first'));
     await tester.pumpAndSettle();
 
-    expect(files.saved.keys.single, endsWith('.zip'));
+    expect(files.saved.keys.single, endsWith('.json'));
     expect(
       find.text('Replace everything?'),
       findsOneWidget,

@@ -100,11 +100,11 @@
   "pinUnlock": "Unlock",
   "settingsData": "Your data",
   "settingsSupport": "Support",
-  "exportJson": "Export backup (with photos)",
+  "exportJson": "Export backup (JSON)",
   "exportCsv": "Export as spreadsheet (CSV)",
   "importJson": "Import backup",
   "importWarningTitle": "Replace everything?",
-  "importWarningBody": "Importing replaces every entry, photo and franchise currently stored. Export a backup first if you want to keep them.",
+  "importWarningBody": "Importing replaces every room and franchise currently stored. Export a backup first if you want to keep them.",
   "importConfirm": "Replace",
   "importDone": "{count, plural, =1{1 room restored} other{{count} rooms restored}}",
   "@importDone": {
@@ -351,13 +351,5 @@
     }
   },
   "eraseAllExportFirst": "Export first",
-  "eraseAllAction": "Delete everything",
-  "exportMissingPhotos": "{count, plural, =1{1 photo could not be found and was left out.} other{{count} photos could not be found and were left out.}}",
-  "@exportMissingPhotos": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  }
+  "eraseAllAction": "Delete everything"
 }

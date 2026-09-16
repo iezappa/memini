@@ -56,8 +56,7 @@ class PlatformBackupFiles implements BackupFiles {
   Future<Uint8List?> open() async {
     final file = await FilePicker.pickFile(
       type: FileType.custom,
-      // zip is the backup since format v3; json is every backup before it.
-      allowedExtensions: const ['zip', 'json'],
+      allowedExtensions: const ['json'],
     );
     return file?.readAsBytes();
   }

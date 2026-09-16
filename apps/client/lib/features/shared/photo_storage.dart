@@ -95,48 +95,4 @@ class PhotoStorage {
     final folder = await _photoFolder();
     if (await folder.exists()) await folder.delete(recursive: true);
   }
-
-  /// The bytes of a stored photo, or null when there is none to read — on
-  /// web, or when the file is gone.
-  Future<Uint8List?> read(String path) async {
-    if (kIsWeb) return null;
-
-    final file = File(path);
-    if (!await file.exists()) return null;
-    return file.readAsBytes();
-  }
-
-  /// Writes [bytes] as a new photo, as [store] does for a picked file.
-  /// Returns null on web, where there is no file system to write to.
-  Future<String?> storeBytes(
-    Uint8List bytes, {
-    String extension = '.jpg',
-  }) async {
-    if (kIsWeb) return null;
-
-    final folder = await _photoFolder();
-    if (!await folder.exists()) await folder.create(recursive: true);
-
-    final target =
-        '${folder.path}/${DateTime.now().microsecondsSinceEpoch}$extension';
-    await File(target).writeAsBytes(bytes);
-    return target;
-  }
-
-  /// Deletes every stored photo whose path is not in [keep].
-  ///
-  /// Used after a restore, which replaces every entry: the photos of the
-  /// entries it replaced would otherwise stay on disk with nothing pointing
-  /// at them.
-  Future<void> removeAllExcept(Set<String> keep) async {
-    if (kIsWeb) return;
-
-    final folder = await _photoFolder();
-    if (!await folder.exists()) return;
-    await for (final entity in folder.list()) {
-      if (entity is File && !keep.contains(entity.path)) {
-        await entity.delete();
-      }
-    }
-  }
 }

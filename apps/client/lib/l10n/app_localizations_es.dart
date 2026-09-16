@@ -243,7 +243,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsSupport => 'Apoyo';
 
   @override
-  String get exportJson => 'Exportar backup (con fotos)';
+  String get exportJson => 'Exportar backup (JSON)';
 
   @override
   String get exportCsv => 'Exportar como planilla (CSV)';
@@ -256,7 +256,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get importWarningBody =>
-      'Importar reemplaza todas las entradas, fotos y franquicias guardadas. Exportá un backup primero si querés conservarlas.';
+      'Importar reemplaza todas las salas y franquicias guardadas. Exportá un backup primero si querés conservarlas.';
 
   @override
   String get importConfirm => 'Reemplazar';
@@ -864,15 +864,4 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eraseAllAction => 'Borrar todo';
-
-  @override
-  String exportMissingPhotos(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'No se encontraron $count fotos y quedaron afuera.',
-      one: 'No se encontró 1 foto y quedó afuera.',
-    );
-    return '$_temp0';
-  }
 }

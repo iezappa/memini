@@ -52,7 +52,6 @@ dependencies:
   http: ^1.6.0
   # `navigator.storage.persist()` on the web build.
   web: ^1.1.1
-  archive: ^4.3.0
 
 dev_dependencies:
   flutter_test:

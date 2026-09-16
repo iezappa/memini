@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -527,12 +529,9 @@ class _DataSection extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     final actions = ref.read(backupActionsProvider);
 
-    if (!asCsv) {
-      await exportBackupWithFeedback(context, ref);
-      return;
-    }
-
-    final saved = await actions.exportCsv();
+    final saved = asCsv
+        ? await actions.exportCsv()
+        : await actions.exportBackup();
     messenger.showSnackBar(
       SnackBar(content: Text(saved ? l10n.exportDone : l10n.exportFailed)),
     );
@@ -571,7 +570,9 @@ class _DataSection extends ConsumerWidget {
       final bytes = await ref.read(backupFilesProvider).open();
       if (bytes == null) return;
 
-      final document = await ref.read(backupServiceProvider).importFile(bytes);
+      final document = await ref
+          .read(backupServiceProvider)
+          .import(utf8.decode(bytes));
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.importDone(document.rooms.length))),
       );

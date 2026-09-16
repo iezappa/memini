@@ -167,13 +167,7 @@ void main() {
       await open(tester);
 
       await tester.tap(find.text('Export first'));
-      // Real file work (the photo goes into the zip): give it real time.
-      for (var i = 0; i < 5; i++) {
-        await tester.runAsync(
-          () => Future<void>.delayed(const Duration(milliseconds: 20)),
-        );
-        await tester.pump();
-      }
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
       await tester.pumpAndSettle();
 
       expect(files.saved, isNotEmpty);

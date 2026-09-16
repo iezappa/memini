@@ -229,7 +229,7 @@ void main() {
         // What an older build would have written: rooms and franchises only.
         final legacy = await service.exportJson();
         final trimmed = legacy.replaceAll(
-          RegExp(r'"version": \d+'),
+          RegExp(r'"version": 2'),
           '"version": 1',
         );
 

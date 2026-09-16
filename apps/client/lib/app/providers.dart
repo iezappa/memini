@@ -69,10 +69,7 @@ final franchiseRepositoryProvider = Provider<FranchiseRepository>(
 );
 
 final backupServiceProvider = Provider<BackupService>(
-  (ref) => BackupService(
-    ref.watch(databaseProvider),
-    photos: ref.watch(photoStorageProvider),
-  ),
+  (ref) => BackupService(ref.watch(databaseProvider)),
 );
 
 final pinServiceProvider = Provider<PinService>(
