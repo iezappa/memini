@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "version": "1.1.0",
+      "date": "2026-09-17",
+      "highlights": [
+        "Cada registro tiene ahora un identificador único permanente y guarda cuándo se modificó por última vez. Tus datos se convierten la primera vez que abres esta versión: exporta un respaldo antes de actualizar.",
+        "Los respaldos usan un formato nuevo (v3). Los archivos de respaldo anteriores se siguen importando.",
+        "La política de privacidad y los términos están en Ajustes → Acerca de, legibles sin conexión, junto con las licencias.",
+        "Ajustes muestra la versión y qué cambió en cada una, y la app te avisa cuando hay una versión nueva.",
+        "La versión web abre sin conexión."
+      ]
+    },
+    {
       "version": "1.0.0",
       "date": "2026-09-01",
       "highlights": [

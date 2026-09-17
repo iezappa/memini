@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -49,5 +50,16 @@ void main() {
 
   test('the notes are declared as an asset, so they ship', () {
     expect(pubspec, contains('- assets/release_notes/'));
+  });
+
+  test('web/update.json announces the pubspec version', () {
+    // release.yml refuses a tag whose update.json disagrees; failing here
+    // catches it before a tag is pushed.
+    final update = jsonDecode(File('web/update.json').readAsStringSync());
+    final declared = AppVersion.tryParse(
+      RegExp(r'^version:\s*(\S+)', multiLine: true).firstMatch(pubspec)![1],
+    );
+    expect(AppVersion.tryParse(update['version'] as String), declared);
+    expect(update['schemaChange'], isA<bool>());
   });
 }

@@ -1,6 +1,17 @@
 {
   "releases": [
     {
+      "version": "1.1.0",
+      "date": "2026-09-17",
+      "highlights": [
+        "Every record now has a permanent unique id and remembers when it was last changed. Your data is converted the first time this version opens: export a backup before updating.",
+        "Backups use a new format (v3). Older backup files still import.",
+        "The privacy policy and terms are in Settings → About, readable offline, along with the licences.",
+        "Settings shows the version and what changed in each release, and the app tells you when a new version is out.",
+        "The web version opens without a connection."
+      ]
+    },
+    {
       "version": "1.0.0",
       "date": "2026-09-01",
       "highlights": [
