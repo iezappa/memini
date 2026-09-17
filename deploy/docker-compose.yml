@@ -1,0 +1,59 @@
+# Memini for ZimaOS / CasaOS ("App Store" -> "+" -> "Install a customized app"
+# -> Import). Everything is filled in; change HOST_PORT (8082) if it is taken.
+#
+# Field names of the x-casaos blocks follow the apps published in
+# IceWhaleTech/CasaOS-AppStore (e.g. Apps/Syncthing/docker-compose.yml).
+#
+# No volumes on purpose: this container only SERVES the app files. Memini's
+# data lives in each person's browser storage (OPFS/IndexedDB), never on this
+# server. Recreating or updating the container loses nothing.
+
+name: memini
+services:
+  memini:
+    image: ghcr.io/iezappa/memini:latest
+    container_name: memini
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - target: 8080
+        published: "8082"
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    x-casaos:
+      ports:
+        - container: "8080"
+          description:
+            en_US: Web UI port
+            es_ES: Puerto de la interfaz web
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: memini
+  author: Zeke Zappa Developments (iezappa)
+  developer: Zeke Zappa Developments (iezappa)
+  category: Productivity
+  icon: https://raw.githubusercontent.com/iezappa/memini/master/apps/client/web/icons/Icon-512.png
+  tagline:
+    en_US: A personal log of the things you have done
+    es_ES: Un registro personal de lo que hiciste
+  description:
+    en_US: |
+      Serves the web/PWA build of Memini: escape rooms, meals, concerts,
+      films and series, and games. Data is stored on each person's device,
+      not on this server. Use export/import for backups.
+    es_ES: |
+      Sirve la versión web/PWA de Memini: salas de escape, comidas,
+      conciertos, películas y series, y juegos. Los datos se guardan en el
+      dispositivo de cada persona, no en este servidor. Usa exportar/importar
+      como respaldo.
+  title:
+    en_US: Memini
+  index: /
+  port_map: "8082"
+  scheme: http
