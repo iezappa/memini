@@ -8,7 +8,7 @@ import 'rawg_source.dart';
 import 'tmdb_source.dart';
 
 /// Identifies Memini to MusicBrainz, which throttles anonymous callers hard.
-const kMusicBrainzUserAgent = 'Memini/1.0 (https://github.com/zyreth/memini)';
+const kMusicBrainzUserAgent = 'Memini/1.0 (https://github.com/iezappa/memini)';
 
 final tmdbSourceProvider = Provider<EnrichmentSource>(
   (ref) => TmdbSource(apiKey: ref.watch(tmdbApiKeyProvider)),
