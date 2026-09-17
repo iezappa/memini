@@ -1,0 +1,249 @@
+# Release pipeline for Memini (Profile A, STACK-APPS-DINAMICAS.md 5.A).
+#
+# Trigger: push a tag like v1.1.0
+#   git tag v1.1.0 && git push origin v1.1.0
+#
+# Produces:
+#   - A GitHub Release with the Linux, Windows and macOS builds, a zip of the
+#     web build (base href /) and update.json
+#   - The multi-arch Docker image ghcr.io/iezappa/memini:<version> and :latest
+#
+# Not here, on purpose:
+#   - GitHub Pages. pages.yml publishes every push to master under /memini/;
+#     a tag points at a commit that is already live.
+#   - The Android APK. It is built and signed on the maintainer's machine with
+#     the release keystore and attached to this release by
+#     apps/client/tool/release_apk.sh (docs/RELEASING.md, docs/SIGNING.md).
+#     The keystore and its passwords never go into repository secrets.
+#
+# Caveat: the macOS and Windows builds are unsigned; Gatekeeper and
+# SmartScreen will warn.
+
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write # create the GitHub Release
+  packages: write # push to GHCR
+
+env:
+  APP_DIR: apps/client
+  # Pinned like ci.yml and pages.yml: a release must build with the toolchain
+  # the tests ran on.
+  FLUTTER_VERSION: 3.47.1
+
+defaults:
+  run:
+    working-directory: apps/client
+
+jobs:
+  # Fails fast when pubspec.yaml or web/update.json disagree with the tag, or
+  # when the compliance gate (CUMPLIMIENTO.md) fails.
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the pubspec and update.json versions match the tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          PUBSPEC_VERSION="$(sed -n 's/^version:[[:space:]]*\([0-9][0-9.]*\).*/\1/p' pubspec.yaml)"
+          if [ "v${PUBSPEC_VERSION}" != "${TAG}" ]; then
+            echo "::error::pubspec.yaml version '${PUBSPEC_VERSION}' does not match tag '${TAG}'"
+            exit 1
+          fi
+          if [ ! -f web/update.json ]; then
+            echo "::error::web/update.json is missing (STACK-APPS-DINAMICAS.md 8.2)"
+            exit 1
+          fi
+          if ! grep -q "\"version\"[[:space:]]*:[[:space:]]*\"${PUBSPEC_VERSION}\"" web/update.json; then
+            echo "::error::web/update.json version does not match tag '${TAG}'"
+            exit 1
+          fi
+      - name: Check the release notes cover this version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          for lang in en es; do
+            grep -q "\"version\": \"${TAG#v}\"" "assets/release_notes/${lang}.json" \
+              || { echo "::error::assets/release_notes/${lang}.json has no notes for ${TAG}"; exit 1; }
+          done
+      # Legal docs present and filled in; no analytics, ads or crash
+      # reporting unless allowlisted after a consent flow exists.
+      - name: Check legal docs and tracking dependencies
+        env:
+          TRACKING_ALLOWLIST: ""
+        run: |
+          fail=0
+          for doc in ../../PRIVACY.md ../../TERMS.md; do
+            if [ ! -f "$doc" ]; then
+              echo "::error::Missing ${doc#../../} (CUMPLIMIENTO.md)"; fail=1
+            elif grep -q '{{' "$doc"; then
+              echo "::error::${doc#../../} still contains {{...}} placeholders"; fail=1
+            fi
+          done
+          for pkg in firebase_analytics google_mobile_ads facebook_app_events \
+                     appsflyer_sdk adjust_sdk amplitude_flutter mixpanel_flutter \
+                     posthog_flutter segment_analytics flutter_branch_sdk \
+                     sentry_flutter; do
+            if grep -Eq "^[[:space:]]+${pkg}:" pubspec.yaml; then
+              case " ${TRACKING_ALLOWLIST} " in
+                *" ${pkg} "*) echo "Allowlisted tracking package: ${pkg}" ;;
+                *) echo "::error::${pkg} in pubspec.yaml is not in TRACKING_ALLOWLIST (CUMPLIMIENTO.md items 5 and 8)"; fail=1 ;;
+              esac
+            fi
+          done
+          exit "$fail"
+
+  linux:
+    needs: version-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # libsecret: flutter_secure_storage (the PIN) will not link without it.
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsecret-1-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build linux --release
+      - run: tar -czf "../../memini-${{ github.ref_name }}-linux-x64.tar.gz" -C build/linux/x64/release/bundle .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: "*-linux-x64.tar.gz"
+
+  windows:
+    needs: version-check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - shell: pwsh
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath "../../memini-${{ github.ref_name }}-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: "*-windows-x64.zip"
+
+  macos:
+    needs: version-check
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build macos --release
+      - run: |
+          cd build/macos/Build/Products/Release
+          ditto -c -k --sequesterRsrc --keepParent *.app "$GITHUB_WORKSPACE/memini-${{ github.ref_name }}-macos.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: "*-macos.zip"
+
+  # The web build as a download, for serving from any static host at the root
+  # of its own origin. Same steps as the Docker image, without nginx.
+  web:
+    needs: version-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter build web --release --base-href / --no-web-resources-cdn
+      - name: Check the Drift web assets shipped
+        run: |
+          for f in sqlite3.wasm drift_worker.js; do
+            test -s "build/web/$f" || { echo "::error::build/web/$f is missing"; exit 1; }
+          done
+      - run: sh tool/generate_sw.sh build/web pubspec.yaml
+      - run: cd build/web && zip -qr "$GITHUB_WORKSPACE/memini-${{ github.ref_name }}-web.zip" .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: "*-web.zip"
+
+  docker:
+    needs: version-check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/iezappa/memini
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+      # Served at the root of its own origin: BASE_HREF=/.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          build-args: |
+            APP_DIR=${{ env.APP_DIR }}
+            BASE_HREF=/
+            FLUTTER_IMAGE=ghcr.io/cirruslabs/flutter:${{ env.FLUTTER_VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release:
+    needs: [linux, windows, macos, web]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: apps/client/web/update.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - run: cp apps/client/web/update.json dist/
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          body: |
+            **Android:** the signed APK (`memini-${{ github.ref_name }}-android.apk`) and its `.sha256` are attached by hand shortly after this release is created. If they are not under Assets yet, check back later.
+
+            **Before updating**, if `update.json` says `"schemaChange": true`: export a backup from Settings → Your data → Export.
