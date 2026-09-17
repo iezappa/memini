@@ -9,12 +9,16 @@ const double kMaxRating = 10.0;
 /// tracking: what it was, when it happened, and what the owner thought of it.
 /// Anything narrower than that belongs to the feature, not here.
 abstract interface class Trackable {
-  int get id;
+  /// A UUID, minted when the entry is first stored.
+  String get id;
+
+  /// When the entry was last written. Null only before it is stored.
+  DateTime? get updatedAt;
 
   /// Display name of the entry: the room, the place, the band, the title.
   String get title;
 
-  /// Absolute path to a cover image in the app documents directory.
+  /// Free-text notes about the entry.
   String? get description;
 
   /// Score from [kMinRating] to [kMaxRating], or null when not rated yet.

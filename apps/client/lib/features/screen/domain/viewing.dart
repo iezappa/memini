@@ -10,6 +10,7 @@ enum ViewingKind { film, series, miniseries, documentary }
 class Viewing implements Trackable {
   const Viewing({
     required this.id,
+    this.updatedAt,
     required this.title,
     required this.happenedOn,
     required this.kind,
@@ -24,7 +25,10 @@ class Viewing implements Trackable {
   });
 
   @override
-  final int id;
+  final String id;
+
+  @override
+  final DateTime? updatedAt;
   @override
   final String title;
 
@@ -76,6 +80,7 @@ class Viewing implements Trackable {
   }) {
     return Viewing(
       id: id,
+      updatedAt: updatedAt,
       title: title ?? this.title,
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),

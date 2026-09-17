@@ -4,6 +4,7 @@ import '../../../core/tracking/domain/trackable.dart';
 class Room implements Trackable {
   const Room({
     required this.id,
+    this.updatedAt,
     required this.title,
     required this.happenedOn,
     required this.escaped,
@@ -15,10 +16,12 @@ class Room implements Trackable {
   });
 
   @override
-  final int id;
+  final String id;
+
+  @override
+  final DateTime? updatedAt;
   @override
   final String title;
-  @override
   @override
   final String? description;
   @override
@@ -28,7 +31,7 @@ class Room implements Trackable {
   @override
   final DateTime happenedOn;
 
-  final int? franchiseId;
+  final String? franchiseId;
   final bool escaped;
 
   /// Minutes left on the clock when the room was escaped. Null when unknown,
@@ -41,7 +44,7 @@ class Room implements Trackable {
   Room copyWith({
     String? title,
     String? description,
-    int? franchiseId,
+    String? franchiseId,
     double? rating,
     String? review,
     DateTime? happenedOn,
@@ -53,6 +56,7 @@ class Room implements Trackable {
   }) {
     return Room(
       id: id,
+      updatedAt: updatedAt,
       title: title ?? this.title,
       description: description ?? this.description,
       franchiseId: clearFranchise ? null : (franchiseId ?? this.franchiseId),
@@ -82,7 +86,7 @@ class RoomDraft {
 
   final String title;
   final String? description;
-  final int? franchiseId;
+  final String? franchiseId;
   final double? rating;
   final String? review;
   final DateTime happenedOn;

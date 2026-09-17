@@ -11,7 +11,7 @@ import 'meal_providers.dart';
 class MealDetailScreen extends ConsumerWidget {
   const MealDetailScreen({super.key, required this.mealId});
 
-  final int mealId;
+  final String mealId;
 
   Future<void> _edit(BuildContext context, Meal meal) async {
     await Navigator.of(

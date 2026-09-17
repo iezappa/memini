@@ -7,6 +7,7 @@ import '../../../core/tracking/domain/trackable.dart';
 class Meal implements Trackable {
   const Meal({
     required this.id,
+    this.updatedAt,
     required this.title,
     required this.happenedOn,
     this.description,
@@ -19,12 +20,14 @@ class Meal implements Trackable {
   });
 
   @override
-  final int id;
+  final String id;
+
+  @override
+  final DateTime? updatedAt;
 
   /// Name of the place.
   @override
   final String title;
-  @override
   @override
   final String? description;
   @override
@@ -66,6 +69,7 @@ class Meal implements Trackable {
   }) {
     return Meal(
       id: id,
+      updatedAt: updatedAt,
       title: title ?? this.title,
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),

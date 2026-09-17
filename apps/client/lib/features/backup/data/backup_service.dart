@@ -18,9 +18,14 @@ import '../domain/entries_csv.dart';
 /// would have to invent a conflict rule for every field, and a personal
 /// tracker has no such rule. The caller must confirm before calling [import].
 class BackupService {
-  BackupService(this._db);
+  BackupService(this._db, {DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final AppDatabase _db;
+
+  /// Stamps a record restored without an updatedAt. Every record a v3 file or
+  /// a parsed older file carries has one, so this is a last resort.
+  final DateTime Function() _now;
 
   Future<BackupDocument> read() async {
     final franchiseRows = await _db.select(_db.franchises).get();
@@ -33,12 +38,18 @@ class BackupService {
     return BackupDocument.of(
       franchises: [
         for (final row in franchiseRows)
-          Franchise(id: row.id, name: row.name, logoPath: row.logoPath),
+          Franchise(
+            id: row.id,
+            name: row.name,
+            logoPath: row.logoPath,
+            updatedAt: row.updatedAt,
+          ),
       ],
       rooms: [
         for (final row in roomRows)
           Room(
             id: row.id,
+            updatedAt: row.updatedAt,
             title: row.title,
             description: row.description,
             franchiseId: row.franchiseId,
@@ -53,6 +64,7 @@ class BackupService {
         for (final row in mealRows)
           Meal(
             id: row.id,
+            updatedAt: row.updatedAt,
             title: row.title,
             description: row.description,
             rating: row.rating,
@@ -68,6 +80,7 @@ class BackupService {
         for (final row in gigRows)
           Gig(
             id: row.id,
+            updatedAt: row.updatedAt,
             title: row.title,
             description: row.description,
             rating: row.rating,
@@ -85,6 +98,7 @@ class BackupService {
         for (final row in viewingRows)
           Viewing(
             id: row.id,
+            updatedAt: row.updatedAt,
             title: row.title,
             description: row.description,
             rating: row.rating,
@@ -102,6 +116,7 @@ class BackupService {
         for (final row in gameRows)
           Game(
             id: row.id,
+            updatedAt: row.updatedAt,
             title: row.title,
             description: row.description,
             rating: row.rating,
@@ -204,6 +219,7 @@ class BackupService {
           for (final f in document.franchises)
             FranchisesCompanion.insert(
               id: Value(f.id),
+              updatedAt: f.updatedAt ?? _now(),
               name: f.name,
               logoPath: Value(f.logoPath),
             ),
@@ -212,6 +228,7 @@ class BackupService {
           for (final r in document.rooms)
             RoomsCompanion.insert(
               id: Value(r.id),
+              updatedAt: r.updatedAt ?? _now(),
               title: r.title,
               description: Value(r.description),
               franchiseId: Value(r.franchiseId),
@@ -226,6 +243,7 @@ class BackupService {
           for (final m in document.meals)
             MealsCompanion.insert(
               id: Value(m.id),
+              updatedAt: m.updatedAt ?? _now(),
               title: m.title,
               description: Value(m.description),
               rating: Value(m.rating),
@@ -241,6 +259,7 @@ class BackupService {
           for (final g in document.gigs)
             GigsCompanion.insert(
               id: Value(g.id),
+              updatedAt: g.updatedAt ?? _now(),
               title: g.title,
               description: Value(g.description),
               rating: Value(g.rating),
@@ -258,6 +277,7 @@ class BackupService {
           for (final v in document.viewings)
             ViewingsCompanion.insert(
               id: Value(v.id),
+              updatedAt: v.updatedAt ?? _now(),
               title: v.title,
               description: Value(v.description),
               rating: Value(v.rating),
@@ -275,6 +295,7 @@ class BackupService {
           for (final g in document.games)
             GamesCompanion.insert(
               id: Value(g.id),
+              updatedAt: g.updatedAt ?? _now(),
               title: g.title,
               description: Value(g.description),
               rating: Value(g.rating),

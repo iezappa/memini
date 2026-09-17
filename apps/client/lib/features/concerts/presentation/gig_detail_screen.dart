@@ -13,7 +13,7 @@ import 'gig_providers.dart';
 class GigDetailScreen extends ConsumerWidget {
   const GigDetailScreen({super.key, required this.gigId});
 
-  final int gigId;
+  final String gigId;
 
   Future<void> _edit(BuildContext context, Gig gig) async {
     await Navigator.of(context)

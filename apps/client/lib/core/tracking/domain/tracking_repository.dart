@@ -13,13 +13,14 @@ abstract interface class TrackingRepository<
 > {
   Future<List<T>> list(F filter);
 
-  Future<T?> findById(int id);
+  Future<T?> findById(String id);
 
   Future<T> create(D draft);
 
+  /// Writes [entry] and moves its updatedAt to now.
   Future<void> update(T entry);
 
-  Future<void> delete(int id);
+  Future<void> delete(String id);
 
   Stream<List<T>> watch(F filter);
 }

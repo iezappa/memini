@@ -28,6 +28,7 @@ void main() {
             title: 'The Vault',
             happenedOn: DateTime(2026, 3, 14),
             escaped: true,
+            updatedAt: DateTime(2026, 3, 14),
           ),
         );
     await first.customStatement('PRAGMA user_version = 0');

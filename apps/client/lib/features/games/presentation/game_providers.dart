@@ -1,13 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/time/clock.dart';
 import '../../../core/tracking/presentation/tracking_filter_controller.dart';
 import '../data/drift_game_repository.dart';
 import '../domain/game.dart';
 import '../domain/game_repository.dart';
 
 final gameRepositoryProvider = Provider<GameRepository>(
-  (ref) => DriftGameRepository(ref.watch(databaseProvider)),
+  (ref) => DriftGameRepository(
+    ref.watch(databaseProvider),
+    now: ref.watch(clockProvider),
+  ),
 );
 
 final gameFilterProvider = NotifierProvider<GameFilterController, GameFilter>(
@@ -37,7 +41,7 @@ final allGamesProvider = StreamProvider<List<Game>>(
   (ref) => ref.watch(gameRepositoryProvider).watch(const GameFilter()),
 );
 
-final gameProvider = FutureProvider.family<Game?, int>((ref, id) {
+final gameProvider = FutureProvider.family<Game?, String>((ref, id) {
   ref.watch(allGamesProvider);
   return ref.watch(gameRepositoryProvider).findById(id);
 });

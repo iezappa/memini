@@ -1,13 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/time/clock.dart';
 import '../../../core/tracking/presentation/tracking_filter_controller.dart';
 import '../data/drift_viewing_repository.dart';
 import '../domain/viewing.dart';
 import '../domain/viewing_repository.dart';
 
 final viewingRepositoryProvider = Provider<ViewingRepository>(
-  (ref) => DriftViewingRepository(ref.watch(databaseProvider)),
+  (ref) => DriftViewingRepository(
+    ref.watch(databaseProvider),
+    now: ref.watch(clockProvider),
+  ),
 );
 
 final viewingFilterProvider =
@@ -34,7 +38,7 @@ final allViewingsProvider = StreamProvider<List<Viewing>>(
   (ref) => ref.watch(viewingRepositoryProvider).watch(const ViewingFilter()),
 );
 
-final viewingProvider = FutureProvider.family<Viewing?, int>((ref, id) {
+final viewingProvider = FutureProvider.family<Viewing?, String>((ref, id) {
   ref.watch(allViewingsProvider);
   return ref.watch(viewingRepositoryProvider).findById(id);
 });

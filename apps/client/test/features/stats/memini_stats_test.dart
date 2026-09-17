@@ -16,8 +16,9 @@ class _Entry implements Trackable {
   final DateTime happenedOn;
 
   @override
-  int get id => title.hashCode;
+  String get id => title;
   @override
+  DateTime? get updatedAt => null;
   @override
   String? get description => null;
   @override

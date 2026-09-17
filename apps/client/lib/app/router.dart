@@ -103,7 +103,7 @@ List<RouteBase> _domainRoutes({
   required String segment,
   required Widget Function() list,
   required Widget Function() form,
-  required Widget Function(int id) detail,
+  required Widget Function(String id) detail,
 }) {
   return [
     GoRoute(path: '/$segment', builder: (context, state) => list()),
@@ -111,8 +111,8 @@ List<RouteBase> _domainRoutes({
     GoRoute(
       path: '/$segment/:id',
       builder: (context, state) {
-        final id = int.tryParse(state.pathParameters['id'] ?? '');
-        return id == null ? list() : detail(id);
+        final id = state.pathParameters['id'];
+        return id == null || id.isEmpty ? list() : detail(id);
       },
     ),
   ];

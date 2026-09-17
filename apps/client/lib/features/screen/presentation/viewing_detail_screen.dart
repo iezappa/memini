@@ -12,7 +12,7 @@ import 'viewing_providers.dart';
 class ViewingDetailScreen extends ConsumerWidget {
   const ViewingDetailScreen({super.key, required this.viewingId});
 
-  final int viewingId;
+  final String viewingId;
 
   Future<void> _edit(BuildContext context, Viewing viewing) async {
     await Navigator.of(context).push(

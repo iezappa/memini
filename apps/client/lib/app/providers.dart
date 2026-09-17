@@ -9,6 +9,7 @@ import '../core/database/app_database.dart';
 import '../core/database/database_health.dart';
 import '../core/database/storage_durability.dart';
 import '../core/settings/settings_repository.dart';
+import '../core/time/clock.dart';
 import '../core/tracking/presentation/tracking_filter_controller.dart';
 import '../features/backup/data/backup_service.dart';
 import '../features/franchises/data/drift_franchise_repository.dart';
@@ -60,15 +61,22 @@ final settingsRepositoryProvider = Provider<SettingsRepository>(
 );
 
 final roomRepositoryProvider = Provider<RoomRepository>(
-  (ref) => DriftRoomRepository(ref.watch(databaseProvider)),
+  (ref) => DriftRoomRepository(
+    ref.watch(databaseProvider),
+    now: ref.watch(clockProvider),
+  ),
 );
 
 final franchiseRepositoryProvider = Provider<FranchiseRepository>(
-  (ref) => DriftFranchiseRepository(ref.watch(databaseProvider)),
+  (ref) => DriftFranchiseRepository(
+    ref.watch(databaseProvider),
+    now: ref.watch(clockProvider),
+  ),
 );
 
 final backupServiceProvider = Provider<BackupService>(
-  (ref) => BackupService(ref.watch(databaseProvider)),
+  (ref) =>
+      BackupService(ref.watch(databaseProvider), now: ref.watch(clockProvider)),
 );
 
 final pinServiceProvider = Provider<PinService>(
@@ -84,7 +92,7 @@ class RoomFilterController extends TrackingFilterController<RoomFilter> {
   @override
   RoomFilter get pristine => const RoomFilter();
 
-  void setFranchise(int? id) => state = id == null
+  void setFranchise(String? id) => state = id == null
       ? state.copyWith(clearFranchise: true)
       : state.copyWith(franchiseId: id);
 
@@ -114,12 +122,12 @@ final franchisesProvider = StreamProvider<List<Franchise>>(
 
 /// Franchise names by id, so a list can label every row without the
 /// repository having to join. The franchise list is small and already live.
-final franchiseNamesProvider = Provider<Map<int, String>>((ref) {
+final franchiseNamesProvider = Provider<Map<String, String>>((ref) {
   final franchises = ref.watch(franchisesProvider).valueOrNull ?? const [];
   return {for (final franchise in franchises) franchise.id: franchise.name};
 });
 
-final roomProvider = FutureProvider.family<Room?, int>((ref, id) {
+final roomProvider = FutureProvider.family<Room?, String>((ref, id) {
   // Re-resolves whenever the collection changes so an edit is reflected
   // without the detail screen having to invalidate itself.
   ref.watch(allRoomsProvider);

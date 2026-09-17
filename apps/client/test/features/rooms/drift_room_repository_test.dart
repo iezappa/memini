@@ -26,7 +26,7 @@ void main() {
     double? rating,
     bool escaped = true,
     DateTime? happenedOn,
-    int? franchiseId,
+    String? franchiseId,
     String? description,
     String? review,
   }) {

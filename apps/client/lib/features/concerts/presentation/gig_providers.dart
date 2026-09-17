@@ -1,13 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/time/clock.dart';
 import '../../../core/tracking/presentation/tracking_filter_controller.dart';
 import '../data/drift_gig_repository.dart';
 import '../domain/gig.dart';
 import '../domain/gig_repository.dart';
 
 final gigRepositoryProvider = Provider<GigRepository>(
-  (ref) => DriftGigRepository(ref.watch(databaseProvider)),
+  (ref) => DriftGigRepository(
+    ref.watch(databaseProvider),
+    now: ref.watch(clockProvider),
+  ),
 );
 
 final gigFilterProvider = NotifierProvider<GigFilterController, GigFilter>(
@@ -33,7 +37,7 @@ final allGigsProvider = StreamProvider<List<Gig>>(
   (ref) => ref.watch(gigRepositoryProvider).watch(const GigFilter()),
 );
 
-final gigProvider = FutureProvider.family<Gig?, int>((ref, id) {
+final gigProvider = FutureProvider.family<Gig?, String>((ref, id) {
   ref.watch(allGigsProvider);
   return ref.watch(gigRepositoryProvider).findById(id);
 });

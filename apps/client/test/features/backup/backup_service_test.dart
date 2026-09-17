@@ -56,8 +56,7 @@ void main() {
     await seed();
     final json = await service.exportJson();
 
-    await rooms.delete(1);
-    await franchises.delete(1);
+    await service.eraseEverything();
     expect(await rooms.list(const RoomFilter()), isEmpty);
 
     await service.import(json);
@@ -247,20 +246,23 @@ void main() {
     test(
       'a version 1 file still restores, with the new domains empty',
       () async {
-        await seed();
         await seedAllDomains();
 
-        // What an older build would have written: rooms and franchises only.
-        final legacy = await service.exportJson();
-        final trimmed = legacy.replaceAll(
-          RegExp(r'"version": 2'),
-          '"version": 1',
-        );
+        // What the first builds wrote: rooms and franchises only, int ids.
+        const legacy =
+            '{"version": 1, "exportedAt": "2026-01-01T00:00:00.000Z",'
+            ' "franchises": [{"id": 4, "name": "Enigma"}],'
+            ' "rooms": [{"id": 4, "title": "The Vault", "happenedOn":'
+            ' "2026-03-14", "escaped": true, "franchiseId": 4}]}';
 
-        final document = await service.import(trimmed);
+        final document = await service.import(legacy);
 
         expect(document.version, 1);
         expect(document.rooms, hasLength(1));
+        expect(await DriftMealRepository(db).list(const MealFilter()), isEmpty);
+        final room = (await rooms.list(const RoomFilter())).single;
+        final franchise = (await franchises.listAll()).single;
+        expect(room.franchiseId, franchise.id);
       },
     );
 
@@ -278,6 +280,53 @@ void main() {
       expect(sheets['games'], contains('hundredPercent'));
       // A multi-line setlist must stay inside one quoted cell.
       expect(sheets['gigs'], contains('"Bloom\nDaydreaming"'));
+    });
+  });
+
+  group('relation integrity across a restore', () {
+    test('a v3 round trip keeps ids, links and updatedAt exactly', () async {
+      await seed();
+      final before = (await rooms.list(const RoomFilter())).single;
+      final franchise = (await franchises.listAll()).single;
+
+      final json = await service.exportJson();
+      await service.eraseEverything();
+      await service.import(json);
+
+      final after = (await rooms.list(const RoomFilter())).single;
+      expect(after.id, before.id);
+      expect(after.updatedAt, before.updatedAt);
+      expect(after.franchiseId, franchise.id);
+      expect(await franchises.findById(franchise.id), franchise);
+    });
+
+    test('a v2 file lands with every room on its own franchise', () async {
+      const legacy =
+          '{"version": 2, "exportedAt": "2026-08-01T10:00:00.000Z",'
+          ' "franchises": [{"id": 1, "name": "Enigma"},'
+          ' {"id": 2, "name": "Mystery"}],'
+          ' "rooms": ['
+          '{"id": 1, "title": "A", "happenedOn": "2026-03-14",'
+          ' "escaped": true, "franchiseId": 2, "photoPath": "/p.jpg"},'
+          '{"id": 2, "title": "B", "happenedOn": "2026-03-15",'
+          ' "escaped": true, "franchiseId": 1}]}';
+
+      await service.import(legacy);
+
+      final byName = {for (final f in await franchises.listAll()) f.name: f.id};
+      final byTitle = {
+        for (final r in await rooms.list(const RoomFilter())) r.title: r,
+      };
+      expect(byTitle['A']!.franchiseId, byName['Mystery']);
+      expect(byTitle['B']!.franchiseId, byName['Enigma']);
+
+      // The links are real foreign keys, not just matching strings.
+      await franchises.delete(byName['Mystery']!);
+      expect((await rooms.findById(byTitle['A']!.id))!.franchiseId, isNull);
+      expect(
+        (await rooms.findById(byTitle['B']!.id))!.franchiseId,
+        byName['Enigma'],
+      );
     });
   });
 }

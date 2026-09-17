@@ -13,7 +13,7 @@ class RoomFilter extends TrackingFilter {
     this.escaped,
   });
 
-  final int? franchiseId;
+  final String? franchiseId;
   final bool? escaped;
 
   @override
@@ -24,7 +24,7 @@ class RoomFilter extends TrackingFilter {
     String? query,
     double? minRating,
     TrackingSort? sort,
-    int? franchiseId,
+    String? franchiseId,
     bool? escaped,
     bool clearQuery = false,
     bool clearMinRating = false,

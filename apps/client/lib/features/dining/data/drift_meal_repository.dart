@@ -7,9 +7,13 @@ import '../domain/meal.dart';
 import '../domain/meal_repository.dart';
 
 class DriftMealRepository implements MealRepository {
-  DriftMealRepository(this._db);
+  DriftMealRepository(this._db, {DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final AppDatabase _db;
+
+  /// Stamps updatedAt on every write. Injected so tests can pin it.
+  final DateTime Function() _now;
 
   TrackingColumns get _columns {
     final meals = _db.meals;
@@ -25,6 +29,7 @@ class DriftMealRepository implements MealRepository {
 
   Meal _toDomain(MealRow row) => Meal(
     id: row.id,
+    updatedAt: row.updatedAt,
     title: row.title,
     description: row.description,
     rating: row.rating,
@@ -63,7 +68,7 @@ class DriftMealRepository implements MealRepository {
       _query(filter).watch().map((rows) => rows.map(_toDomain).toList());
 
   @override
-  Future<Meal?> findById(int id) async {
+  Future<Meal?> findById(String id) async {
     final row = await (_db.select(
       _db.meals,
     )..where((m) => m.id.equals(id))).getSingleOrNull();
@@ -76,6 +81,7 @@ class DriftMealRepository implements MealRepository {
         .into(_db.meals)
         .insertReturning(
           MealsCompanion.insert(
+            updatedAt: _now(),
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             description: Value(draft.description),
@@ -94,6 +100,7 @@ class DriftMealRepository implements MealRepository {
   Future<void> update(Meal entry) async {
     await (_db.update(_db.meals)..where((m) => m.id.equals(entry.id))).write(
       MealsCompanion(
+        updatedAt: Value(_now()),
         title: Value(entry.title.trim()),
         description: Value(entry.description),
         rating: Value(entry.rating),
@@ -108,7 +115,7 @@ class DriftMealRepository implements MealRepository {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> delete(String id) async {
     await (_db.delete(_db.meals)..where((m) => m.id.equals(id))).go();
   }
 }

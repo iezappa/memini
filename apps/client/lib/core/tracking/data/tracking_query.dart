@@ -17,7 +17,7 @@ class TrackingColumns {
     required this.happenedOn,
   });
 
-  final GeneratedColumn<int> id;
+  final GeneratedColumn<String> id;
   final GeneratedColumn<String> title;
   final GeneratedColumn<String> description;
   final GeneratedColumn<String> review;
@@ -65,11 +65,11 @@ List<OrderingTerm> trackingOrdering(
   return switch (sort) {
     TrackingSort.happenedOnDesc => [
       OrderingTerm(expression: columns.happenedOn, mode: OrderingMode.desc),
-      OrderingTerm(expression: columns.id, mode: OrderingMode.desc),
+      OrderingTerm(expression: _rowid, mode: OrderingMode.desc),
     ],
     TrackingSort.happenedOnAsc => [
       OrderingTerm(expression: columns.happenedOn),
-      OrderingTerm(expression: columns.id),
+      OrderingTerm(expression: _rowid),
     ],
     TrackingSort.ratingDesc => [
       OrderingTerm(expression: columns.rating.isNull()),
@@ -84,3 +84,10 @@ List<OrderingTerm> trackingOrdering(
     TrackingSort.titleAsc => [OrderingTerm(expression: columns.title.lower())],
   };
 }
+
+/// Insertion order, for entries on the same day.
+///
+/// Ids are random UUIDs since schema v4, so they no longer say which entry
+/// came first. SQLite's implicit rowid still does, and both the v4 migration
+/// and a backup restore copy rows in their original order.
+const _rowid = CustomExpression<int>('rowid');

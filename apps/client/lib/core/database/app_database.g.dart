@@ -11,16 +11,13 @@ class $FranchisesTable extends Franchises
   $FranchisesTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    clientDefault: newUuid,
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -46,8 +43,19 @@ class $FranchisesTable extends Franchises
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, name, logoPath];
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, logoPath, updatedAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -77,6 +85,14 @@ class $FranchisesTable extends Franchises
         logoPath.isAcceptableOrUnknown(data['logo_path']!, _logoPathMeta),
       );
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     return context;
   }
 
@@ -87,7 +103,7 @@ class $FranchisesTable extends Franchises
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FranchiseRow(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       name: attachedDatabase.typeMapping.read(
@@ -98,6 +114,10 @@ class $FranchisesTable extends Franchises
         DriftSqlType.string,
         data['${effectivePrefix}logo_path'],
       ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
     );
   }
 
@@ -108,18 +128,25 @@ class $FranchisesTable extends Franchises
 }
 
 class FranchiseRow extends DataClass implements Insertable<FranchiseRow> {
-  final int id;
+  final String id;
   final String name;
   final String? logoPath;
-  const FranchiseRow({required this.id, required this.name, this.logoPath});
+  final DateTime updatedAt;
+  const FranchiseRow({
+    required this.id,
+    required this.name,
+    this.logoPath,
+    required this.updatedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || logoPath != null) {
       map['logo_path'] = Variable<String>(logoPath);
     }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -130,6 +157,7 @@ class FranchiseRow extends DataClass implements Insertable<FranchiseRow> {
       logoPath: logoPath == null && nullToAbsent
           ? const Value.absent()
           : Value(logoPath),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -139,35 +167,40 @@ class FranchiseRow extends DataClass implements Insertable<FranchiseRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FranchiseRow(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       logoPath: serializer.fromJson<String?>(json['logoPath']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
       'logoPath': serializer.toJson<String?>(logoPath),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
   FranchiseRow copyWith({
-    int? id,
+    String? id,
     String? name,
     Value<String?> logoPath = const Value.absent(),
+    DateTime? updatedAt,
   }) => FranchiseRow(
     id: id ?? this.id,
     name: name ?? this.name,
     logoPath: logoPath.present ? logoPath.value : this.logoPath,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   FranchiseRow copyWithCompanion(FranchisesCompanion data) {
     return FranchiseRow(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       logoPath: data.logoPath.present ? data.logoPath.value : this.logoPath,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -176,57 +209,74 @@ class FranchiseRow extends DataClass implements Insertable<FranchiseRow> {
     return (StringBuffer('FranchiseRow(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('logoPath: $logoPath')
+          ..write('logoPath: $logoPath, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, logoPath);
+  int get hashCode => Object.hash(id, name, logoPath, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is FranchiseRow &&
           other.id == this.id &&
           other.name == this.name &&
-          other.logoPath == this.logoPath);
+          other.logoPath == this.logoPath &&
+          other.updatedAt == this.updatedAt);
 }
 
 class FranchisesCompanion extends UpdateCompanion<FranchiseRow> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> name;
   final Value<String?> logoPath;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
   const FranchisesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.logoPath = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FranchisesCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     this.logoPath = const Value.absent(),
-  }) : name = Value(name);
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : name = Value(name),
+       updatedAt = Value(updatedAt);
   static Insertable<FranchiseRow> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? name,
     Expression<String>? logoPath,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (logoPath != null) 'logo_path': logoPath,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FranchisesCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? name,
     Value<String?>? logoPath,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
   }) {
     return FranchisesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       logoPath: logoPath ?? this.logoPath,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -234,13 +284,19 @@ class FranchisesCompanion extends UpdateCompanion<FranchiseRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
     if (logoPath.present) {
       map['logo_path'] = Variable<String>(logoPath.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -250,7 +306,9 @@ class FranchisesCompanion extends UpdateCompanion<FranchiseRow> {
     return (StringBuffer('FranchisesCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('logoPath: $logoPath')
+          ..write('logoPath: $logoPath, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -263,16 +321,13 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
   $RoomsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    clientDefault: newUuid,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -327,15 +382,26 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _franchiseIdMeta = const VerificationMeta(
     'franchiseId',
   );
   @override
-  late final GeneratedColumn<int> franchiseId = GeneratedColumn<int>(
+  late final GeneratedColumn<String> franchiseId = GeneratedColumn<String>(
     'franchise_id',
     aliasedName,
     true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES franchises (id) ON DELETE SET NULL',
@@ -374,6 +440,7 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     franchiseId,
     escaped,
     timeLeftMinutes,
@@ -430,6 +497,14 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
     } else if (isInserting) {
       context.missing(_happenedOnMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     if (data.containsKey('franchise_id')) {
       context.handle(
         _franchiseIdMeta,
@@ -466,7 +541,7 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return RoomRow(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -489,8 +564,12 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}happened_on'],
       )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
       franchiseId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}franchise_id'],
       ),
       escaped: attachedDatabase.typeMapping.read(
@@ -511,15 +590,18 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, RoomRow> {
 }
 
 class RoomRow extends DataClass implements Insertable<RoomRow> {
-  final int id;
+  final String id;
   final String title;
   final String? description;
   final double? rating;
   final String? review;
   final DateTime happenedOn;
 
+  /// When the row was last written, by this device.
+  final DateTime updatedAt;
+
   /// Rooms outlive their franchise: deleting one detaches instead of cascading.
-  final int? franchiseId;
+  final String? franchiseId;
   final bool escaped;
 
   /// Minutes left on the clock. Meaningless unless [escaped].
@@ -531,6 +613,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     this.rating,
     this.review,
     required this.happenedOn,
+    required this.updatedAt,
     this.franchiseId,
     required this.escaped,
     this.timeLeftMinutes,
@@ -538,7 +621,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -550,8 +633,9 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
       map['review'] = Variable<String>(review);
     }
     map['happened_on'] = Variable<DateTime>(happenedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || franchiseId != null) {
-      map['franchise_id'] = Variable<int>(franchiseId);
+      map['franchise_id'] = Variable<String>(franchiseId);
     }
     map['escaped'] = Variable<bool>(escaped);
     if (!nullToAbsent || timeLeftMinutes != null) {
@@ -574,6 +658,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
           ? const Value.absent()
           : Value(review),
       happenedOn: Value(happenedOn),
+      updatedAt: Value(updatedAt),
       franchiseId: franchiseId == null && nullToAbsent
           ? const Value.absent()
           : Value(franchiseId),
@@ -590,13 +675,14 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return RoomRow(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
       happenedOn: serializer.fromJson<DateTime>(json['happenedOn']),
-      franchiseId: serializer.fromJson<int?>(json['franchiseId']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      franchiseId: serializer.fromJson<String?>(json['franchiseId']),
       escaped: serializer.fromJson<bool>(json['escaped']),
       timeLeftMinutes: serializer.fromJson<int?>(json['timeLeftMinutes']),
     );
@@ -605,26 +691,28 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
       'happenedOn': serializer.toJson<DateTime>(happenedOn),
-      'franchiseId': serializer.toJson<int?>(franchiseId),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'franchiseId': serializer.toJson<String?>(franchiseId),
       'escaped': serializer.toJson<bool>(escaped),
       'timeLeftMinutes': serializer.toJson<int?>(timeLeftMinutes),
     };
   }
 
   RoomRow copyWith({
-    int? id,
+    String? id,
     String? title,
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
     DateTime? happenedOn,
-    Value<int?> franchiseId = const Value.absent(),
+    DateTime? updatedAt,
+    Value<String?> franchiseId = const Value.absent(),
     bool? escaped,
     Value<int?> timeLeftMinutes = const Value.absent(),
   }) => RoomRow(
@@ -634,6 +722,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
     happenedOn: happenedOn ?? this.happenedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
     franchiseId: franchiseId.present ? franchiseId.value : this.franchiseId,
     escaped: escaped ?? this.escaped,
     timeLeftMinutes: timeLeftMinutes.present
@@ -652,6 +741,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
       happenedOn: data.happenedOn.present
           ? data.happenedOn.value
           : this.happenedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       franchiseId: data.franchiseId.present
           ? data.franchiseId.value
           : this.franchiseId,
@@ -671,6 +761,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('franchiseId: $franchiseId, ')
           ..write('escaped: $escaped, ')
           ..write('timeLeftMinutes: $timeLeftMinutes')
@@ -686,6 +777,7 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     franchiseId,
     escaped,
     timeLeftMinutes,
@@ -700,21 +792,24 @@ class RoomRow extends DataClass implements Insertable<RoomRow> {
           other.rating == this.rating &&
           other.review == this.review &&
           other.happenedOn == this.happenedOn &&
+          other.updatedAt == this.updatedAt &&
           other.franchiseId == this.franchiseId &&
           other.escaped == this.escaped &&
           other.timeLeftMinutes == this.timeLeftMinutes);
 }
 
 class RoomsCompanion extends UpdateCompanion<RoomRow> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
   final Value<DateTime> happenedOn;
-  final Value<int?> franchiseId;
+  final Value<DateTime> updatedAt;
+  final Value<String?> franchiseId;
   final Value<bool> escaped;
   final Value<int?> timeLeftMinutes;
+  final Value<int> rowid;
   const RoomsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -722,9 +817,11 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     this.happenedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.franchiseId = const Value.absent(),
     this.escaped = const Value.absent(),
     this.timeLeftMinutes = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   RoomsCompanion.insert({
     this.id = const Value.absent(),
@@ -733,22 +830,27 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     required DateTime happenedOn,
+    required DateTime updatedAt,
     this.franchiseId = const Value.absent(),
     required bool escaped,
     this.timeLeftMinutes = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
+       updatedAt = Value(updatedAt),
        escaped = Value(escaped);
   static Insertable<RoomRow> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
     Expression<DateTime>? happenedOn,
-    Expression<int>? franchiseId,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? franchiseId,
     Expression<bool>? escaped,
     Expression<int>? timeLeftMinutes,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -757,22 +859,26 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
       if (happenedOn != null) 'happened_on': happenedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (franchiseId != null) 'franchise_id': franchiseId,
       if (escaped != null) 'escaped': escaped,
       if (timeLeftMinutes != null) 'time_left_minutes': timeLeftMinutes,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   RoomsCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? title,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
     Value<DateTime>? happenedOn,
-    Value<int?>? franchiseId,
+    Value<DateTime>? updatedAt,
+    Value<String?>? franchiseId,
     Value<bool>? escaped,
     Value<int?>? timeLeftMinutes,
+    Value<int>? rowid,
   }) {
     return RoomsCompanion(
       id: id ?? this.id,
@@ -781,9 +887,11 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
       rating: rating ?? this.rating,
       review: review ?? this.review,
       happenedOn: happenedOn ?? this.happenedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
       franchiseId: franchiseId ?? this.franchiseId,
       escaped: escaped ?? this.escaped,
       timeLeftMinutes: timeLeftMinutes ?? this.timeLeftMinutes,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -791,7 +899,7 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -808,14 +916,20 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
     if (happenedOn.present) {
       map['happened_on'] = Variable<DateTime>(happenedOn.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (franchiseId.present) {
-      map['franchise_id'] = Variable<int>(franchiseId.value);
+      map['franchise_id'] = Variable<String>(franchiseId.value);
     }
     if (escaped.present) {
       map['escaped'] = Variable<bool>(escaped.value);
     }
     if (timeLeftMinutes.present) {
       map['time_left_minutes'] = Variable<int>(timeLeftMinutes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -829,9 +943,11 @@ class RoomsCompanion extends UpdateCompanion<RoomRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('franchiseId: $franchiseId, ')
           ..write('escaped: $escaped, ')
-          ..write('timeLeftMinutes: $timeLeftMinutes')
+          ..write('timeLeftMinutes: $timeLeftMinutes, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -844,16 +960,13 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
   $MealsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    clientDefault: newUuid,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -908,6 +1021,17 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _dishMeta = const VerificationMeta('dish');
   @override
   late final GeneratedColumn<String> dish = GeneratedColumn<String>(
@@ -956,6 +1080,7 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     dish,
     price,
     company,
@@ -1013,6 +1138,14 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     } else if (isInserting) {
       context.missing(_happenedOnMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     if (data.containsKey('dish')) {
       context.handle(
         _dishMeta,
@@ -1047,7 +1180,7 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return MealRow(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -1069,6 +1202,10 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
       happenedOn: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}happened_on'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
       )!,
       dish: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1096,12 +1233,15 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
 }
 
 class MealRow extends DataClass implements Insertable<MealRow> {
-  final int id;
+  final String id;
   final String title;
   final String? description;
   final double? rating;
   final String? review;
   final DateTime happenedOn;
+
+  /// When the row was last written, by this device.
+  final DateTime updatedAt;
   final String? dish;
   final double? price;
   final String? company;
@@ -1113,6 +1253,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     this.rating,
     this.review,
     required this.happenedOn,
+    required this.updatedAt,
     this.dish,
     this.price,
     this.company,
@@ -1121,7 +1262,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -1133,6 +1274,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       map['review'] = Variable<String>(review);
     }
     map['happened_on'] = Variable<DateTime>(happenedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || dish != null) {
       map['dish'] = Variable<String>(dish);
     }
@@ -1162,6 +1304,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
           ? const Value.absent()
           : Value(review),
       happenedOn: Value(happenedOn),
+      updatedAt: Value(updatedAt),
       dish: dish == null && nullToAbsent ? const Value.absent() : Value(dish),
       price: price == null && nullToAbsent
           ? const Value.absent()
@@ -1181,12 +1324,13 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MealRow(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
       happenedOn: serializer.fromJson<DateTime>(json['happenedOn']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       dish: serializer.fromJson<String?>(json['dish']),
       price: serializer.fromJson<double?>(json['price']),
       company: serializer.fromJson<String?>(json['company']),
@@ -1197,12 +1341,13 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
       'happenedOn': serializer.toJson<DateTime>(happenedOn),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'dish': serializer.toJson<String?>(dish),
       'price': serializer.toJson<double?>(price),
       'company': serializer.toJson<String?>(company),
@@ -1211,12 +1356,13 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   }
 
   MealRow copyWith({
-    int? id,
+    String? id,
     String? title,
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
     DateTime? happenedOn,
+    DateTime? updatedAt,
     Value<String?> dish = const Value.absent(),
     Value<double?> price = const Value.absent(),
     Value<String?> company = const Value.absent(),
@@ -1228,6 +1374,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
     happenedOn: happenedOn ?? this.happenedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
     dish: dish.present ? dish.value : this.dish,
     price: price.present ? price.value : this.price,
     company: company.present ? company.value : this.company,
@@ -1245,6 +1392,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       happenedOn: data.happenedOn.present
           ? data.happenedOn.value
           : this.happenedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       dish: data.dish.present ? data.dish.value : this.dish,
       price: data.price.present ? data.price.value : this.price,
       company: data.company.present ? data.company.value : this.company,
@@ -1261,6 +1409,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('dish: $dish, ')
           ..write('price: $price, ')
           ..write('company: $company, ')
@@ -1277,6 +1426,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     dish,
     price,
     company,
@@ -1292,6 +1442,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
           other.rating == this.rating &&
           other.review == this.review &&
           other.happenedOn == this.happenedOn &&
+          other.updatedAt == this.updatedAt &&
           other.dish == this.dish &&
           other.price == this.price &&
           other.company == this.company &&
@@ -1299,16 +1450,18 @@ class MealRow extends DataClass implements Insertable<MealRow> {
 }
 
 class MealsCompanion extends UpdateCompanion<MealRow> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
   final Value<DateTime> happenedOn;
+  final Value<DateTime> updatedAt;
   final Value<String?> dish;
   final Value<double?> price;
   final Value<String?> company;
   final Value<String?> location;
+  final Value<int> rowid;
   const MealsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -1316,10 +1469,12 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     this.happenedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.dish = const Value.absent(),
     this.price = const Value.absent(),
     this.company = const Value.absent(),
     this.location = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   MealsCompanion.insert({
     this.id = const Value.absent(),
@@ -1328,23 +1483,28 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     required DateTime happenedOn,
+    required DateTime updatedAt,
     this.dish = const Value.absent(),
     this.price = const Value.absent(),
     this.company = const Value.absent(),
     this.location = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : title = Value(title),
-       happenedOn = Value(happenedOn);
+       happenedOn = Value(happenedOn),
+       updatedAt = Value(updatedAt);
   static Insertable<MealRow> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
     Expression<DateTime>? happenedOn,
+    Expression<DateTime>? updatedAt,
     Expression<String>? dish,
     Expression<double>? price,
     Expression<String>? company,
     Expression<String>? location,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1353,24 +1513,28 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
       if (happenedOn != null) 'happened_on': happenedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (dish != null) 'dish': dish,
       if (price != null) 'price': price,
       if (company != null) 'company': company,
       if (location != null) 'location': location,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   MealsCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? title,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
     Value<DateTime>? happenedOn,
+    Value<DateTime>? updatedAt,
     Value<String?>? dish,
     Value<double?>? price,
     Value<String?>? company,
     Value<String?>? location,
+    Value<int>? rowid,
   }) {
     return MealsCompanion(
       id: id ?? this.id,
@@ -1379,10 +1543,12 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
       rating: rating ?? this.rating,
       review: review ?? this.review,
       happenedOn: happenedOn ?? this.happenedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
       dish: dish ?? this.dish,
       price: price ?? this.price,
       company: company ?? this.company,
       location: location ?? this.location,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1390,7 +1556,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -1407,6 +1573,9 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     if (happenedOn.present) {
       map['happened_on'] = Variable<DateTime>(happenedOn.value);
     }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (dish.present) {
       map['dish'] = Variable<String>(dish.value);
     }
@@ -1418,6 +1587,9 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     }
     if (location.present) {
       map['location'] = Variable<String>(location.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -1431,10 +1603,12 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('dish: $dish, ')
           ..write('price: $price, ')
           ..write('company: $company, ')
-          ..write('location: $location')
+          ..write('location: $location, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1447,16 +1621,13 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
   $GigsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    clientDefault: newUuid,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -1506,6 +1677,17 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
   @override
   late final GeneratedColumn<DateTime> happenedOn = GeneratedColumn<DateTime>(
     'happened_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
@@ -1581,6 +1763,7 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     venue,
     city,
     supportActs,
@@ -1640,6 +1823,14 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
     } else if (isInserting) {
       context.missing(_happenedOnMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     if (data.containsKey('venue')) {
       context.handle(
         _venueMeta,
@@ -1689,7 +1880,7 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GigRow(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -1711,6 +1902,10 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
       happenedOn: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}happened_on'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
       )!,
       venue: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1746,12 +1941,15 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
 }
 
 class GigRow extends DataClass implements Insertable<GigRow> {
-  final int id;
+  final String id;
   final String title;
   final String? description;
   final double? rating;
   final String? review;
   final DateTime happenedOn;
+
+  /// When the row was last written, by this device.
+  final DateTime updatedAt;
   final String? venue;
   final String? city;
   final String? supportActs;
@@ -1767,6 +1965,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     this.rating,
     this.review,
     required this.happenedOn,
+    required this.updatedAt,
     this.venue,
     this.city,
     this.supportActs,
@@ -1777,7 +1976,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -1789,6 +1988,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       map['review'] = Variable<String>(review);
     }
     map['happened_on'] = Variable<DateTime>(happenedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || venue != null) {
       map['venue'] = Variable<String>(venue);
     }
@@ -1824,6 +2024,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
           ? const Value.absent()
           : Value(review),
       happenedOn: Value(happenedOn),
+      updatedAt: Value(updatedAt),
       venue: venue == null && nullToAbsent
           ? const Value.absent()
           : Value(venue),
@@ -1849,12 +2050,13 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GigRow(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
       happenedOn: serializer.fromJson<DateTime>(json['happenedOn']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       venue: serializer.fromJson<String?>(json['venue']),
       city: serializer.fromJson<String?>(json['city']),
       supportActs: serializer.fromJson<String?>(json['supportActs']),
@@ -1867,12 +2069,13 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
       'happenedOn': serializer.toJson<DateTime>(happenedOn),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'venue': serializer.toJson<String?>(venue),
       'city': serializer.toJson<String?>(city),
       'supportActs': serializer.toJson<String?>(supportActs),
@@ -1883,12 +2086,13 @@ class GigRow extends DataClass implements Insertable<GigRow> {
   }
 
   GigRow copyWith({
-    int? id,
+    String? id,
     String? title,
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
     DateTime? happenedOn,
+    DateTime? updatedAt,
     Value<String?> venue = const Value.absent(),
     Value<String?> city = const Value.absent(),
     Value<String?> supportActs = const Value.absent(),
@@ -1902,6 +2106,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
     happenedOn: happenedOn ?? this.happenedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
     venue: venue.present ? venue.value : this.venue,
     city: city.present ? city.value : this.city,
     supportActs: supportActs.present ? supportActs.value : this.supportActs,
@@ -1921,6 +2126,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       happenedOn: data.happenedOn.present
           ? data.happenedOn.value
           : this.happenedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       venue: data.venue.present ? data.venue.value : this.venue,
       city: data.city.present ? data.city.value : this.city,
       supportActs: data.supportActs.present
@@ -1943,6 +2149,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('venue: $venue, ')
           ..write('city: $city, ')
           ..write('supportActs: $supportActs, ')
@@ -1961,6 +2168,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     venue,
     city,
     supportActs,
@@ -1978,6 +2186,7 @@ class GigRow extends DataClass implements Insertable<GigRow> {
           other.rating == this.rating &&
           other.review == this.review &&
           other.happenedOn == this.happenedOn &&
+          other.updatedAt == this.updatedAt &&
           other.venue == this.venue &&
           other.city == this.city &&
           other.supportActs == this.supportActs &&
@@ -1987,18 +2196,20 @@ class GigRow extends DataClass implements Insertable<GigRow> {
 }
 
 class GigsCompanion extends UpdateCompanion<GigRow> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
   final Value<DateTime> happenedOn;
+  final Value<DateTime> updatedAt;
   final Value<String?> venue;
   final Value<String?> city;
   final Value<String?> supportActs;
   final Value<String?> setlist;
   final Value<String?> company;
   final Value<String?> externalId;
+  final Value<int> rowid;
   const GigsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2006,12 +2217,14 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     this.happenedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.venue = const Value.absent(),
     this.city = const Value.absent(),
     this.supportActs = const Value.absent(),
     this.setlist = const Value.absent(),
     this.company = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   GigsCompanion.insert({
     this.id = const Value.absent(),
@@ -2020,27 +2233,32 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     required DateTime happenedOn,
+    required DateTime updatedAt,
     this.venue = const Value.absent(),
     this.city = const Value.absent(),
     this.supportActs = const Value.absent(),
     this.setlist = const Value.absent(),
     this.company = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : title = Value(title),
-       happenedOn = Value(happenedOn);
+       happenedOn = Value(happenedOn),
+       updatedAt = Value(updatedAt);
   static Insertable<GigRow> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
     Expression<DateTime>? happenedOn,
+    Expression<DateTime>? updatedAt,
     Expression<String>? venue,
     Expression<String>? city,
     Expression<String>? supportActs,
     Expression<String>? setlist,
     Expression<String>? company,
     Expression<String>? externalId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2049,28 +2267,32 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
       if (happenedOn != null) 'happened_on': happenedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (venue != null) 'venue': venue,
       if (city != null) 'city': city,
       if (supportActs != null) 'support_acts': supportActs,
       if (setlist != null) 'setlist': setlist,
       if (company != null) 'company': company,
       if (externalId != null) 'external_id': externalId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   GigsCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? title,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
     Value<DateTime>? happenedOn,
+    Value<DateTime>? updatedAt,
     Value<String?>? venue,
     Value<String?>? city,
     Value<String?>? supportActs,
     Value<String?>? setlist,
     Value<String?>? company,
     Value<String?>? externalId,
+    Value<int>? rowid,
   }) {
     return GigsCompanion(
       id: id ?? this.id,
@@ -2079,12 +2301,14 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
       rating: rating ?? this.rating,
       review: review ?? this.review,
       happenedOn: happenedOn ?? this.happenedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
       venue: venue ?? this.venue,
       city: city ?? this.city,
       supportActs: supportActs ?? this.supportActs,
       setlist: setlist ?? this.setlist,
       company: company ?? this.company,
       externalId: externalId ?? this.externalId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2092,7 +2316,7 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -2108,6 +2332,9 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     }
     if (happenedOn.present) {
       map['happened_on'] = Variable<DateTime>(happenedOn.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
     if (venue.present) {
       map['venue'] = Variable<String>(venue.value);
@@ -2127,6 +2354,9 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     if (externalId.present) {
       map['external_id'] = Variable<String>(externalId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2139,12 +2369,14 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('venue: $venue, ')
           ..write('city: $city, ')
           ..write('supportActs: $supportActs, ')
           ..write('setlist: $setlist, ')
           ..write('company: $company, ')
-          ..write('externalId: $externalId')
+          ..write('externalId: $externalId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2158,16 +2390,13 @@ class $ViewingsTable extends Viewings
   $ViewingsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    clientDefault: newUuid,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -2217,6 +2446,17 @@ class $ViewingsTable extends Viewings
   @override
   late final GeneratedColumn<DateTime> happenedOn = GeneratedColumn<DateTime>(
     'happened_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
@@ -2290,6 +2530,7 @@ class $ViewingsTable extends Viewings
     rating,
     review,
     happenedOn,
+    updatedAt,
     kind,
     releaseYear,
     director,
@@ -2349,6 +2590,14 @@ class $ViewingsTable extends Viewings
     } else if (isInserting) {
       context.missing(_happenedOnMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     if (data.containsKey('release_year')) {
       context.handle(
         _releaseYearMeta,
@@ -2392,7 +2641,7 @@ class $ViewingsTable extends Viewings
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ViewingRow(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -2414,6 +2663,10 @@ class $ViewingsTable extends Viewings
       happenedOn: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}happened_on'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
       )!,
       kind: $ViewingsTable.$converterkind.fromSql(
         attachedDatabase.typeMapping.read(
@@ -2454,12 +2707,15 @@ class $ViewingsTable extends Viewings
 }
 
 class ViewingRow extends DataClass implements Insertable<ViewingRow> {
-  final int id;
+  final String id;
   final String title;
   final String? description;
   final double? rating;
   final String? review;
   final DateTime happenedOn;
+
+  /// When the row was last written, by this device.
+  final DateTime updatedAt;
 
   /// Stored by index rather than name: the set is closed and owned by this
   /// app, so a rename never has to touch stored rows.
@@ -2478,6 +2734,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     this.rating,
     this.review,
     required this.happenedOn,
+    required this.updatedAt,
     required this.kind,
     this.releaseYear,
     this.director,
@@ -2488,7 +2745,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -2500,6 +2757,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       map['review'] = Variable<String>(review);
     }
     map['happened_on'] = Variable<DateTime>(happenedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     {
       map['kind'] = Variable<int>($ViewingsTable.$converterkind.toSql(kind));
     }
@@ -2535,6 +2793,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
           ? const Value.absent()
           : Value(review),
       happenedOn: Value(happenedOn),
+      updatedAt: Value(updatedAt),
       kind: Value(kind),
       releaseYear: releaseYear == null && nullToAbsent
           ? const Value.absent()
@@ -2558,12 +2817,13 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ViewingRow(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
       happenedOn: serializer.fromJson<DateTime>(json['happenedOn']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       kind: $ViewingsTable.$converterkind.fromJson(
         serializer.fromJson<int>(json['kind']),
       ),
@@ -2578,12 +2838,13 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
       'happenedOn': serializer.toJson<DateTime>(happenedOn),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'kind': serializer.toJson<int>(
         $ViewingsTable.$converterkind.toJson(kind),
       ),
@@ -2596,12 +2857,13 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
   }
 
   ViewingRow copyWith({
-    int? id,
+    String? id,
     String? title,
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
     DateTime? happenedOn,
+    DateTime? updatedAt,
     ViewingKind? kind,
     Value<int?> releaseYear = const Value.absent(),
     Value<String?> director = const Value.absent(),
@@ -2615,6 +2877,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
     happenedOn: happenedOn ?? this.happenedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
     kind: kind ?? this.kind,
     releaseYear: releaseYear.present ? releaseYear.value : this.releaseYear,
     director: director.present ? director.value : this.director,
@@ -2634,6 +2897,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       happenedOn: data.happenedOn.present
           ? data.happenedOn.value
           : this.happenedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       kind: data.kind.present ? data.kind.value : this.kind,
       releaseYear: data.releaseYear.present
           ? data.releaseYear.value
@@ -2656,6 +2920,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('kind: $kind, ')
           ..write('releaseYear: $releaseYear, ')
           ..write('director: $director, ')
@@ -2674,6 +2939,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     kind,
     releaseYear,
     director,
@@ -2691,6 +2957,7 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
           other.rating == this.rating &&
           other.review == this.review &&
           other.happenedOn == this.happenedOn &&
+          other.updatedAt == this.updatedAt &&
           other.kind == this.kind &&
           other.releaseYear == this.releaseYear &&
           other.director == this.director &&
@@ -2700,18 +2967,20 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
 }
 
 class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
   final Value<DateTime> happenedOn;
+  final Value<DateTime> updatedAt;
   final Value<ViewingKind> kind;
   final Value<int?> releaseYear;
   final Value<String?> director;
   final Value<String?> cast;
   final Value<int?> season;
   final Value<String?> externalId;
+  final Value<int> rowid;
   const ViewingsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -2719,12 +2988,14 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     this.happenedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.kind = const Value.absent(),
     this.releaseYear = const Value.absent(),
     this.director = const Value.absent(),
     this.cast = const Value.absent(),
     this.season = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ViewingsCompanion.insert({
     this.id = const Value.absent(),
@@ -2733,28 +3004,33 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     required DateTime happenedOn,
+    required DateTime updatedAt,
     required ViewingKind kind,
     this.releaseYear = const Value.absent(),
     this.director = const Value.absent(),
     this.cast = const Value.absent(),
     this.season = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
+       updatedAt = Value(updatedAt),
        kind = Value(kind);
   static Insertable<ViewingRow> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
     Expression<DateTime>? happenedOn,
+    Expression<DateTime>? updatedAt,
     Expression<int>? kind,
     Expression<int>? releaseYear,
     Expression<String>? director,
     Expression<String>? cast,
     Expression<int>? season,
     Expression<String>? externalId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2763,28 +3039,32 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
       if (happenedOn != null) 'happened_on': happenedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (kind != null) 'kind': kind,
       if (releaseYear != null) 'release_year': releaseYear,
       if (director != null) 'director': director,
       if (cast != null) 'cast': cast,
       if (season != null) 'season': season,
       if (externalId != null) 'external_id': externalId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ViewingsCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? title,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
     Value<DateTime>? happenedOn,
+    Value<DateTime>? updatedAt,
     Value<ViewingKind>? kind,
     Value<int?>? releaseYear,
     Value<String?>? director,
     Value<String?>? cast,
     Value<int?>? season,
     Value<String?>? externalId,
+    Value<int>? rowid,
   }) {
     return ViewingsCompanion(
       id: id ?? this.id,
@@ -2793,12 +3073,14 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
       rating: rating ?? this.rating,
       review: review ?? this.review,
       happenedOn: happenedOn ?? this.happenedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
       kind: kind ?? this.kind,
       releaseYear: releaseYear ?? this.releaseYear,
       director: director ?? this.director,
       cast: cast ?? this.cast,
       season: season ?? this.season,
       externalId: externalId ?? this.externalId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -2806,7 +3088,7 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -2822,6 +3104,9 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     }
     if (happenedOn.present) {
       map['happened_on'] = Variable<DateTime>(happenedOn.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
     if (kind.present) {
       map['kind'] = Variable<int>(
@@ -2843,6 +3128,9 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     if (externalId.present) {
       map['external_id'] = Variable<String>(externalId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -2855,12 +3143,14 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('kind: $kind, ')
           ..write('releaseYear: $releaseYear, ')
           ..write('director: $director, ')
           ..write('cast: $cast, ')
           ..write('season: $season, ')
-          ..write('externalId: $externalId')
+          ..write('externalId: $externalId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -2873,16 +3163,13 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
   $GamesTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    clientDefault: newUuid,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -2932,6 +3219,17 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
   @override
   late final GeneratedColumn<DateTime> happenedOn = GeneratedColumn<DateTime>(
     'happened_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
@@ -2998,6 +3296,7 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     status,
     platform,
     hoursPlayed,
@@ -3056,6 +3355,14 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
     } else if (isInserting) {
       context.missing(_happenedOnMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     if (data.containsKey('platform')) {
       context.handle(
         _platformMeta,
@@ -3096,7 +3403,7 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GameRow(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -3118,6 +3425,10 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
       happenedOn: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}happened_on'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
       )!,
       status: $GamesTable.$converterstatus.fromSql(
         attachedDatabase.typeMapping.read(
@@ -3154,12 +3465,15 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
 }
 
 class GameRow extends DataClass implements Insertable<GameRow> {
-  final int id;
+  final String id;
   final String title;
   final String? description;
   final double? rating;
   final String? review;
   final DateTime happenedOn;
+
+  /// When the row was last written, by this device.
+  final DateTime updatedAt;
   final GameStatus status;
   final String? platform;
   final double? hoursPlayed;
@@ -3174,6 +3488,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     this.rating,
     this.review,
     required this.happenedOn,
+    required this.updatedAt,
     required this.status,
     this.platform,
     this.hoursPlayed,
@@ -3183,7 +3498,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -3195,6 +3510,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       map['review'] = Variable<String>(review);
     }
     map['happened_on'] = Variable<DateTime>(happenedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     {
       map['status'] = Variable<int>($GamesTable.$converterstatus.toSql(status));
     }
@@ -3227,6 +3543,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
           ? const Value.absent()
           : Value(review),
       happenedOn: Value(happenedOn),
+      updatedAt: Value(updatedAt),
       status: Value(status),
       platform: platform == null && nullToAbsent
           ? const Value.absent()
@@ -3249,12 +3566,13 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GameRow(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
       rating: serializer.fromJson<double?>(json['rating']),
       review: serializer.fromJson<String?>(json['review']),
       happenedOn: serializer.fromJson<DateTime>(json['happenedOn']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       status: $GamesTable.$converterstatus.fromJson(
         serializer.fromJson<int>(json['status']),
       ),
@@ -3268,12 +3586,13 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String?>(description),
       'rating': serializer.toJson<double?>(rating),
       'review': serializer.toJson<String?>(review),
       'happenedOn': serializer.toJson<DateTime>(happenedOn),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'status': serializer.toJson<int>(
         $GamesTable.$converterstatus.toJson(status),
       ),
@@ -3285,12 +3604,13 @@ class GameRow extends DataClass implements Insertable<GameRow> {
   }
 
   GameRow copyWith({
-    int? id,
+    String? id,
     String? title,
     Value<String?> description = const Value.absent(),
     Value<double?> rating = const Value.absent(),
     Value<String?> review = const Value.absent(),
     DateTime? happenedOn,
+    DateTime? updatedAt,
     GameStatus? status,
     Value<String?> platform = const Value.absent(),
     Value<double?> hoursPlayed = const Value.absent(),
@@ -3303,6 +3623,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     rating: rating.present ? rating.value : this.rating,
     review: review.present ? review.value : this.review,
     happenedOn: happenedOn ?? this.happenedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
     status: status ?? this.status,
     platform: platform.present ? platform.value : this.platform,
     hoursPlayed: hoursPlayed.present ? hoursPlayed.value : this.hoursPlayed,
@@ -3321,6 +3642,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       happenedOn: data.happenedOn.present
           ? data.happenedOn.value
           : this.happenedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       status: data.status.present ? data.status.value : this.status,
       platform: data.platform.present ? data.platform.value : this.platform,
       hoursPlayed: data.hoursPlayed.present
@@ -3344,6 +3666,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('status: $status, ')
           ..write('platform: $platform, ')
           ..write('hoursPlayed: $hoursPlayed, ')
@@ -3361,6 +3684,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     rating,
     review,
     happenedOn,
+    updatedAt,
     status,
     platform,
     hoursPlayed,
@@ -3377,6 +3701,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
           other.rating == this.rating &&
           other.review == this.review &&
           other.happenedOn == this.happenedOn &&
+          other.updatedAt == this.updatedAt &&
           other.status == this.status &&
           other.platform == this.platform &&
           other.hoursPlayed == this.hoursPlayed &&
@@ -3385,17 +3710,19 @@ class GameRow extends DataClass implements Insertable<GameRow> {
 }
 
 class GamesCompanion extends UpdateCompanion<GameRow> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<String?> description;
   final Value<double?> rating;
   final Value<String?> review;
   final Value<DateTime> happenedOn;
+  final Value<DateTime> updatedAt;
   final Value<GameStatus> status;
   final Value<String?> platform;
   final Value<double?> hoursPlayed;
   final Value<int?> releaseYear;
   final Value<String?> externalId;
+  final Value<int> rowid;
   const GamesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -3403,11 +3730,13 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     this.happenedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.status = const Value.absent(),
     this.platform = const Value.absent(),
     this.hoursPlayed = const Value.absent(),
     this.releaseYear = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   GamesCompanion.insert({
     this.id = const Value.absent(),
@@ -3416,26 +3745,31 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     this.rating = const Value.absent(),
     this.review = const Value.absent(),
     required DateTime happenedOn,
+    required DateTime updatedAt,
     required GameStatus status,
     this.platform = const Value.absent(),
     this.hoursPlayed = const Value.absent(),
     this.releaseYear = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
+       updatedAt = Value(updatedAt),
        status = Value(status);
   static Insertable<GameRow> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? title,
     Expression<String>? description,
     Expression<double>? rating,
     Expression<String>? review,
     Expression<DateTime>? happenedOn,
+    Expression<DateTime>? updatedAt,
     Expression<int>? status,
     Expression<String>? platform,
     Expression<double>? hoursPlayed,
     Expression<int>? releaseYear,
     Expression<String>? externalId,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3444,26 +3778,30 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
       if (rating != null) 'rating': rating,
       if (review != null) 'review': review,
       if (happenedOn != null) 'happened_on': happenedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (status != null) 'status': status,
       if (platform != null) 'platform': platform,
       if (hoursPlayed != null) 'hours_played': hoursPlayed,
       if (releaseYear != null) 'release_year': releaseYear,
       if (externalId != null) 'external_id': externalId,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   GamesCompanion copyWith({
-    Value<int>? id,
+    Value<String>? id,
     Value<String>? title,
     Value<String?>? description,
     Value<double?>? rating,
     Value<String?>? review,
     Value<DateTime>? happenedOn,
+    Value<DateTime>? updatedAt,
     Value<GameStatus>? status,
     Value<String?>? platform,
     Value<double?>? hoursPlayed,
     Value<int?>? releaseYear,
     Value<String?>? externalId,
+    Value<int>? rowid,
   }) {
     return GamesCompanion(
       id: id ?? this.id,
@@ -3472,11 +3810,13 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
       rating: rating ?? this.rating,
       review: review ?? this.review,
       happenedOn: happenedOn ?? this.happenedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
       status: status ?? this.status,
       platform: platform ?? this.platform,
       hoursPlayed: hoursPlayed ?? this.hoursPlayed,
       releaseYear: releaseYear ?? this.releaseYear,
       externalId: externalId ?? this.externalId,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -3484,7 +3824,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -3500,6 +3840,9 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     }
     if (happenedOn.present) {
       map['happened_on'] = Variable<DateTime>(happenedOn.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
     if (status.present) {
       map['status'] = Variable<int>(
@@ -3518,6 +3861,9 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     if (externalId.present) {
       map['external_id'] = Variable<String>(externalId.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -3530,11 +3876,13 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
           ..write('rating: $rating, ')
           ..write('review: $review, ')
           ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('status: $status, ')
           ..write('platform: $platform, ')
           ..write('hoursPlayed: $hoursPlayed, ')
           ..write('releaseYear: $releaseYear, ')
-          ..write('externalId: $externalId')
+          ..write('externalId: $externalId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -3574,14 +3922,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 }
 
 typedef $$FranchisesTableCreateCompanionBuilder = FranchisesCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String name,
   Value<String?> logoPath,
+  required DateTime updatedAt,
+  Value<int> rowid,
 });
 typedef $$FranchisesTableUpdateCompanionBuilder = FranchisesCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> name,
   Value<String?> logoPath,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
 });
 
 final class $$FranchisesTableReferences
@@ -3599,7 +3951,7 @@ final class $$FranchisesTableReferences
     final manager = $$RoomsTableTableManager(
       $_db,
       $_db.rooms,
-    ).filter((f) => f.franchiseId.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.franchiseId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_roomsRefsTable($_db));
     return ProcessedTableManager(
@@ -3617,7 +3969,7 @@ class $$FranchisesTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -3629,6 +3981,11 @@ class $$FranchisesTableFilterComposer
 
   ColumnFilters<String> get logoPath => $composableBuilder(
     column: $table.logoPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3667,7 +4024,7 @@ class $$FranchisesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -3681,6 +4038,11 @@ class $$FranchisesTableOrderingComposer
     column: $table.logoPath,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$FranchisesTableAnnotationComposer
@@ -3692,7 +4054,7 @@ class $$FranchisesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
@@ -3700,6 +4062,9 @@ class $$FranchisesTableAnnotationComposer
 
   GeneratedColumn<String> get logoPath =>
       $composableBuilder(column: $table.logoPath, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   Expression<T> roomsRefs<T extends Object>(
     Expression<T> Function($$RoomsTableAnnotationComposer a) f,
@@ -3753,20 +4118,33 @@ class $$FranchisesTableTableManager
               $$FranchisesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$FranchisesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String?> logoPath = const Value.absent(),
-          }) => FranchisesCompanion(id: id, name: name, logoPath: logoPath),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> logoPath = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FranchisesCompanion(
+                id: id,
+                name: name,
+                logoPath: logoPath,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 required String name,
                 Value<String?> logoPath = const Value.absent(),
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
               }) => FranchisesCompanion.insert(
                 id: id,
                 name: name,
                 logoPath: logoPath,
+                updatedAt: updatedAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -3823,26 +4201,30 @@ typedef $$FranchisesTableProcessedTableManager =
       PrefetchHooks Function({bool roomsRefs})
     >;
 typedef $$RoomsTableCreateCompanionBuilder = RoomsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   required DateTime happenedOn,
-  Value<int?> franchiseId,
+  required DateTime updatedAt,
+  Value<String?> franchiseId,
   required bool escaped,
   Value<int?> timeLeftMinutes,
+  Value<int> rowid,
 });
 typedef $$RoomsTableUpdateCompanionBuilder = RoomsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   Value<DateTime> happenedOn,
-  Value<int?> franchiseId,
+  Value<DateTime> updatedAt,
+  Value<String?> franchiseId,
   Value<bool> escaped,
   Value<int?> timeLeftMinutes,
+  Value<int> rowid,
 });
 
 final class $$RoomsTableReferences
@@ -3853,7 +4235,7 @@ final class $$RoomsTableReferences
       db.franchises.createAlias('rooms__franchise_id__franchises__id');
 
   $$FranchisesTableProcessedTableManager? get franchiseId {
-    final $_column = $_itemColumn<int>('franchise_id');
+    final $_column = $_itemColumn<String>('franchise_id');
     if ($_column == null) return null;
     final manager = $$FranchisesTableTableManager(
       $_db,
@@ -3875,7 +4257,7 @@ class $$RoomsTableFilterComposer extends Composer<_$AppDatabase, $RoomsTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -3902,6 +4284,11 @@ class $$RoomsTableFilterComposer extends Composer<_$AppDatabase, $RoomsTable> {
 
   ColumnFilters<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3948,7 +4335,7 @@ class $$RoomsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -3975,6 +4362,11 @@ class $$RoomsTableOrderingComposer
 
   ColumnOrderings<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4021,7 +4413,7 @@ class $$RoomsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -4042,6 +4434,9 @@ class $$RoomsTableAnnotationComposer
     column: $table.happenedOn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumn<bool> get escaped =>
       $composableBuilder(column: $table.escaped, builder: (column) => column);
@@ -4103,15 +4498,17 @@ class $$RoomsTableTableManager
               $$RoomsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 Value<DateTime> happenedOn = const Value.absent(),
-                Value<int?> franchiseId = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> franchiseId = const Value.absent(),
                 Value<bool> escaped = const Value.absent(),
                 Value<int?> timeLeftMinutes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => RoomsCompanion(
                 id: id,
                 title: title,
@@ -4119,21 +4516,25 @@ class $$RoomsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 franchiseId: franchiseId,
                 escaped: escaped,
                 timeLeftMinutes: timeLeftMinutes,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 required DateTime happenedOn,
-                Value<int?> franchiseId = const Value.absent(),
+                required DateTime updatedAt,
+                Value<String?> franchiseId = const Value.absent(),
                 required bool escaped,
                 Value<int?> timeLeftMinutes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => RoomsCompanion.insert(
                 id: id,
                 title: title,
@@ -4141,9 +4542,11 @@ class $$RoomsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 franchiseId: franchiseId,
                 escaped: escaped,
                 timeLeftMinutes: timeLeftMinutes,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -4209,28 +4612,32 @@ typedef $$RoomsTableProcessedTableManager =
       PrefetchHooks Function({bool franchiseId})
     >;
 typedef $$MealsTableCreateCompanionBuilder = MealsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   required DateTime happenedOn,
+  required DateTime updatedAt,
   Value<String?> dish,
   Value<double?> price,
   Value<String?> company,
   Value<String?> location,
+  Value<int> rowid,
 });
 typedef $$MealsTableUpdateCompanionBuilder = MealsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   Value<DateTime> happenedOn,
+  Value<DateTime> updatedAt,
   Value<String?> dish,
   Value<double?> price,
   Value<String?> company,
   Value<String?> location,
+  Value<int> rowid,
 });
 
 class $$MealsTableFilterComposer extends Composer<_$AppDatabase, $MealsTable> {
@@ -4241,7 +4648,7 @@ class $$MealsTableFilterComposer extends Composer<_$AppDatabase, $MealsTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -4268,6 +4675,11 @@ class $$MealsTableFilterComposer extends Composer<_$AppDatabase, $MealsTable> {
 
   ColumnFilters<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4301,7 +4713,7 @@ class $$MealsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -4328,6 +4740,11 @@ class $$MealsTableOrderingComposer
 
   ColumnOrderings<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4361,7 +4778,7 @@ class $$MealsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -4382,6 +4799,9 @@ class $$MealsTableAnnotationComposer
     column: $table.happenedOn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumn<String> get dish =>
       $composableBuilder(column: $table.dish, builder: (column) => column);
@@ -4424,16 +4844,18 @@ class $$MealsTableTableManager
               $$MealsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 Value<DateTime> happenedOn = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
                 Value<String?> dish = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> location = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => MealsCompanion(
                 id: id,
                 title: title,
@@ -4441,23 +4863,27 @@ class $$MealsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 dish: dish,
                 price: price,
                 company: company,
                 location: location,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 required DateTime happenedOn,
+                required DateTime updatedAt,
                 Value<String?> dish = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> location = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => MealsCompanion.insert(
                 id: id,
                 title: title,
@@ -4465,10 +4891,12 @@ class $$MealsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 dish: dish,
                 price: price,
                 company: company,
                 location: location,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -4493,32 +4921,36 @@ typedef $$MealsTableProcessedTableManager =
       PrefetchHooks Function()
     >;
 typedef $$GigsTableCreateCompanionBuilder = GigsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   required DateTime happenedOn,
+  required DateTime updatedAt,
   Value<String?> venue,
   Value<String?> city,
   Value<String?> supportActs,
   Value<String?> setlist,
   Value<String?> company,
   Value<String?> externalId,
+  Value<int> rowid,
 });
 typedef $$GigsTableUpdateCompanionBuilder = GigsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   Value<DateTime> happenedOn,
+  Value<DateTime> updatedAt,
   Value<String?> venue,
   Value<String?> city,
   Value<String?> supportActs,
   Value<String?> setlist,
   Value<String?> company,
   Value<String?> externalId,
+  Value<int> rowid,
 });
 
 class $$GigsTableFilterComposer extends Composer<_$AppDatabase, $GigsTable> {
@@ -4529,7 +4961,7 @@ class $$GigsTableFilterComposer extends Composer<_$AppDatabase, $GigsTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -4556,6 +4988,11 @@ class $$GigsTableFilterComposer extends Composer<_$AppDatabase, $GigsTable> {
 
   ColumnFilters<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4598,7 +5035,7 @@ class $$GigsTableOrderingComposer extends Composer<_$AppDatabase, $GigsTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -4625,6 +5062,11 @@ class $$GigsTableOrderingComposer extends Composer<_$AppDatabase, $GigsTable> {
 
   ColumnOrderings<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4668,7 +5110,7 @@ class $$GigsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -4689,6 +5131,9 @@ class $$GigsTableAnnotationComposer
     column: $table.happenedOn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumn<String> get venue =>
       $composableBuilder(column: $table.venue, builder: (column) => column);
@@ -4741,18 +5186,20 @@ class $$GigsTableTableManager
               $$GigsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 Value<DateTime> happenedOn = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
                 Value<String?> venue = const Value.absent(),
                 Value<String?> city = const Value.absent(),
                 Value<String?> supportActs = const Value.absent(),
                 Value<String?> setlist = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => GigsCompanion(
                 id: id,
                 title: title,
@@ -4760,27 +5207,31 @@ class $$GigsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 venue: venue,
                 city: city,
                 supportActs: supportActs,
                 setlist: setlist,
                 company: company,
                 externalId: externalId,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 required DateTime happenedOn,
+                required DateTime updatedAt,
                 Value<String?> venue = const Value.absent(),
                 Value<String?> city = const Value.absent(),
                 Value<String?> supportActs = const Value.absent(),
                 Value<String?> setlist = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => GigsCompanion.insert(
                 id: id,
                 title: title,
@@ -4788,12 +5239,14 @@ class $$GigsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 venue: venue,
                 city: city,
                 supportActs: supportActs,
                 setlist: setlist,
                 company: company,
                 externalId: externalId,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -4818,32 +5271,36 @@ typedef $$GigsTableProcessedTableManager =
       PrefetchHooks Function()
     >;
 typedef $$ViewingsTableCreateCompanionBuilder = ViewingsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   required DateTime happenedOn,
+  required DateTime updatedAt,
   required ViewingKind kind,
   Value<int?> releaseYear,
   Value<String?> director,
   Value<String?> cast,
   Value<int?> season,
   Value<String?> externalId,
+  Value<int> rowid,
 });
 typedef $$ViewingsTableUpdateCompanionBuilder = ViewingsCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   Value<DateTime> happenedOn,
+  Value<DateTime> updatedAt,
   Value<ViewingKind> kind,
   Value<int?> releaseYear,
   Value<String?> director,
   Value<String?> cast,
   Value<int?> season,
   Value<String?> externalId,
+  Value<int> rowid,
 });
 
 class $$ViewingsTableFilterComposer
@@ -4855,7 +5312,7 @@ class $$ViewingsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -4882,6 +5339,11 @@ class $$ViewingsTableFilterComposer
 
   ColumnFilters<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4926,7 +5388,7 @@ class $$ViewingsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -4953,6 +5415,11 @@ class $$ViewingsTableOrderingComposer
 
   ColumnOrderings<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4996,7 +5463,7 @@ class $$ViewingsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -5017,6 +5484,9 @@ class $$ViewingsTableAnnotationComposer
     column: $table.happenedOn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<ViewingKind, int> get kind =>
       $composableBuilder(column: $table.kind, builder: (column) => column);
@@ -5072,18 +5542,20 @@ class $$ViewingsTableTableManager
               $$ViewingsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 Value<DateTime> happenedOn = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
                 Value<ViewingKind> kind = const Value.absent(),
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> director = const Value.absent(),
                 Value<String?> cast = const Value.absent(),
                 Value<int?> season = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ViewingsCompanion(
                 id: id,
                 title: title,
@@ -5091,27 +5563,31 @@ class $$ViewingsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 kind: kind,
                 releaseYear: releaseYear,
                 director: director,
                 cast: cast,
                 season: season,
                 externalId: externalId,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 required DateTime happenedOn,
+                required DateTime updatedAt,
                 required ViewingKind kind,
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> director = const Value.absent(),
                 Value<String?> cast = const Value.absent(),
                 Value<int?> season = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ViewingsCompanion.insert(
                 id: id,
                 title: title,
@@ -5119,12 +5595,14 @@ class $$ViewingsTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 kind: kind,
                 releaseYear: releaseYear,
                 director: director,
                 cast: cast,
                 season: season,
                 externalId: externalId,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -5149,30 +5627,34 @@ typedef $$ViewingsTableProcessedTableManager =
       PrefetchHooks Function()
     >;
 typedef $$GamesTableCreateCompanionBuilder = GamesCompanion Function({
-  Value<int> id,
+  Value<String> id,
   required String title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   required DateTime happenedOn,
+  required DateTime updatedAt,
   required GameStatus status,
   Value<String?> platform,
   Value<double?> hoursPlayed,
   Value<int?> releaseYear,
   Value<String?> externalId,
+  Value<int> rowid,
 });
 typedef $$GamesTableUpdateCompanionBuilder = GamesCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String> title,
   Value<String?> description,
   Value<double?> rating,
   Value<String?> review,
   Value<DateTime> happenedOn,
+  Value<DateTime> updatedAt,
   Value<GameStatus> status,
   Value<String?> platform,
   Value<double?> hoursPlayed,
   Value<int?> releaseYear,
   Value<String?> externalId,
+  Value<int> rowid,
 });
 
 class $$GamesTableFilterComposer extends Composer<_$AppDatabase, $GamesTable> {
@@ -5183,7 +5665,7 @@ class $$GamesTableFilterComposer extends Composer<_$AppDatabase, $GamesTable> {
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -5210,6 +5692,11 @@ class $$GamesTableFilterComposer extends Composer<_$AppDatabase, $GamesTable> {
 
   ColumnFilters<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5249,7 +5736,7 @@ class $$GamesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -5276,6 +5763,11 @@ class $$GamesTableOrderingComposer
 
   ColumnOrderings<DateTime> get happenedOn => $composableBuilder(
     column: $table.happenedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -5314,7 +5806,7 @@ class $$GamesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -5335,6 +5827,9 @@ class $$GamesTableAnnotationComposer
     column: $table.happenedOn,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<GameStatus, int> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
@@ -5386,17 +5881,19 @@ class $$GamesTableTableManager
               $$GamesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 Value<DateTime> happenedOn = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
                 Value<GameStatus> status = const Value.absent(),
                 Value<String?> platform = const Value.absent(),
                 Value<double?> hoursPlayed = const Value.absent(),
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => GamesCompanion(
                 id: id,
                 title: title,
@@ -5404,25 +5901,29 @@ class $$GamesTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 status: status,
                 platform: platform,
                 hoursPlayed: hoursPlayed,
                 releaseYear: releaseYear,
                 externalId: externalId,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
                 required String title,
                 Value<String?> description = const Value.absent(),
                 Value<double?> rating = const Value.absent(),
                 Value<String?> review = const Value.absent(),
                 required DateTime happenedOn,
+                required DateTime updatedAt,
                 required GameStatus status,
                 Value<String?> platform = const Value.absent(),
                 Value<double?> hoursPlayed = const Value.absent(),
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => GamesCompanion.insert(
                 id: id,
                 title: title,
@@ -5430,11 +5931,13 @@ class $$GamesTableTableManager
                 rating: rating,
                 review: review,
                 happenedOn: happenedOn,
+                updatedAt: updatedAt,
                 status: status,
                 platform: platform,
                 hoursPlayed: hoursPlayed,
                 releaseYear: releaseYear,
                 externalId: externalId,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

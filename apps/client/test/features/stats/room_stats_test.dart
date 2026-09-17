@@ -3,7 +3,7 @@ import 'package:memini/features/rooms/domain/room.dart';
 import 'package:memini/features/stats/domain/room_stats.dart';
 
 Room room({
-  int id = 1,
+  String id = 'room',
   String title = 'Room',
   double? rating,
   bool escaped = true,
@@ -32,9 +32,9 @@ void main() {
 
     test('counts escapes and failures', () {
       final stats = RoomStats.from([
-        room(id: 1, escaped: true),
-        room(id: 2, escaped: true),
-        room(id: 3, escaped: false),
+        room(id: 'r1', escaped: true),
+        room(id: 'r2', escaped: true),
+        room(id: 'r3', escaped: false),
       ]);
 
       expect(stats.total, 3);
@@ -45,9 +45,9 @@ void main() {
 
     test('averages only rated rooms', () {
       final stats = RoomStats.from([
-        room(id: 1, rating: 8),
-        room(id: 2, rating: 6),
-        room(id: 3),
+        room(id: 'r1', rating: 8),
+        room(id: 'r2', rating: 6),
+        room(id: 'r3'),
       ]);
 
       expect(stats.rated, 2);
@@ -56,16 +56,16 @@ void main() {
 
     test('picks the highest rated room as best', () {
       final stats = RoomStats.from([
-        room(id: 1, title: 'Good', rating: 7),
-        room(id: 2, title: 'Best', rating: 9.5),
-        room(id: 3, title: 'Unrated'),
+        room(id: 'r1', title: 'Good', rating: 7),
+        room(id: 'r2', title: 'Best', rating: 9.5),
+        room(id: 'r3', title: 'Unrated'),
       ]);
 
       expect(stats.bestRoom?.title, 'Best');
     });
 
     test('leaves best null when nothing is rated', () {
-      final stats = RoomStats.from([room(id: 1), room(id: 2)]);
+      final stats = RoomStats.from([room(id: 'r1'), room(id: 'r2')]);
 
       expect(stats.bestRoom, isNull);
       expect(stats.averageRating, isNull);
@@ -73,9 +73,9 @@ void main() {
 
     test('groups rooms per year, newest first', () {
       final stats = RoomStats.from([
-        room(id: 1, happenedOn: DateTime(2024, 5, 1)),
-        room(id: 2, happenedOn: DateTime(2026, 2, 1)),
-        room(id: 3, happenedOn: DateTime(2026, 8, 1)),
+        room(id: 'r1', happenedOn: DateTime(2024, 5, 1)),
+        room(id: 'r2', happenedOn: DateTime(2026, 2, 1)),
+        room(id: 'r3', happenedOn: DateTime(2026, 8, 1)),
       ]);
 
       expect(stats.roomsPerYear.keys.toList(), [2026, 2024]);

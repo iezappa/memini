@@ -7,9 +7,13 @@ import '../domain/viewing.dart';
 import '../domain/viewing_repository.dart';
 
 class DriftViewingRepository implements ViewingRepository {
-  DriftViewingRepository(this._db);
+  DriftViewingRepository(this._db, {DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final AppDatabase _db;
+
+  /// Stamps updatedAt on every write. Injected so tests can pin it.
+  final DateTime Function() _now;
 
   TrackingColumns get _columns {
     final viewings = _db.viewings;
@@ -25,6 +29,7 @@ class DriftViewingRepository implements ViewingRepository {
 
   Viewing _toDomain(ViewingRow row) => Viewing(
     id: row.id,
+    updatedAt: row.updatedAt,
     title: row.title,
     description: row.description,
     rating: row.rating,
@@ -65,7 +70,7 @@ class DriftViewingRepository implements ViewingRepository {
       _query(filter).watch().map((rows) => rows.map(_toDomain).toList());
 
   @override
-  Future<Viewing?> findById(int id) async {
+  Future<Viewing?> findById(String id) async {
     final row = await (_db.select(
       _db.viewings,
     )..where((v) => v.id.equals(id))).getSingleOrNull();
@@ -78,6 +83,7 @@ class DriftViewingRepository implements ViewingRepository {
         .into(_db.viewings)
         .insertReturning(
           ViewingsCompanion.insert(
+            updatedAt: _now(),
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             kind: draft.kind,
@@ -98,6 +104,7 @@ class DriftViewingRepository implements ViewingRepository {
   Future<void> update(Viewing entry) async {
     await (_db.update(_db.viewings)..where((v) => v.id.equals(entry.id))).write(
       ViewingsCompanion(
+        updatedAt: Value(_now()),
         title: Value(entry.title.trim()),
         description: Value(entry.description),
         rating: Value(entry.rating),
@@ -114,7 +121,7 @@ class DriftViewingRepository implements ViewingRepository {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> delete(String id) async {
     await (_db.delete(_db.viewings)..where((v) => v.id.equals(id))).go();
   }
 }

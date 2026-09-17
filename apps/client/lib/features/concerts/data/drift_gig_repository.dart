@@ -7,9 +7,13 @@ import '../domain/gig.dart';
 import '../domain/gig_repository.dart';
 
 class DriftGigRepository implements GigRepository {
-  DriftGigRepository(this._db);
+  DriftGigRepository(this._db, {DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final AppDatabase _db;
+
+  /// Stamps updatedAt on every write. Injected so tests can pin it.
+  final DateTime Function() _now;
 
   TrackingColumns get _columns {
     final gigs = _db.gigs;
@@ -25,6 +29,7 @@ class DriftGigRepository implements GigRepository {
 
   Gig _toDomain(GigRow row) => Gig(
     id: row.id,
+    updatedAt: row.updatedAt,
     title: row.title,
     description: row.description,
     rating: row.rating,
@@ -65,7 +70,7 @@ class DriftGigRepository implements GigRepository {
       _query(filter).watch().map((rows) => rows.map(_toDomain).toList());
 
   @override
-  Future<Gig?> findById(int id) async {
+  Future<Gig?> findById(String id) async {
     final row = await (_db.select(
       _db.gigs,
     )..where((g) => g.id.equals(id))).getSingleOrNull();
@@ -78,6 +83,7 @@ class DriftGigRepository implements GigRepository {
         .into(_db.gigs)
         .insertReturning(
           GigsCompanion.insert(
+            updatedAt: _now(),
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             description: Value(draft.description),
@@ -98,6 +104,7 @@ class DriftGigRepository implements GigRepository {
   Future<void> update(Gig entry) async {
     await (_db.update(_db.gigs)..where((g) => g.id.equals(entry.id))).write(
       GigsCompanion(
+        updatedAt: Value(_now()),
         title: Value(entry.title.trim()),
         description: Value(entry.description),
         rating: Value(entry.rating),
@@ -114,7 +121,7 @@ class DriftGigRepository implements GigRepository {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> delete(String id) async {
     await (_db.delete(_db.gigs)..where((g) => g.id.equals(id))).go();
   }
 }

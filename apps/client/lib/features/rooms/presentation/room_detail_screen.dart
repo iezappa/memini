@@ -14,7 +14,7 @@ import 'room_form_screen.dart';
 class RoomDetailScreen extends ConsumerWidget {
   const RoomDetailScreen({super.key, required this.roomId});
 
-  final int roomId;
+  final String roomId;
 
   Future<void> _edit(BuildContext context, WidgetRef ref, Room room) async {
     await Navigator.of(

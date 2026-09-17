@@ -12,7 +12,7 @@ import 'game_providers.dart';
 class GameDetailScreen extends ConsumerWidget {
   const GameDetailScreen({super.key, required this.gameId});
 
-  final int gameId;
+  final String gameId;
 
   Future<void> _edit(BuildContext context, Game game) async {
     await Navigator.of(

@@ -8,7 +8,9 @@ class _Entry implements Trackable {
   const _Entry(this.id, this.title, this.rating, this.happenedOn);
 
   @override
-  final int id;
+  final String id;
+  @override
+  DateTime? get updatedAt => null;
   @override
   final String title;
   @override
@@ -16,7 +18,6 @@ class _Entry implements Trackable {
   @override
   final DateTime happenedOn;
 
-  @override
   @override
   String? get description => null;
   @override
@@ -26,7 +27,7 @@ class _Entry implements Trackable {
 }
 
 Trackable entry(String title, {double? rating, required int year}) =>
-    _Entry(title.hashCode, title, rating, DateTime(year, 6, 15));
+    _Entry(title, title, rating, DateTime(year, 6, 15));
 
 void main() {
   group('TrackingStats.from', () {

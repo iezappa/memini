@@ -55,7 +55,7 @@ class RoomListScreen extends ConsumerWidget {
               controller.setEscaped(selected ? false : null),
         ),
         if (franchises.isNotEmpty)
-          PopupMenuButton<int?>(
+          PopupMenuButton<String?>(
             onSelected: controller.setFranchise,
             itemBuilder: (context) => [
               PopupMenuItem(value: null, child: Text(l10n.filterAllFranchises)),

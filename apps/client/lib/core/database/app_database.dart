@@ -9,6 +9,7 @@ import '../../features/games/domain/game.dart';
 import '../../features/rooms/data/room_tables.dart';
 import '../../features/screen/data/viewing_tables.dart';
 import '../../features/screen/domain/viewing.dart';
+import '../ids/uuid.dart';
 import 'app_database.steps.dart';
 import 'legacy_photos.dart';
 import 'storage_durability.dart';
@@ -50,10 +51,19 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 3;
+  static const currentSchemaVersion = 4;
 
   @override
   int get schemaVersion => currentSchemaVersion;
+
+  /// A random version 4 UUID, evaluated per row, in plain SQLite: sixteen
+  /// random bytes as lowercase hex, with the version and variant nibbles set.
+  static const _uuidSql =
+      "(lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' "
+      "|| substr(lower(hex(randomblob(2))), 2) || '-' "
+      "|| substr('89ab', 1 + (abs(random()) % 4), 1) "
+      "|| substr(lower(hex(randomblob(2))), 2) || '-' "
+      '|| lower(hex(randomblob(6))))';
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -79,6 +89,74 @@ class AppDatabase extends _$AppDatabase {
             await m.alterTable(TableMigration(schema.gigs));
             await m.alterTable(TableMigration(schema.viewings));
             await m.alterTable(TableMigration(schema.games));
+          },
+          // v4 gives every record a UUID and an updatedAt (1.1 of the
+          // standard). Every table is rebuilt; franchise ids are minted first,
+          // into a temporary map, so each room's link is rewritten onto the
+          // new id of the franchise it pointed at. Rows are copied in rowid
+          // order, which the lists use to tie-break entries on the same day.
+          from3To4: (m, schema) async {
+            await transaction(() async {
+              final stamp = Variable<DateTime>(DateTime.now());
+
+              await customStatement(
+                'CREATE TEMP TABLE franchise_ids AS '
+                'SELECT id AS old_id, $_uuidSql AS new_id FROM franchises',
+              );
+
+              await m.alterTable(
+                TableMigration(
+                  schema.franchises,
+                  columnTransformer: {
+                    schema.franchises.id: const CustomExpression<String>(
+                      '(SELECT new_id FROM franchise_ids '
+                      'WHERE old_id = franchises.id)',
+                    ),
+                    schema.franchises.updatedAt: stamp,
+                  },
+                  newColumns: [schema.franchises.updatedAt],
+                ),
+              );
+
+              await m.alterTable(
+                TableMigration(
+                  schema.rooms,
+                  columnTransformer: {
+                    schema.rooms.id: const CustomExpression<String>(_uuidSql),
+                    schema.rooms.franchiseId: const CustomExpression<String>(
+                      '(SELECT new_id FROM franchise_ids '
+                      'WHERE old_id = rooms.franchise_id)',
+                    ),
+                    schema.rooms.updatedAt: stamp,
+                  },
+                  newColumns: [schema.rooms.updatedAt],
+                ),
+              );
+
+              for (final (table, id, updatedAt) in [
+                (schema.meals, schema.meals.id, schema.meals.updatedAt),
+                (schema.gigs, schema.gigs.id, schema.gigs.updatedAt),
+                (
+                  schema.viewings,
+                  schema.viewings.id,
+                  schema.viewings.updatedAt,
+                ),
+                (schema.games, schema.games.id, schema.games.updatedAt),
+              ]) {
+                await m.alterTable(
+                  TableMigration(
+                    table,
+                    columnTransformer: {
+                      id: const CustomExpression<String>(_uuidSql),
+                      updatedAt: stamp,
+                    },
+                    newColumns: [updatedAt],
+                  ),
+                );
+              }
+
+              await customStatement('DROP TABLE franchise_ids');
+            });
           },
         ),
       );

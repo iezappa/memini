@@ -5,12 +5,20 @@ import '../domain/franchise.dart';
 import '../domain/franchise_repository.dart';
 
 class DriftFranchiseRepository implements FranchiseRepository {
-  DriftFranchiseRepository(this._db);
+  DriftFranchiseRepository(this._db, {DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final AppDatabase _db;
 
-  Franchise _toDomain(FranchiseRow row) =>
-      Franchise(id: row.id, name: row.name, logoPath: row.logoPath);
+  /// Stamps updatedAt on every write. Injected so tests can pin it.
+  final DateTime Function() _now;
+
+  Franchise _toDomain(FranchiseRow row) => Franchise(
+    id: row.id,
+    name: row.name,
+    logoPath: row.logoPath,
+    updatedAt: row.updatedAt,
+  );
 
   SimpleSelectStatement<$FranchisesTable, FranchiseRow> get _ordered =>
       _db.select(_db.franchises)
@@ -27,7 +35,7 @@ class DriftFranchiseRepository implements FranchiseRepository {
       _ordered.watch().map((rows) => rows.map(_toDomain).toList());
 
   @override
-  Future<Franchise?> findById(int id) async {
+  Future<Franchise?> findById(String id) async {
     final row = await (_db.select(
       _db.franchises,
     )..where((f) => f.id.equals(id))).getSingleOrNull();
@@ -53,6 +61,7 @@ class DriftFranchiseRepository implements FranchiseRepository {
         .into(_db.franchises)
         .insertReturning(
           FranchisesCompanion.insert(
+            updatedAt: _now(),
             name: draft.name.trim(),
             logoPath: Value(draft.logoPath),
           ),
@@ -66,6 +75,7 @@ class DriftFranchiseRepository implements FranchiseRepository {
       _db.franchises,
     )..where((f) => f.id.equals(franchise.id))).write(
       FranchisesCompanion(
+        updatedAt: Value(_now()),
         name: Value(franchise.name.trim()),
         logoPath: Value(franchise.logoPath),
       ),
@@ -73,7 +83,7 @@ class DriftFranchiseRepository implements FranchiseRepository {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> delete(String id) async {
     await (_db.delete(_db.franchises)..where((f) => f.id.equals(id))).go();
   }
 }

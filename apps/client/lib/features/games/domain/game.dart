@@ -10,6 +10,7 @@ enum GameStatus { playing, finished, hundredPercent, dropped }
 class Game implements Trackable {
   const Game({
     required this.id,
+    this.updatedAt,
     required this.title,
     required this.happenedOn,
     required this.status,
@@ -23,12 +24,14 @@ class Game implements Trackable {
   });
 
   @override
-  final int id;
+  final String id;
+
+  @override
+  final DateTime? updatedAt;
   @override
   final String title;
 
   /// Cover art, either picked by the owner or cached from a lookup.
-  @override
   @override
   final String? description;
   @override
@@ -73,6 +76,7 @@ class Game implements Trackable {
   }) {
     return Game(
       id: id,
+      updatedAt: updatedAt,
       title: title ?? this.title,
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),

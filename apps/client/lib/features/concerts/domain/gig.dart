@@ -8,6 +8,7 @@ import '../../../core/tracking/domain/trackable.dart';
 class Gig implements Trackable {
   const Gig({
     required this.id,
+    this.updatedAt,
     required this.title,
     required this.happenedOn,
     this.description,
@@ -22,12 +23,14 @@ class Gig implements Trackable {
   });
 
   @override
-  final int id;
+  final String id;
+
+  @override
+  final DateTime? updatedAt;
 
   /// The headliner.
   @override
   final String title;
-  @override
   @override
   final String? description;
   @override
@@ -71,6 +74,7 @@ class Gig implements Trackable {
   }) {
     return Gig(
       id: id,
+      updatedAt: updatedAt,
       title: title ?? this.title,
       description: description ?? this.description,
       rating: clearRating ? null : (rating ?? this.rating),

@@ -1,13 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/time/clock.dart';
 import '../../../core/tracking/presentation/tracking_filter_controller.dart';
 import '../data/drift_meal_repository.dart';
 import '../domain/meal.dart';
 import '../domain/meal_repository.dart';
 
 final mealRepositoryProvider = Provider<MealRepository>(
-  (ref) => DriftMealRepository(ref.watch(databaseProvider)),
+  (ref) => DriftMealRepository(
+    ref.watch(databaseProvider),
+    now: ref.watch(clockProvider),
+  ),
 );
 
 final mealFilterProvider = NotifierProvider<MealFilterController, MealFilter>(
@@ -33,7 +37,7 @@ final allMealsProvider = StreamProvider<List<Meal>>(
   (ref) => ref.watch(mealRepositoryProvider).watch(const MealFilter()),
 );
 
-final mealProvider = FutureProvider.family<Meal?, int>((ref, id) {
+final mealProvider = FutureProvider.family<Meal?, String>((ref, id) {
   // Re-resolves whenever the collection changes so an edit is reflected
   // without the detail screen having to invalidate itself.
   ref.watch(allMealsProvider);

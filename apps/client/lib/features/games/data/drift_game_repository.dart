@@ -7,9 +7,13 @@ import '../domain/game.dart';
 import '../domain/game_repository.dart';
 
 class DriftGameRepository implements GameRepository {
-  DriftGameRepository(this._db);
+  DriftGameRepository(this._db, {DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final AppDatabase _db;
+
+  /// Stamps updatedAt on every write. Injected so tests can pin it.
+  final DateTime Function() _now;
 
   TrackingColumns get _columns {
     final games = _db.games;
@@ -25,6 +29,7 @@ class DriftGameRepository implements GameRepository {
 
   Game _toDomain(GameRow row) => Game(
     id: row.id,
+    updatedAt: row.updatedAt,
     title: row.title,
     description: row.description,
     rating: row.rating,
@@ -68,7 +73,7 @@ class DriftGameRepository implements GameRepository {
       _query(filter).watch().map((rows) => rows.map(_toDomain).toList());
 
   @override
-  Future<Game?> findById(int id) async {
+  Future<Game?> findById(String id) async {
     final row = await (_db.select(
       _db.games,
     )..where((g) => g.id.equals(id))).getSingleOrNull();
@@ -81,6 +86,7 @@ class DriftGameRepository implements GameRepository {
         .into(_db.games)
         .insertReturning(
           GamesCompanion.insert(
+            updatedAt: _now(),
             title: draft.title.trim(),
             happenedOn: dayOf(draft.happenedOn),
             status: draft.status,
@@ -100,6 +106,7 @@ class DriftGameRepository implements GameRepository {
   Future<void> update(Game entry) async {
     await (_db.update(_db.games)..where((g) => g.id.equals(entry.id))).write(
       GamesCompanion(
+        updatedAt: Value(_now()),
         title: Value(entry.title.trim()),
         description: Value(entry.description),
         rating: Value(entry.rating),
@@ -115,7 +122,7 @@ class DriftGameRepository implements GameRepository {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> delete(String id) async {
     await (_db.delete(_db.games)..where((g) => g.id.equals(id))).go();
   }
 }

@@ -4,7 +4,7 @@ import 'franchise.dart';
 abstract interface class FranchiseRepository {
   Future<List<Franchise>> listAll();
 
-  Future<Franchise?> findById(int id);
+  Future<Franchise?> findById(String id);
 
   /// Returns the franchise with this name, creating it if absent.
   /// Matching is case-insensitive and ignores surrounding whitespace.
@@ -16,7 +16,7 @@ abstract interface class FranchiseRepository {
 
   /// Deletes the franchise. Rooms that referenced it keep existing with no
   /// franchise attached.
-  Future<void> delete(int id);
+  Future<void> delete(String id);
 
   Stream<List<Franchise>> watchAll();
 }

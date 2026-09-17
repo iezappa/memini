@@ -6,7 +6,7 @@ import '../../franchises/data/franchise_tables.dart';
 @DataClassName('RoomRow')
 class Rooms extends Table with TrackableTable {
   /// Rooms outlive their franchise: deleting one detaches instead of cascading.
-  IntColumn get franchiseId => integer().nullable().references(
+  TextColumn get franchiseId => text().nullable().references(
     Franchises,
     #id,
     onDelete: KeyAction.setNull,

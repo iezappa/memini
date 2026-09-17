@@ -20,7 +20,7 @@ void main() {
   });
   tearDown(() => db.close());
 
-  Future<Room> logRoom({int? franchiseId}) => rooms.create(
+  Future<Room> logRoom({String? franchiseId}) => rooms.create(
     RoomDraft(
       title: 'The Vault',
       happenedOn: DateTime(2026, 3, 14),
