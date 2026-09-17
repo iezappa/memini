@@ -53,6 +53,13 @@ jobs:
             test -s "build/web/$f" || { echo "::error::build/web/$f is missing"; exit 1; }
           done
 
+      # Own service worker (web/sw.js, registered by web/flutter_bootstrap.js):
+      # inject the version and the precache manifest. Last step that touches
+      # build/web, so every shipped file is in the manifest. Its scope is the
+      # folder of sw.js, /memini/ here.
+      - name: Generate the service worker
+        run: sh tool/generate_sw.sh build/web pubspec.yaml
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

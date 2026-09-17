@@ -45,6 +45,11 @@ jobs:
       - name: Test
         run: flutter test
 
+      - name: Test the release and service worker scripts
+        run: |
+          bash tool/release_apk_test.sh
+          bash tool/generate_sw_test.sh
+
   integration:
     name: Integration test (Linux desktop)
     runs-on: ubuntu-latest
