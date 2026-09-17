@@ -852,4 +852,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eraseAllAction => 'Borrar todo';
+
+  @override
+  String get privacyPolicy => 'Política de privacidad';
+
+  @override
+  String get termsOfUse => 'Términos de uso';
+
+  @override
+  String get developerContact => 'Desarrollador';
+
+  @override
+  String get developerContactHint =>
+      'Consultas y reportes: el registro de issues del proyecto';
+
+  @override
+  String get openSourceLicenses => 'Licencias';
 }

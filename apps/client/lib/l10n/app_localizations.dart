@@ -1597,6 +1597,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete everything'**
   String get eraseAllAction;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get termsOfUse;
+
+  /// No description provided for @developerContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get developerContact;
+
+  /// No description provided for @developerContactHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions and reports: the project\'s issue tracker'**
+  String get developerContactHint;
+
+  /// No description provided for @openSourceLicenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Licences'**
+  String get openSourceLicenses;
 }
 
 class _AppLocalizationsDelegate

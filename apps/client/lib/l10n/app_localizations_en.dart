@@ -852,4 +852,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eraseAllAction => 'Delete everything';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get termsOfUse => 'Terms of use';
+
+  @override
+  String get developerContact => 'Developer';
+
+  @override
+  String get developerContactHint =>
+      'Questions and reports: the project\'s issue tracker';
+
+  @override
+  String get openSourceLicenses => 'Licences';
 }

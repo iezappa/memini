@@ -305,5 +305,10 @@
   "eraseAllConfirmWord": "BORRAR",
   "eraseAllTypeToConfirm": "Escribí {word} para confirmar",
   "eraseAllExportFirst": "Exportar antes",
-  "eraseAllAction": "Borrar todo"
+  "eraseAllAction": "Borrar todo",
+  "privacyPolicy": "Política de privacidad",
+  "termsOfUse": "Términos de uso",
+  "developerContact": "Desarrollador",
+  "developerContactHint": "Consultas y reportes: el registro de issues del proyecto",
+  "openSourceLicenses": "Licencias"
 }

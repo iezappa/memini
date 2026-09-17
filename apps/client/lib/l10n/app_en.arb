@@ -347,5 +347,10 @@
     }
   },
   "eraseAllExportFirst": "Export first",
-  "eraseAllAction": "Delete everything"
+  "eraseAllAction": "Delete everything",
+  "privacyPolicy": "Privacy policy",
+  "termsOfUse": "Terms of use",
+  "developerContact": "Developer",
+  "developerContactHint": "Questions and reports: the project's issue tracker",
+  "openSourceLicenses": "Licences"
 }

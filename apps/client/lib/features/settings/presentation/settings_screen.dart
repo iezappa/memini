@@ -12,6 +12,9 @@ import '../../backup/domain/backup_document.dart';
 import '../../backup/presentation/backup_actions.dart';
 import '../../backup/presentation/backup_feedback.dart';
 import '../../backup/presentation/erase_all_data_tile.dart';
+import '../../legal/data/asset_legal_documents.dart';
+import '../../legal/presentation/legal_document_screen.dart';
+import '../../legal/presentation/legal_links.dart';
 import '../../onboarding/presentation/onboarding_screen.dart';
 import '../../shared/support_actions.dart';
 import '../../shared/widgets.dart';
@@ -600,11 +603,30 @@ class _SupportSection extends StatelessWidget {
   }
 }
 
-class _AboutSection extends StatelessWidget {
+class _AboutSection extends ConsumerWidget {
   const _AboutSection();
 
+  void _openDocument(BuildContext context, LegalDocumentType type) =>
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => LegalDocumentScreen(type: type),
+        ),
+      );
+
+  Future<void> _contact(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final failure = AppLocalizations.of(context).linkFailed;
+    var ok = false;
+    try {
+      ok = await ref.read(urlOpenerProvider)(kContactUrl);
+    } catch (_) {
+      ok = false;
+    }
+    if (!ok) messenger.showSnackBar(SnackBar(content: Text(failure)));
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
 
     return _Section(
@@ -620,6 +642,34 @@ class _AboutSection extends StatelessWidget {
           ),
         ),
         Gap.vSm,
+        // Bundled with the app, so they read offline (CUMPLIMIENTO.md 2).
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.privacy_tip_outlined),
+          title: Text(l10n.privacyPolicy),
+          onTap: () => _openDocument(context, LegalDocumentType.privacy),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.gavel_outlined),
+          title: Text(l10n.termsOfUse),
+          onTap: () => _openDocument(context, LegalDocumentType.terms),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.person_outline),
+          title: Text(l10n.developerContact),
+          subtitle: Text('$kDeveloperName\n${l10n.developerContactHint}'),
+          isThreeLine: true,
+          onTap: () => _contact(context, ref),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.description_outlined),
+          title: Text(l10n.openSourceLicenses),
+          onTap: () =>
+              showLicensePage(context: context, applicationName: l10n.appTitle),
+        ),
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.school_outlined),

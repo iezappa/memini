@@ -7,9 +7,11 @@ import 'app/app.dart';
 import 'app/providers.dart';
 import 'core/app/app_restart.dart';
 import 'core/database/persistent_storage.dart';
+import 'features/legal/data/font_licenses.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerFontLicenses();
 
   // Preferences are read synchronously all over the app, so they are resolved
   // once here instead of leaking a FutureProvider into every widget.

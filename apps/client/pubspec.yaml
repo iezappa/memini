@@ -82,6 +82,11 @@ flutter:
   uses-material-design: true
   generate: true
 
+  assets:
+    - assets/legal/
+    - assets/fonts/OFL-Fraunces.txt
+    - assets/fonts/OFL-Inter.txt
+
   fonts:
     - family: Fraunces
       fonts:
