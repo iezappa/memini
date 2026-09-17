@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:memini/core/database/app_database.dart';
 
 import 'generated/schema.dart';
+import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 
@@ -31,6 +32,60 @@ void main() {
       });
     }
   });
+
+  // No commit of this repository ever had schemaVersion 1: the first commit
+  // already shipped v2. The v1 dump is reconstructed from the v1 -> v2
+  // migration itself, which only creates the four newer tables and leaves
+  // franchises and rooms alone, so v1 is exactly those two v2 tables.
+  test(
+    'v1 to v3 keeps franchises and rooms, and adds the other domains',
+    () async {
+      await verifier.testWithDataIntegrity(
+        oldVersion: 1,
+        newVersion: 3,
+        createOld: v1.DatabaseAtV1.new,
+        createNew: v3.DatabaseAtV3.new,
+        openTestedDatabase: AppDatabase.forTesting,
+        createItems: (batch, oldDb) {
+          batch.insertAll(oldDb.franchises, [
+            const v1.FranchisesData(id: 1, name: 'Enigma'),
+          ]);
+          batch.insertAll(oldDb.rooms, [
+            const v1.RoomsData(
+              id: 1,
+              title: 'The Vault',
+              photoPath: '/data/room_photos/1.jpg',
+              review: 'Tight',
+              rating: 9.5,
+              happenedOn: 1773446400,
+              franchiseId: 1,
+              escaped: 1,
+              timeLeftMinutes: 4,
+            ),
+          ]);
+        },
+        validateItems: (newDb) async {
+          expect(await newDb.select(newDb.franchises).get(), [
+            const v3.FranchisesData(id: 1, name: 'Enigma'),
+          ]);
+          expect(await newDb.select(newDb.rooms).get(), [
+            const v3.RoomsData(
+              id: 1,
+              title: 'The Vault',
+              review: 'Tight',
+              rating: 9.5,
+              happenedOn: 1773446400,
+              franchiseId: 1,
+              escaped: 1,
+              timeLeftMinutes: 4,
+            ),
+          ]);
+          expect(await newDb.select(newDb.meals).get(), isEmpty);
+          expect(await newDb.select(newDb.games).get(), isEmpty);
+        },
+      );
+    },
+  );
 
   test('v2 to v3 drops the photo paths and keeps everything else', () async {
     await verifier.testWithDataIntegrity(

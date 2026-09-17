@@ -58,19 +58,18 @@ class AppDatabase extends _$AppDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
-      // v2 opened the log to the other four domains. Every one of them is a
-      // brand new table, so nothing existing has to be rewritten.
-      if (from < 2) {
-        await m.createTable(meals);
-        await m.createTable(gigs);
-        await m.createTable(viewings);
-        await m.createTable(games);
-      }
-
       await m.runMigrationSteps(
-        from: from < 2 ? 2 : from,
+        from: from,
         to: to,
         steps: migrationSteps(
+          // v2 opened the log to the other four domains. Every one of them is
+          // a brand new table, so nothing existing has to be rewritten.
+          from1To2: (m, schema) async {
+            await m.createTable(schema.meals);
+            await m.createTable(schema.gigs);
+            await m.createTable(schema.viewings);
+            await m.createTable(schema.games);
+          },
           // v3 removed photos: every tracked table loses its photo_path.
           // Each table is rebuilt from its v3 shape, which works on every
           // SQLite build, including those without ALTER TABLE DROP COLUMN.
