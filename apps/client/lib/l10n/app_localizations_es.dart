@@ -887,4 +887,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get aboutVersionHint => 'Ver qué cambió en cada versión';
+
+  @override
+  String get updateAvailableTitle => 'Hay una versión nueva';
+
+  @override
+  String updateAvailableBody(String version) {
+    return 'La versión $version está disponible.';
+  }
+
+  @override
+  String get updateAvailableBackupHint =>
+      'Esta versión cambia cómo se guardan tus datos. Exporta un respaldo antes de actualizar.';
+
+  @override
+  String get updateUnsupportedPath =>
+      'Tu versión es muy antigua para actualizar directo. Exporta un respaldo y consulta las instrucciones.';
+
+  @override
+  String get updateActionReload => 'Actualizar';
+
+  @override
+  String get updateActionDownload => 'Descargar';
+
+  @override
+  String get updateActionExport => 'Exportar';
+
+  @override
+  String get updateActionDismiss => 'Ahora no';
 }

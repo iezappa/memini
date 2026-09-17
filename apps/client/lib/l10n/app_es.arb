@@ -315,5 +315,13 @@
   "whatsNewClose": "Entendido",
   "releaseNotesHistory": "Novedades",
   "aboutVersion": "Versión {version}",
-  "aboutVersionHint": "Ver qué cambió en cada versión"
+  "aboutVersionHint": "Ver qué cambió en cada versión",
+  "updateAvailableTitle": "Hay una versión nueva",
+  "updateAvailableBody": "La versión {version} está disponible.",
+  "updateAvailableBackupHint": "Esta versión cambia cómo se guardan tus datos. Exporta un respaldo antes de actualizar.",
+  "updateUnsupportedPath": "Tu versión es muy antigua para actualizar directo. Exporta un respaldo y consulta las instrucciones.",
+  "updateActionReload": "Actualizar",
+  "updateActionDownload": "Descargar",
+  "updateActionExport": "Exportar",
+  "updateActionDismiss": "Ahora no"
 }

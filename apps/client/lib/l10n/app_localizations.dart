@@ -1657,6 +1657,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See what changed in each release'**
   String get aboutVersionHint;
+
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version is available'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} is available.'**
+  String updateAvailableBody(String version);
+
+  /// No description provided for @updateAvailableBackupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This version changes how your data is stored. Export a backup before updating.'**
+  String get updateAvailableBackupHint;
+
+  /// No description provided for @updateUnsupportedPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Your version is too old to update directly. Export a backup and check the instructions.'**
+  String get updateUnsupportedPath;
+
+  /// No description provided for @updateActionReload.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get updateActionReload;
+
+  /// No description provided for @updateActionDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get updateActionDownload;
+
+  /// No description provided for @updateActionExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get updateActionExport;
+
+  /// No description provided for @updateActionDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get updateActionDismiss;
 }
 
 class _AppLocalizationsDelegate

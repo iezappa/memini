@@ -22,6 +22,8 @@ class SettingsRepository {
   static const _lastExportKey = 'backup.last_export_at';
   static const _reminderDismissedKey = 'backup.reminder_dismissed_at';
   static const _lastSeenVersionKey = 'releaseNotes.lastSeenVersion';
+  static const _lastUpdateCheckKey = 'update.last_check_at';
+  static const _dismissedUpdateKey = 'update.dismissed_version';
 
   /// Preferences that survive "delete all my data".
   ///
@@ -108,6 +110,18 @@ class SettingsRepository {
 
   Future<void> setLastSeenVersion(String version) =>
       _prefs.setString(_lastSeenVersionKey, version);
+
+  /// When GitHub was last asked for a newer release (6 h throttle, 8.2).
+  DateTime? get lastUpdateCheckAt => _dateAt(_lastUpdateCheckKey);
+
+  Future<void> recordUpdateCheck(DateTime at) =>
+      _prefs.setString(_lastUpdateCheckKey, at.toIso8601String());
+
+  /// The version whose update banner the owner dismissed.
+  String? get dismissedUpdateVersion => _prefs.getString(_dismissedUpdateKey);
+
+  Future<void> setDismissedUpdateVersion(String version) =>
+      _prefs.setString(_dismissedUpdateKey, version);
 
   /// Forgets every preference except [keptOnErase].
   Future<void> eraseAllButAppearance() async {
