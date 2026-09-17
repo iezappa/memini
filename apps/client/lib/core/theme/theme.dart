@@ -65,6 +65,9 @@ abstract final class MeminiTheme {
       primary: accent.deepSeed,
       onPrimary: Colors.white,
       secondary: MeminiColors.escapedDeep,
+      // White, not the default black: black on escapedDeep is 3.4:1, below
+      // the 4.5:1 a selected segment's label needs.
+      onSecondary: Colors.white,
       surface: MeminiColors.paperSurface,
       onSurface: MeminiColors.textOnPaper,
       surfaceContainerLowest: MeminiColors.paper,
@@ -163,11 +166,14 @@ abstract final class MeminiTheme {
         height: 1.4,
         color: semantics.muted,
       ),
-      labelLarge: const TextStyle(
+      // Coloured explicitly: a label outside a button (the menu chips) has no
+      // foreground to inherit, and a null colour painted it invisible.
+      labelLarge: TextStyle(
         fontFamily: _body,
         fontSize: 14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.1,
+        color: scheme.onSurface,
       ),
       // Used for the small uppercase eyebrow labels above sections.
       labelSmall: TextStyle(
@@ -256,7 +262,11 @@ abstract final class MeminiTheme {
         selectedColor: scheme.primary.withValues(alpha: 0.14),
         side: BorderSide(color: semantics.hairline),
         shape: const RoundedRectangleBorder(borderRadius: Radii.pill),
-        labelStyle: TextStyle(fontFamily: _body, fontSize: 13),
+        labelStyle: TextStyle(
+          fontFamily: _body,
+          fontSize: 13,
+          color: scheme.onSurface,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 6),
       ),
       snackBarTheme: SnackBarThemeData(

@@ -21,6 +21,7 @@ Future<Widget> harness(
   Locale locale = const Locale('en'),
   List<Override> overrides = const [],
   Map<String, Object> prefs = const {},
+  ThemeMode themeMode = ThemeMode.light,
 }) async {
   SharedPreferences.setMockInitialValues(prefs);
 
@@ -34,6 +35,8 @@ Future<Widget> harness(
     ],
     child: MaterialApp(
       theme: MeminiTheme.light(),
+      darkTheme: MeminiTheme.dark(),
+      themeMode: themeMode,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,

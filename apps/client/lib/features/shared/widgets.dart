@@ -254,9 +254,10 @@ class AccentSwatch extends StatelessWidget {
       child: InkResponse(
         onTap: onTap,
         radius: 28,
+        // 48 across: the smallest target Android's guideline accepts.
         child: Container(
-          width: 40,
-          height: 40,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: accent.seed,

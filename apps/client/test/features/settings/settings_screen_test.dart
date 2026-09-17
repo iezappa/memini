@@ -6,6 +6,7 @@ import 'package:memini/app/providers.dart';
 import 'package:memini/core/database/app_database.dart';
 import 'package:memini/features/security/data/pin_service.dart';
 import 'package:memini/features/settings/presentation/settings_screen.dart';
+import 'package:memini/features/shared/support_actions.dart';
 import 'package:memini/features/shared/widgets.dart';
 
 import 'package:memini/features/backup/presentation/backup_actions.dart';
@@ -117,20 +118,12 @@ void main() {
     // The support block is the one deliberate card; every other control sits
     // straight on the page, which is what separates this layout from a
     // grouped-card one.
-    for (final label in [
-      'PIN lock',
-      'Your name',
-      'TMDB key (films and series)',
-    ]) {
-      expect(
-        find.ancestor(
-          of: find.widgetWithText(ListTile, label),
-          matching: find.byType(Card),
-        ),
-        findsNothing,
-        reason: '"$label" must not be wrapped in a Card',
-      );
-    }
+    expect(find.byType(SupportProjectsCard), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(Card), matching: find.byType(ListTile)),
+      findsNothing,
+      reason: 'a row inside a card is the grouped layout the standard drops',
+    );
 
     await unmount(tester);
   });
