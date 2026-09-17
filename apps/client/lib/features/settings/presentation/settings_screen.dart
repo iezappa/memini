@@ -15,6 +15,8 @@ import '../../backup/presentation/erase_all_data_tile.dart';
 import '../../legal/data/asset_legal_documents.dart';
 import '../../legal/presentation/legal_document_screen.dart';
 import '../../legal/presentation/legal_links.dart';
+import '../../release_notes/presentation/release_notes_dialog.dart';
+import '../../release_notes/presentation/release_notes_providers.dart';
 import '../../onboarding/presentation/onboarding_screen.dart';
 import '../../shared/support_actions.dart';
 import '../../shared/widgets.dart';
@@ -670,6 +672,7 @@ class _AboutSection extends ConsumerWidget {
           onTap: () =>
               showLicensePage(context: context, applicationName: l10n.appTitle),
         ),
+        const _VersionTile(),
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.school_outlined),
@@ -681,6 +684,28 @@ class _AboutSection extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// The running version, read from the bundled release notes (a test pins them
+/// to pubspec.yaml). Tapping it opens the whole history.
+class _VersionTile extends ConsumerWidget {
+  const _VersionTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final notes = ref.watch(releaseNotesProvider(language)).valueOrNull;
+    if (notes == null) return const SizedBox.shrink();
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.new_releases_outlined),
+      title: Text(l10n.aboutVersion('${notes.current}')),
+      subtitle: Text(l10n.aboutVersionHint),
+      onTap: () => showReleaseNotesDialog(context, releases: notes.all),
     );
   }
 }

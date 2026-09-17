@@ -352,5 +352,24 @@
   "termsOfUse": "Terms of use",
   "developerContact": "Developer",
   "developerContactHint": "Questions and reports: the project's issue tracker",
-  "openSourceLicenses": "Licences"
+  "openSourceLicenses": "Licences",
+  "whatsNewTitle": "What's new in {version}",
+  "@whatsNewTitle": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsNewClose": "Got it",
+  "releaseNotesHistory": "Release notes",
+  "aboutVersion": "Version {version}",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutVersionHint": "See what changed in each release"
 }

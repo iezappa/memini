@@ -84,6 +84,7 @@ flutter:
 
   assets:
     - assets/legal/
+    - assets/release_notes/
     - assets/fonts/OFL-Fraunces.txt
     - assets/fonts/OFL-Inter.txt
 

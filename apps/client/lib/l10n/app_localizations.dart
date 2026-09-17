@@ -1627,6 +1627,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Licences'**
   String get openSourceLicenses;
+
+  /// No description provided for @whatsNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new in {version}'**
+  String whatsNewTitle(String version);
+
+  /// No description provided for @whatsNewClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get whatsNewClose;
+
+  /// No description provided for @releaseNotesHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Release notes'**
+  String get releaseNotesHistory;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String aboutVersion(String version);
+
+  /// No description provided for @aboutVersionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'See what changed in each release'**
+  String get aboutVersionHint;
 }
 
 class _AppLocalizationsDelegate

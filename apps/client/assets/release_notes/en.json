@@ -1,0 +1,14 @@
+{
+  "releases": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-01",
+      "highlights": [
+        "Log escape rooms, meals, concerts, films and series, and games, each with a score and a review.",
+        "Look up films, series, games and bands to fill in the details.",
+        "Everything stays on this device: export a backup to keep it safe.",
+        "An optional PIN locks the app."
+      ]
+    }
+  ]
+}

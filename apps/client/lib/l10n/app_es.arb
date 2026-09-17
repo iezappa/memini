@@ -310,5 +310,10 @@
   "termsOfUse": "Términos de uso",
   "developerContact": "Desarrollador",
   "developerContactHint": "Consultas y reportes: el registro de issues del proyecto",
-  "openSourceLicenses": "Licencias"
+  "openSourceLicenses": "Licencias",
+  "whatsNewTitle": "Novedades en {version}",
+  "whatsNewClose": "Entendido",
+  "releaseNotesHistory": "Novedades",
+  "aboutVersion": "Versión {version}",
+  "aboutVersionHint": "Ver qué cambió en cada versión"
 }

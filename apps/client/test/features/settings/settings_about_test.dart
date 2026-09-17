@@ -4,6 +4,7 @@ import 'package:memini/core/database/app_database.dart';
 import 'package:memini/features/backup/presentation/backup_actions.dart';
 import 'package:memini/app/providers.dart';
 import 'package:memini/features/legal/presentation/legal_links.dart';
+import 'package:memini/features/release_notes/presentation/release_notes_providers.dart';
 import 'package:memini/features/security/data/pin_service.dart';
 import 'package:memini/features/settings/presentation/settings_screen.dart';
 
@@ -33,6 +34,7 @@ void main() {
             PinService(InMemorySecureStore()),
           ),
           backupFilesProvider.overrideWithValue(FakeBackupFiles()),
+          assetBundleProvider.overrideWithValue(DiskAssetBundle()),
           urlOpenerProvider.overrideWithValue((url) async {
             opened.add(url);
             return true;
@@ -60,7 +62,9 @@ void main() {
       findsOneWidget,
     );
     expect(top('Licences'), greaterThan(top('Developer')));
-    expect(top('Show the tutorial again'), greaterThan(top('Licences')));
+    await tester.pumpAndSettle();
+    expect(top('Version 1.0.0'), greaterThan(top('Licences')));
+    expect(top('Show the tutorial again'), greaterThan(top('Version 1.0.0')));
 
     await unmount(tester);
   });
@@ -109,6 +113,22 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(LicensePage), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('the version row opens the release history', (tester) async {
+    await pumpSettings(tester);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Version 1.0.0'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Release notes'), findsOneWidget);
+    expect(
+      find.textContaining('An optional PIN locks the app'),
+      findsOneWidget,
+    );
 
     await unmount(tester);
   });

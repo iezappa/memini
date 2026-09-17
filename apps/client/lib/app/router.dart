@@ -16,6 +16,7 @@ import '../features/games/presentation/game_detail_screen.dart';
 import '../features/games/presentation/game_form_screen.dart';
 import '../features/games/presentation/game_list_screen.dart';
 import '../features/home/presentation/home_screen.dart';
+import '../features/release_notes/presentation/whats_new_check.dart';
 import '../features/rooms/presentation/room_list_screen.dart';
 import '../features/screen/presentation/viewing_detail_screen.dart';
 import '../features/screen/presentation/viewing_form_screen.dart';
@@ -190,12 +191,14 @@ class _WithNotices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BackupNoticeCheck(
-    child: Column(
-      children: [
-        Expanded(child: child),
-        const StorageWarningBanner(),
-        const BackupReminderBanner(),
-      ],
+    child: WhatsNewCheck(
+      child: Column(
+        children: [
+          Expanded(child: child),
+          const StorageWarningBanner(),
+          const BackupReminderBanner(),
+        ],
+      ),
     ),
   );
 }

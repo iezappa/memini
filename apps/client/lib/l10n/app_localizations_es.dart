@@ -868,4 +868,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get openSourceLicenses => 'Licencias';
+
+  @override
+  String whatsNewTitle(String version) {
+    return 'Novedades en $version';
+  }
+
+  @override
+  String get whatsNewClose => 'Entendido';
+
+  @override
+  String get releaseNotesHistory => 'Novedades';
+
+  @override
+  String aboutVersion(String version) {
+    return 'Versión $version';
+  }
+
+  @override
+  String get aboutVersionHint => 'Ver qué cambió en cada versión';
 }

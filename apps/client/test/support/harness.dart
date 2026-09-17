@@ -1,4 +1,6 @@
-import 'dart:typed_data';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
@@ -166,4 +168,14 @@ class FakeBackupFiles implements BackupFiles {
 
   @override
   Future<Uint8List?> open() async => toOpen;
+}
+
+/// The app's real bundled files, read straight from disk.
+///
+/// `rootBundle` loads through real I/O that a widget test's fake clock does
+/// not wait for; a synchronous read resolves within the frame.
+class DiskAssetBundle extends CachingAssetBundle {
+  @override
+  Future<ByteData> load(String key) async =>
+      ByteData.sublistView(File(key).readAsBytesSync());
 }

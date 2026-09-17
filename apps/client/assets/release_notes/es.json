@@ -1,0 +1,14 @@
+{
+  "releases": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-01",
+      "highlights": [
+        "Registra salas de escape, comidas, conciertos, películas y series, y juegos, cada uno con puntuación y reseña.",
+        "Busca películas, series, juegos y bandas para completar los detalles.",
+        "Todo queda en este dispositivo: exporta un respaldo para no perderlo.",
+        "Un PIN opcional bloquea la app."
+      ]
+    }
+  ]
+}

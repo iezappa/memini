@@ -21,6 +21,7 @@ class SettingsRepository {
   static const _backupNoticeKey = 'onboarding.backup_notice_accepted';
   static const _lastExportKey = 'backup.last_export_at';
   static const _reminderDismissedKey = 'backup.reminder_dismissed_at';
+  static const _lastSeenVersionKey = 'releaseNotes.lastSeenVersion';
 
   /// Preferences that survive "delete all my data".
   ///
@@ -101,6 +102,12 @@ class SettingsRepository {
 
   Future<void> snoozeBackupReminder(DateTime at) =>
       _prefs.setString(_reminderDismissedKey, at.toIso8601String());
+
+  /// The newest version whose release notes this device has been shown.
+  String? get lastSeenVersion => _prefs.getString(_lastSeenVersionKey);
+
+  Future<void> setLastSeenVersion(String version) =>
+      _prefs.setString(_lastSeenVersionKey, version);
 
   /// Forgets every preference except [keptOnErase].
   Future<void> eraseAllButAppearance() async {
