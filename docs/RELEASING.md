@@ -13,11 +13,14 @@ Requirements: the Android SDK with build-tools (`apksigner` on `PATH` or under
 `$ANDROID_HOME`), Flutter, an authenticated `gh`, and the signing setup in
 [`SIGNING.md`](SIGNING.md).
 
-1. Bump `version:` in `apps/client/pubspec.yaml`, commit.
+1. Bump `version:` in `apps/client/pubspec.yaml`, set the same version in
+   `apps/client/web/update.json` (with `schemaChange: true` if `schemaVersion`
+   moved), add the release to `assets/release_notes/en.json` and `es.json`,
+   commit. The tests fail if any of them disagree.
 2. Tag and push the tag: `git tag vX.Y.Z && git push origin vX.Y.Z`.
-3. Create the GitHub release. A release workflow that builds the other
-   artifacts is still pending (P1, see `TODO.md`); until then create it by hand
-   with `gh release create vX.Y.Z`.
+3. `.github/workflows/release.yml` checks the versions and the legal docs,
+   builds Linux, Windows, macOS and the web zip, creates the GitHub release
+   with `update.json`, and pushes `ghcr.io/iezappa/memini`. Wait for it.
 4. With a clean tree checked out at the tag:
 
    ```bash

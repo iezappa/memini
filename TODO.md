@@ -7,7 +7,7 @@ The standard is
 It is the canonical copy: the `Estandarización/` folder here is a working
 copy, ignored by git, and loses to that repository on any disagreement.
 
-Last checked against it: **2026-09-01**.
+Last checked against it: **2026-09-17**.
 
 ---
 
@@ -59,8 +59,31 @@ Last checked against it: **2026-09-01**.
       backup through `share_plus` / `file_picker` on the web are covered by
       widget tests with fakes only. Walk them on the published site.
 
-- [ ] **P1 — Release workflow.** GitHub releases are still created by hand
-      (`docs/RELEASING.md`), and CI does not run `tool/release_apk_test.sh`.
+- [ ] **P1 — Walk the service worker checklist (§8.2) on the published site.**
+      `web/sw.js` and `tool/generate_sw.sh` are unit-checked
+      (`tool/generate_sw_test.sh`), but offline launch, the update banner's
+      reload, iOS Home Screen and the kill switch have not been tried in a
+      browser.
+
+- [ ] **P1 — First tagged release.** `release.yml` is YAML-valid but has never
+      run: the Windows and macOS runners were generated for it and never built
+      here, the pinned `ghcr.io/cirruslabs/flutter:3.47.1` tag is assumed to
+      exist, and the Docker image and nginx config were not built or run (no
+      Docker daemon access). 1.1.0 is prepared (`update.json` says
+      `schemaChange: true`) but not tagged.
+
+- [ ] **P2 — macOS keychain.** The sandboxed macOS build has the network
+      entitlement for lookups and the update check; whether
+      `flutter_secure_storage` (the PIN) needs a keychain entitlement there is
+      unverified.
+
+- [ ] **P2 — Support card title (§2.2).** `SupportProjectsCard` still prints
+      its own title under the SUPPORT label, which the standard asks to drop.
+
+- [ ] **P2 — Schema v1 dump is reconstructed.** No commit ever had
+      `schemaVersion` 1; `drift_schema_v1.json` is v2's franchises and rooms,
+      which is what the v1 → v2 migration assumes. If a real v1 store had a
+      different rooms table, only a real v1 file would show it.
 
 - [ ] **P2 — Integration coverage for erase and import.** Both are widget-
       and unit-tested; neither is driven end to end on a real database file.
@@ -88,6 +111,24 @@ Last checked against it: **2026-09-01**.
       `photo_path` and deletes the old `room_photos` folder once; backups are
       plain JSON again, and older ones that still name a `photoPath` import
       with the field ignored.
+- [x] **Legal (§2.3).** `PRIVACY.md` and `TERMS.md` (EN at the root, EN/ES
+      bundled and readable offline), disclosing the lookups; ABOUT carries
+      privacy, terms, developer contact (the issue tracker) and licences,
+      including the bundled fonts' OFL.
+- [x] **Accessibility (CUMPLIMIENTO 1.4).** `meetsGuideline` for tap targets,
+      labels and contrast on settings and the main screens, light and dark
+      (`test/accessibility/`). Fixed: 40 px accent swatches, invisible menu
+      chip labels, and the selected-segment contrast.
+- [x] **UUID + updatedAt (§1.1).** Schema v4, migration tested from v1, v2 and
+      v3 with relation integrity; backup format v3, v1/v2 files remapped.
+- [x] **Updates and What's new (§8.2).** GitHub Releases on native (6 h
+      throttle), `version.json` + waiting service worker on the web, banner
+      with backup hint on `schemaChange`; bundled release notes per version,
+      asserted against pubspec.
+- [x] **Own service worker (§8.2)**, wired into Pages, the release web zip and
+      the Docker image.
+- [x] **Release workflow (§5.A)** with version, release-notes and compliance
+      checks; GHCR image `ghcr.io/iezappa/memini`; ZimaOS compose and guide.
 
 ---
 
@@ -103,8 +144,15 @@ standard changes, or before a release.
 - [ ] **§2.1 Product patterns.** i18n through ARB files, onboarding shown once,
       local PIN, disclaimer and backup notice accepted at onboarding and visible
       in settings, backup import/export (plain JSON), export reminder, delete all data.
-- [ ] **§5 CI.** `ci.yml` runs format, analyse, test and a web build. Add a
-      platform to the matrix when a new target starts shipping.
+- [ ] **§5 CI.** `ci.yml` runs format, analyse, test, the shell script tests
+      and a web build; `release.yml` builds Linux, Windows, macOS, web and the
+      image from a tag.
+
+**§2.2 Ajustes** — Conforme: sí, with the support-card title open (P2 above) ·
+Última revisión: 2026-09-17 · Afirmado por:
+`test/features/settings/settings_screen_test.dart`,
+`test/features/settings/settings_about_test.dart`,
+`test/accessibility/main_screens_accessibility_test.dart`
 - [ ] **§7 Testing.** Widget tests for the screens, `integration_test` for the
       critical flows.
 
