@@ -60,14 +60,30 @@ Last checked against it: **2026-09-17**.
       widget tests with fakes only. Walk them on the published site.
 
 - [ ] **P1 — Walk the service worker checklist (§8.2) on the published site.**
-      `web/sw.js` and `tool/generate_sw.sh` are unit-checked
-      (`tool/generate_sw_test.sh`), but offline launch, the update banner's
-      reload, iOS Home Screen and the kill switch have not been tried in a
-      browser.
+      `tool/generate_sw_test.sh` only reads the generated `web/sw.js` as text:
+      it proves the version and the precache manifest were injected, and
+      nothing about what a browser does with them. There is no browser
+      harness and none is planned for now, so these four are manual, in
+      order, on the published site:
+
+      1. **Offline launch.** Load the site, then go offline (DevTools →
+         Network → Offline, or airplane mode) and reload. The shell and its
+         fonts must come up from the cache, with no network error page.
+      2. **Update and reload.** Publish a build with a new version, reload
+         once: the update banner appears, and the reload it offers lands on
+         the new version — not the cached old one.
+      3. **iOS add to Home Screen.** Safari → Share → Add to Home Screen,
+         launch from the icon: standalone, correct name and icon, and it
+         still opens offline after step 1.
+      4. **Kill-switch drill.** Serve `web/sw-killswitch.js` in place of
+         `sw.js`, reload twice, and confirm the worker unregisters and the
+         caches are emptied — the way out if a bad worker ships.
 
 - [ ] **P1 — First tagged release.** `release.yml` is YAML-valid but has never
-      run: the Windows and macOS runners were generated for it and never built
-      here, the pinned `ghcr.io/cirruslabs/flutter:3.47.1` tag is assumed to
+      run. Its new `check` job (format, analysis, tests, script tests) has not
+      run on a tag either, only its steps as ci.yml runs them. The Windows
+      and macOS runners were generated for it and never built here, the
+      pinned `ghcr.io/cirruslabs/flutter:3.47.1` tag is assumed to
       exist, and the Docker image and nginx config were not built or run (no
       Docker daemon access). 1.1.0 is prepared (`update.json` says
       `schemaChange: true`) but not tagged.
