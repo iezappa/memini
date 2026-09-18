@@ -104,6 +104,17 @@ class AppDatabase extends _$AppDatabase {
               await m.alterTable(TableMigration(schema.viewings));
               await m.alterTable(TableMigration(schema.games));
             },
+            // A room whose franchise_id points at a franchise that is no
+            // longer there comes out of this with a null link, because the
+            // lookup into franchise_ids finds nothing. That heal is
+            // deliberate: an upgrade is the one moment the user cannot do
+            // anything about a corrupt store, so a detached room beats a
+            // store that refuses to open. Importing a backup takes the
+            // opposite view and rejects the file
+            // (backup_document.dart, 'dangling-franchise-reference'): there
+            // the user still has the original, and silently dropping a link
+            // they can see in the file would be the surprise.
+            //
             // v4 gives every record a UUID and an updatedAt (1.1 of the
             // standard). Every table is rebuilt; franchise ids are minted first,
             // into a temporary map, so each room's link is rewritten onto the

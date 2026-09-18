@@ -403,6 +403,37 @@ void main() {
       );
     });
 
+    test('a room pointing at a franchise that is gone is detached', () async {
+      final schema = await verifier.schemaAt(3);
+      final old = v3.DatabaseAtV3(schema.newConnection());
+      // Foreign keys are off on a fresh connection, which is how a store can
+      // hold this row in the first place — an older build wrote it before the
+      // pragma was set on every connection.
+      await old
+          .into(old.rooms)
+          .insert(
+            const v3.RoomsData(
+              id: 1,
+              title: 'The Vault',
+              happenedOn: 1773446400,
+              franchiseId: 404,
+              escaped: 1,
+            ),
+          );
+      await old.close();
+
+      final db = AppDatabase.forTesting(schema.newConnection());
+      final room = await db.select(db.rooms).getSingle();
+      expect(
+        room.franchiseId,
+        isNull,
+        reason: 'the upgrade heals the reference instead of refusing to open',
+      );
+      expect(room.title, 'The Vault');
+      expect(await db.select(db.franchises).get(), isEmpty);
+      await db.close();
+    });
+
     test(
       'a franchise deleted after the upgrade still detaches its rooms',
       () async {
@@ -475,20 +506,18 @@ void main() {
       await interrupted.close();
 
       final after = v2.DatabaseAtV2(schema.newConnection());
-      final roomColumns = (await after
-              .customSelect('PRAGMA table_info(rooms)')
-              .get())
-          .map((row) => row.read<String>('name'));
+      final roomColumns =
+          (await after.customSelect('PRAGMA table_info(rooms)').get()).map(
+            (row) => row.read<String>('name'),
+          );
       expect(
         roomColumns,
         contains('photo_path'),
-        reason: 'a step that died must leave the schema it found, or the '
+        reason:
+            'a step that died must leave the schema it found, or the '
             'store is half of one version and half of another',
       );
-      expect(
-        (await after.select(after.rooms).getSingle()).photoPath,
-        '/p.jpg',
-      );
+      expect((await after.select(after.rooms).getSingle()).photoPath, '/p.jpg');
       // Clearing the obstruction stands for the cause of the crash being
       // gone: the retry has to carry the data through.
       await after.customStatement('DROP INDEX gigs_photo');

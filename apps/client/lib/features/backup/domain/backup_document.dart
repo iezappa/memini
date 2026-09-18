@@ -503,6 +503,12 @@ class _IdScope {
   }
 
   /// Resolves a reference to a record declared earlier in this scope.
+  ///
+  /// A reference to a record the file never declared is fatal, on purpose:
+  /// the user still holds the file, so dropping the link quietly would hide
+  /// a damaged backup. The schema migration heals the same shape instead
+  /// (app_database.dart, v3 -> v4), because there the store is all the user
+  /// has left.
   String? reference(Object? raw) {
     if (raw == null) return null;
     final id = _ids[raw];
