@@ -1,5 +1,7 @@
 # Serving Memini from ZimaOS
 
+**English** · [Español](ZIMAOS.es.md)
+
 How to serve Memini's web/PWA build from a home ZimaOS server
 (STACK-APPS-DINAMICAS.md 5.A).
 

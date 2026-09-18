@@ -1,5 +1,7 @@
 # Memini privacy policy
 
+**English** · [Español](PRIVACY.es.md)
+
 Last updated: 2026-09-17
 
 Memini is a free app developed by Zeke Zappa Developments (iezappa). This policy explains, in plain words, what happens to your data.

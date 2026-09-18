@@ -51,6 +51,12 @@ class LegalDocument {
         continue;
       }
       if (trimmed.startsWith('<!--')) continue;
+      // The `**English** · [Español](X.es.md)` line links the published
+      // translations on GitHub; inside the app the locale already chose.
+      if (_languageSwitcher.hasMatch(trimmed)) {
+        flush();
+        continue;
+      }
 
       if (trimmed.startsWith('#')) {
         flush();
@@ -79,6 +85,11 @@ class LegalDocument {
 
     return LegalDocument(title: title, blocks: List.unmodifiable(blocks));
   }
+
+  static final _languageSwitcher = RegExp(
+    r'^(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\.md\))'
+    r'( · (\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\.md\)))+$',
+  );
 
   static String _inline(String text) => text
       .replaceAllMapped(

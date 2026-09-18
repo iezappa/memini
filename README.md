@@ -1,5 +1,7 @@
 # Memini
 
+**English** · [Español](README.es.md)
+
 [![CI](https://github.com/iezappa/memini/actions/workflows/ci.yml/badge.svg)](https://github.com/iezappa/memini/actions/workflows/ci.yml)
 
 A personal log of the things you have actually done — escape rooms, meals out,
@@ -206,6 +208,7 @@ To erase everything: **Settings → Your data → Delete all my data**.
 
 - [Privacy policy](PRIVACY.md)
 - [Terms of use](TERMS.md)
+- Español: [Política de privacidad](PRIVACY.es.md) · [Términos de uso](TERMS.es.md)
 
 Developer: Zeke Zappa Developments (iezappa) — questions and reports at https://github.com/iezappa/memini/issues
 

@@ -136,7 +136,7 @@ Last checked against it: **2026-09-17**.
       `photo_path` and deletes the old `room_photos` folder once; backups are
       plain JSON again, and older ones that still name a `photoPath` import
       with the field ignored.
-- [x] **Legal (§2.3).** `PRIVACY.md` and `TERMS.md` (EN at the root, EN/ES
+- [x] **Legal (§2.3).** `PRIVACY.md` and `TERMS.md` (EN at the root, ES as `.es.md`, EN/ES
       bundled and readable offline), disclosing the lookups; ABOUT carries
       privacy, terms, developer contact (the issue tracker) and licences,
       including the bundled fonts' OFL.
