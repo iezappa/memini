@@ -100,8 +100,37 @@ jobs:
           done
           exit "$fail"
 
+  # ci.yml does not run on tag pushes, so without this a release could be cut
+  # from a commit whose tests nobody ever ran — the tag is usually on a commit
+  # master already tested, but "usually" is not a gate. Same steps as ci.yml's
+  # check job, kept in step with it by hand.
+  check:
+    name: Format, analyse, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Analyse
+        run: dart analyze lib test
+      - name: Reject focused tests
+        run: bash tool/no_focused_tests.sh test integration_test
+      - name: Test
+        run: flutter test
+      - name: Test the release and service worker scripts
+        run: |
+          bash tool/release_apk_test.sh
+          bash tool/generate_sw_test.sh
+          bash tool/no_focused_tests_test.sh
+
   linux:
-    needs: version-check
+    needs: [version-check, check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -123,7 +152,7 @@ jobs:
           path: "*-linux-x64.tar.gz"
 
   windows:
-    needs: version-check
+    needs: [version-check, check]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -142,7 +171,7 @@ jobs:
           path: "*-windows-x64.zip"
 
   macos:
-    needs: version-check
+    needs: [version-check, check]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -164,7 +193,7 @@ jobs:
   # The web build as a download, for serving from any static host at the root
   # of its own origin. Same steps as the Docker image, without nginx.
   web:
-    needs: version-check
+    needs: [version-check, check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -188,7 +217,7 @@ jobs:
           path: "*-web.zip"
 
   docker:
-    needs: version-check
+    needs: [version-check, check]
     runs-on: ubuntu-latest
     defaults:
       run:
