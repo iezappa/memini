@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/game.dart';
 import 'game_form_screen.dart';
@@ -29,10 +30,13 @@ class GameDetailScreen extends ConsumerWidget {
       title: l10n.deleteGame,
       body: l10n.deleteConfirm(game.title),
     );
-    if (!confirmed) return;
+    if (!confirmed || !context.mounted) return;
 
-    await ref.read(gameRepositoryProvider).delete(game.id);
-    navigator.pop();
+    final deleted = await guardDelete(
+      context,
+      () => ref.read(gameRepositoryProvider).delete(game.id),
+    );
+    if (deleted) navigator.pop();
   }
 
   @override

@@ -920,6 +920,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveFailed => 'No se pudo guardar. Intentá de nuevo.';
 
   @override
+  String get deleteFailed => 'No se pudo eliminar. Intentá de nuevo.';
+
+  @override
   String get staleStoreTitle => 'Hay otra pestaña con una versión anterior';
 
   @override

@@ -10,22 +10,40 @@ import '../../l10n/app_localizations.dart';
 /// to the zone, and the owner is left with a form that neither closes nor
 /// says anything — or, worse, believing the entry was kept. This turns that
 /// into a message they can act on, and still reports the error to the log.
-Future<bool> guardSave(
+Future<bool> guardSave(BuildContext context, Future<void> Function() save) =>
+    _guardWrite(
+      context,
+      save,
+      message: AppLocalizations.of(context).saveFailed,
+      log: 'Saving an entry failed',
+    );
+
+/// Runs [delete] and tells the owner when it throws; returns whether it held.
+///
+/// Without it a refused delete leaves the entry in place with nothing on
+/// screen to say so, and the owner walks away believing it is gone.
+Future<bool> guardDelete(
   BuildContext context,
-  Future<void> Function() save,
-) async {
+  Future<void> Function() delete,
+) => _guardWrite(
+  context,
+  delete,
+  message: AppLocalizations.of(context).deleteFailed,
+  log: 'Deleting an entry failed',
+);
+
+Future<bool> _guardWrite(
+  BuildContext context,
+  Future<void> Function() write, {
+  required String message,
+  required String log,
+}) async {
   final messenger = ScaffoldMessenger.maybeOf(context);
-  final message = AppLocalizations.of(context).saveFailed;
   try {
-    await save();
+    await write();
     return true;
   } on Object catch (error, stack) {
-    developer.log(
-      'Saving an entry failed',
-      name: 'memini',
-      error: error,
-      stackTrace: stack,
-    );
+    developer.log(log, name: 'memini', error: error, stackTrace: stack);
     messenger
       ?..clearSnackBars()
       ..showSnackBar(SnackBar(content: Text(message)));

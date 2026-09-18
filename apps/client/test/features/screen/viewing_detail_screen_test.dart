@@ -91,4 +91,21 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A refused delete used to vanish: the screen closed or sat there, and the
+  // owner had no way to tell the viewing was still kept.
+  testWidgets('says so when the viewing could not be deleted', (tester) async {
+    await pumpDetail(tester, await log());
+    await refuseDeletes(db, 'viewings');
+
+    await tapDelete(tester);
+    await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(deleteFailedMessage), findsOneWidget);
+    expect(find.byType(ViewingDetailScreen), findsOneWidget);
+    expect(await entries.list(const ViewingFilter()), hasLength(1));
+
+    await unmount(tester);
+  });
 }

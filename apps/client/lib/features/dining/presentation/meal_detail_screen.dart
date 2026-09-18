@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/meal.dart';
 import 'meal_form_screen.dart';
@@ -28,10 +29,13 @@ class MealDetailScreen extends ConsumerWidget {
       title: l10n.deleteMeal,
       body: l10n.deleteConfirm(meal.title),
     );
-    if (!confirmed) return;
+    if (!confirmed || !context.mounted) return;
 
-    await ref.read(mealRepositoryProvider).delete(meal.id);
-    navigator.pop();
+    final deleted = await guardDelete(
+      context,
+      () => ref.read(mealRepositoryProvider).delete(meal.id),
+    );
+    if (deleted) navigator.pop();
   }
 
   @override

@@ -7,6 +7,7 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/room.dart';
 import 'room_form_screen.dart';
@@ -33,10 +34,13 @@ class RoomDetailScreen extends ConsumerWidget {
       body: l10n.deleteConfirm(room.title),
     );
 
-    if (!confirmed) return;
+    if (!confirmed || !context.mounted) return;
 
-    await ref.read(roomRepositoryProvider).delete(room.id);
-    navigator.pop();
+    final deleted = await guardDelete(
+      context,
+      () => ref.read(roomRepositoryProvider).delete(room.id),
+    );
+    if (deleted) navigator.pop();
   }
 
   @override

@@ -113,4 +113,21 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A refused delete used to vanish: the screen closed or sat there, and the
+  // owner had no way to tell the room was still kept.
+  testWidgets('says so when the room could not be deleted', (tester) async {
+    await pumpDetail(tester, await logRoom());
+    await refuseDeletes(db, 'rooms');
+
+    await tapDelete(tester);
+    await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(deleteFailedMessage), findsOneWidget);
+    expect(find.byType(RoomDetailScreen), findsOneWidget);
+    expect(await rooms.list(const RoomFilter()), hasLength(1));
+
+    await unmount(tester);
+  });
 }

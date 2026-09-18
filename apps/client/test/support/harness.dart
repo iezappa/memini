@@ -140,6 +140,17 @@ Future<void> refuseWrites(AppDatabase db, String table) async {
   }
 }
 
+/// Makes every delete from [table] fail, the way a store held at an older
+/// schema by another tab refuses it.
+Future<void> refuseDeletes(AppDatabase db, String table) => db.customStatement(
+  'CREATE TRIGGER refuse_delete_$table '
+  'BEFORE DELETE ON $table '
+  "BEGIN SELECT RAISE(ABORT, 'refused'); END",
+);
+
+/// What a detail screen shows when its delete was refused.
+const deleteFailedMessage = "Couldn't delete. Please try again.";
+
 /// What a form shows when its write was refused.
 const saveFailedMessage = "Couldn't save. Please try again.";
 

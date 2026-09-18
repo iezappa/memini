@@ -5,6 +5,7 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/gig.dart';
 import 'gig_form_screen.dart';
@@ -29,10 +30,13 @@ class GigDetailScreen extends ConsumerWidget {
       title: l10n.deleteGig,
       body: l10n.deleteConfirm(gig.title),
     );
-    if (!confirmed) return;
+    if (!confirmed || !context.mounted) return;
 
-    await ref.read(gigRepositoryProvider).delete(gig.id);
-    navigator.pop();
+    final deleted = await guardDelete(
+      context,
+      () => ref.read(gigRepositoryProvider).delete(gig.id),
+    );
+    if (deleted) navigator.pop();
   }
 
   @override

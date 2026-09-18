@@ -1712,6 +1712,12 @@ abstract class AppLocalizations {
   /// **'Couldn\'t save. Please try again.'**
   String get saveFailed;
 
+  /// No description provided for @deleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete. Please try again.'**
+  String get deleteFailed;
+
   /// No description provided for @staleStoreTitle.
   ///
   /// In en, this message translates to:

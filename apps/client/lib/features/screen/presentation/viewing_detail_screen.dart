@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/viewing.dart';
 import 'viewing_form_screen.dart';
@@ -35,10 +36,13 @@ class ViewingDetailScreen extends ConsumerWidget {
       title: l10n.deleteViewing,
       body: l10n.deleteConfirm(viewing.title),
     );
-    if (!confirmed) return;
+    if (!confirmed || !context.mounted) return;
 
-    await ref.read(viewingRepositoryProvider).delete(viewing.id);
-    navigator.pop();
+    final deleted = await guardDelete(
+      context,
+      () => ref.read(viewingRepositoryProvider).delete(viewing.id),
+    );
+    if (deleted) navigator.pop();
   }
 
   @override

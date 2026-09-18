@@ -87,4 +87,21 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A refused delete used to vanish: the screen closed or sat there, and the
+  // owner had no way to tell the gig was still kept.
+  testWidgets('says so when the gig could not be deleted', (tester) async {
+    await pumpDetail(tester, await log());
+    await refuseDeletes(db, 'gigs');
+
+    await tapDelete(tester);
+    await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
+    await tester.pumpAndSettle();
+
+    expect(find.text(deleteFailedMessage), findsOneWidget);
+    expect(find.byType(GigDetailScreen), findsOneWidget);
+    expect(await entries.list(const GigFilter()), hasLength(1));
+
+    await unmount(tester);
+  });
 }
