@@ -532,6 +532,42 @@ void main() {
     });
   });
 
+  test('a store an older build left half-upgraded still opens', () async {
+    // Before the upgrade ran in one transaction, a crash in the v2 -> v3
+    // step could commit some table rebuilds and not others, with
+    // user_version still at 2. Replaying the step over that must work.
+    final schema = await verifier.schemaAt(2);
+    final old = v2.DatabaseAtV2(schema.newConnection());
+    await old
+        .into(old.rooms)
+        .insert(
+          const v2.RoomsData(
+            id: 1,
+            title: 'The Vault',
+            photoPath: '/p.jpg',
+            happenedOn: 1773446400,
+            escaped: 1,
+          ),
+        );
+    await old.close();
+
+    // rooms rebuilt to its v3 shape, the other four tables untouched.
+    final partial = v2.DatabaseAtV2(schema.newConnection());
+    final v3Rooms = v3.DatabaseAtV3(partial.executor).rooms;
+    await partial.createMigrator().alterTable(TableMigration(v3Rooms));
+    expect(
+      (await partial.customSelect('PRAGMA table_info(rooms)').get()).map(
+        (row) => row.read<String>('name'),
+      ),
+      isNot(contains('photo_path')),
+    );
+    await partial.close();
+
+    final db = AppDatabase.forTesting(schema.newConnection());
+    expect((await db.select(db.rooms).getSingle()).title, 'The Vault');
+    await db.close();
+  });
+
   group('the photos left on disk', () {
     test('are cleaned up once when a v2 store is upgraded', () async {
       var cleanups = 0;
