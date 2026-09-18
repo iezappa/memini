@@ -42,6 +42,11 @@ jobs:
       - name: Analyse
         run: dart analyze lib test
 
+      # Before the suite, not after: a focused test would make everything
+      # below it report green over a handful of cases.
+      - name: Reject focused tests
+        run: bash tool/no_focused_tests.sh test integration_test
+
       - name: Test
         run: flutter test
 
@@ -49,6 +54,7 @@ jobs:
         run: |
           bash tool/release_apk_test.sh
           bash tool/generate_sw_test.sh
+          bash tool/no_focused_tests_test.sh
 
   integration:
     name: Integration test (Linux desktop)
