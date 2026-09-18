@@ -435,6 +435,74 @@ void main() {
     );
   });
 
+  group('an upgrade interrupted halfway', () {
+    // A crash partway through an upgrade is the ordinary case on a phone.
+    // Drift records user_version after each step, so the store reopens at the
+    // last version that finished — but only if the step that died left the
+    // schema exactly as it found it. A step that rebuilds five tables one
+    // after another does not, unless the whole run is one transaction.
+    test('rolls the whole step back and leaves the store openable', () async {
+      final schema = await verifier.schemaAt(2);
+
+      final old = v2.DatabaseAtV2(schema.newConnection());
+      await old
+          .into(old.franchises)
+          .insert(const v2.FranchisesData(id: 1, name: 'Enigma'));
+      await old
+          .into(old.rooms)
+          .insert(
+            const v2.RoomsData(
+              id: 1,
+              title: 'The Vault',
+              photoPath: '/p.jpg',
+              happenedOn: 1773446400,
+              franchiseId: 1,
+              escaped: 1,
+            ),
+          );
+      // An index over the column v3 removes. Drift re-creates the indexes of
+      // a table it rebuilds, and this one no longer resolves afterwards, so
+      // the third of the five rebuilds in the v2 -> v3 step throws — the two
+      // before it having already run.
+      await old.customStatement('CREATE INDEX gigs_photo ON gigs (photo_path)');
+      await old.close();
+
+      final interrupted = AppDatabase.forTesting(schema.newConnection());
+      await expectLater(
+        interrupted.customSelect('SELECT 1').get(),
+        throwsA(anything),
+      );
+      await interrupted.close();
+
+      final after = v2.DatabaseAtV2(schema.newConnection());
+      final roomColumns = (await after
+              .customSelect('PRAGMA table_info(rooms)')
+              .get())
+          .map((row) => row.read<String>('name'));
+      expect(
+        roomColumns,
+        contains('photo_path'),
+        reason: 'a step that died must leave the schema it found, or the '
+            'store is half of one version and half of another',
+      );
+      expect(
+        (await after.select(after.rooms).getSingle()).photoPath,
+        '/p.jpg',
+      );
+      // Clearing the obstruction stands for the cause of the crash being
+      // gone: the retry has to carry the data through.
+      await after.customStatement('DROP INDEX gigs_photo');
+      await after.close();
+
+      final db = AppDatabase.forTesting(schema.newConnection());
+      final franchise = await db.select(db.franchises).getSingle();
+      final room = await db.select(db.rooms).getSingle();
+      expect(room.title, 'The Vault');
+      expect(room.franchiseId, franchise.id);
+      await db.close();
+    });
+  });
+
   group('the photos left on disk', () {
     test('are cleaned up once when a v2 store is upgraded', () async {
       var cleanups = 0;

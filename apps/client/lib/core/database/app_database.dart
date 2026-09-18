@@ -68,35 +68,48 @@ class AppDatabase extends _$AppDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (m, from, to) async {
-      await m.runMigrationSteps(
-        from: from,
-        to: to,
-        steps: migrationSteps(
-          // v2 opened the log to the other four domains. Every one of them is
-          // a brand new table, so nothing existing has to be rewritten.
-          from1To2: (m, schema) async {
-            await m.createTable(schema.meals);
-            await m.createTable(schema.gigs);
-            await m.createTable(schema.viewings);
-            await m.createTable(schema.games);
-          },
-          // v3 removed photos: every tracked table loses its photo_path.
-          // Each table is rebuilt from its v3 shape, which works on every
-          // SQLite build, including those without ALTER TABLE DROP COLUMN.
-          from2To3: (m, schema) async {
-            await m.alterTable(TableMigration(schema.rooms));
-            await m.alterTable(TableMigration(schema.meals));
-            await m.alterTable(TableMigration(schema.gigs));
-            await m.alterTable(TableMigration(schema.viewings));
-            await m.alterTable(TableMigration(schema.games));
-          },
-          // v4 gives every record a UUID and an updatedAt (1.1 of the
-          // standard). Every table is rebuilt; franchise ids are minted first,
-          // into a temporary map, so each room's link is rewritten onto the
-          // new id of the franchise it pointed at. Rows are copied in rowid
-          // order, which the lists use to tie-break entries on the same day.
-          from3To4: (m, schema) async {
-            await transaction(() async {
+      // Foreign keys go off for the duration: rebuilding a table drops and
+      // re-creates it, which would trip every reference into it. The pragma
+      // is a no-op inside a transaction, so it has to be set out here —
+      // beforeOpen turns them back on for the connection either way.
+      await customStatement('PRAGMA foreign_keys = OFF');
+
+      // The whole upgrade is one transaction. SQLite makes DDL transactional,
+      // so a crash anywhere in here — between two steps, or between the DROP
+      // and the RENAME of a single rebuilt table — rolls back to the schema
+      // and the rows the store had before, and the next launch simply runs
+      // the upgrade again. Without it the store can come back half of one
+      // version and half of another, which is unopenable and unrepairable.
+      // This is the shape drift documents for a custom onUpgrade.
+      await transaction(() async {
+        await m.runMigrationSteps(
+          from: from,
+          to: to,
+          steps: migrationSteps(
+            // v2 opened the log to the other four domains. Every one of them is
+            // a brand new table, so nothing existing has to be rewritten.
+            from1To2: (m, schema) async {
+              await m.createTable(schema.meals);
+              await m.createTable(schema.gigs);
+              await m.createTable(schema.viewings);
+              await m.createTable(schema.games);
+            },
+            // v3 removed photos: every tracked table loses its photo_path.
+            // Each table is rebuilt from its v3 shape, which works on every
+            // SQLite build, including those without ALTER TABLE DROP COLUMN.
+            from2To3: (m, schema) async {
+              await m.alterTable(TableMigration(schema.rooms));
+              await m.alterTable(TableMigration(schema.meals));
+              await m.alterTable(TableMigration(schema.gigs));
+              await m.alterTable(TableMigration(schema.viewings));
+              await m.alterTable(TableMigration(schema.games));
+            },
+            // v4 gives every record a UUID and an updatedAt (1.1 of the
+            // standard). Every table is rebuilt; franchise ids are minted first,
+            // into a temporary map, so each room's link is rewritten onto the
+            // new id of the franchise it pointed at. Rows are copied in rowid
+            // order, which the lists use to tie-break entries on the same day.
+            from3To4: (m, schema) async {
               final stamp = Variable<DateTime>(DateTime.now());
 
               await customStatement(
@@ -156,10 +169,12 @@ class AppDatabase extends _$AppDatabase {
               }
 
               await customStatement('DROP TABLE franchise_ids');
-            });
-          },
-        ),
-      );
+            },
+          ),
+        );
+      });
+
+      await customStatement('PRAGMA foreign_keys = ON');
     },
     beforeOpen: (details) async {
       final before = details.versionBefore;
