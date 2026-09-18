@@ -72,6 +72,15 @@ Last checked against it: **2026-09-17**.
       Docker daemon access). 1.1.0 is prepared (`update.json` says
       `schemaChange: true`) but not tagged.
 
+- [ ] **P1 — Load the Content-Security-Policy in a browser.**
+      `deploy/nginx.conf` now sends a CSP, `X-Frame-Options: DENY` and
+      `Referrer-Policy: no-referrer`. The policy was reasoned from what the
+      build contains; neither nginx nor a Docker daemon is reachable here, so
+      it has never been served. Serve the image, watch the console for
+      "Refused to ...", and walk one lookup per source (TMDB, RAWG,
+      MusicBrainz) plus a title in a script the bundled fonts do not cover,
+      which is what `fonts.gstatic.com` is in the policy for.
+
 - [ ] **P2 — macOS keychain.** The sandboxed macOS build has the network
       entitlement for lookups and the update check; whether
       `flutter_secure_storage` (the PIN) needs a keychain entitlement there is
