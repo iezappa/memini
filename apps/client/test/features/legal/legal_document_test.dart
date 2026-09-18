@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:memini/features/legal/data/asset_legal_documents.dart';
 import 'package:memini/features/legal/domain/legal_document.dart';
 
 void main() {
@@ -45,6 +46,23 @@ over two lines.
       );
     });
 
+    test('skips the language switcher line, in either language', () {
+      for (final switcher in [
+        '**English** · [Español](PRIVACY.es.md)',
+        '[English](PRIVACY.md) · **Español**',
+      ]) {
+        final doc = LegalDocument.parse('# T\n\n$switcher\n\nBody');
+
+        expect(doc.blocks.map((b) => b.text), ['Body'], reason: switcher);
+      }
+    });
+
+    test('keeps a sentence that merely contains a link', () {
+      final doc = LegalDocument.parse('# T\n\nSee [the terms](TERMS.md) too.');
+
+      expect(doc.blocks.single.text, 'See the terms (TERMS.md) too.');
+    });
+
     test('keeps a nested bullet as a bullet', () {
       final doc = LegalDocument.parse('# T\n\n- top\n  - nested');
 
@@ -54,17 +72,54 @@ over two lines.
 
   group('bundled copies', () {
     // The app shows the policy offline from its own assets. The repository
-    // root holds the canonical English text the README and CI point at, so
-    // the bundled copy must never drift from it.
-    for (final name in ['PRIVACY', 'TERMS']) {
-      test('$name.md at the repo root matches the bundled English copy', () {
-        final root = File('../../$name.md').readAsStringSync();
-        final bundled = File('assets/legal/${name.toLowerCase()}_en.md')
-            .readAsStringSync();
+    // root holds the published text in both languages (English as `NAME.md`,
+    // Spanish as `NAME.es.md`), so no bundled copy may drift from it.
+    const published = {
+      'privacy_en.md': 'PRIVACY.md',
+      'privacy_es.md': 'PRIVACY.es.md',
+      'terms_en.md': 'TERMS.md',
+      'terms_es.md': 'TERMS.es.md',
+    };
+    for (final MapEntry(key: asset, value: source) in published.entries) {
+      test('assets/legal/$asset is byte-identical to $source', () {
+        final root = File('../../$source').readAsBytesSync();
+        final bundled = File('assets/legal/$asset').readAsBytesSync();
 
         expect(bundled, root);
       });
     }
+
+    test('the locale picks the bundled file in its language', () {
+      for (final type in LegalDocumentType.values) {
+        for (final language in ['en', 'es']) {
+          final path = AssetLegalDocuments.pathFor(type, language);
+          expect(path, 'assets/legal/${type.name}_$language.md');
+          expect(File(path).existsSync(), isTrue, reason: path);
+        }
+      }
+    });
+
+    test('falls back to English for a language that is not bundled', () {
+      expect(
+        AssetLegalDocuments.pathFor(LegalDocumentType.terms, 'fr'),
+        'assets/legal/terms_en.md',
+      );
+    });
+
+    test('the release gate requires both languages, filled in', () {
+      final workflow = File('../../.github/workflows/release.yml')
+          .readAsStringSync();
+
+      for (final doc in [
+        'PRIVACY.md',
+        'PRIVACY.es.md',
+        'TERMS.md',
+        'TERMS.es.md',
+      ]) {
+        expect(workflow, contains('../../$doc'), reason: doc);
+      }
+      expect(workflow, contains("grep -q '{{'"));
+    });
 
     for (final path in [
       'assets/legal/privacy_en.md',

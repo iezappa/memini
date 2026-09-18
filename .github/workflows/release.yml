@@ -80,7 +80,7 @@ jobs:
           TRACKING_ALLOWLIST: ""
         run: |
           fail=0
-          for doc in ../../PRIVACY.md ../../TERMS.md; do
+          for doc in ../../PRIVACY.md ../../PRIVACY.es.md ../../TERMS.md ../../TERMS.es.md; do
             if [ ! -f "$doc" ]; then
               echo "::error::Missing ${doc#../../} (CUMPLIMIENTO.md)"; fail=1
             elif grep -q '{{' "$doc"; then
