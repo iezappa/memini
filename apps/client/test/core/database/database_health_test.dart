@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memini/core/database/app_database.dart';
@@ -75,4 +76,61 @@ void main() {
       },
     );
   });
+
+  group('a store an older version of the app already holds open', () {
+    // On the web every tab shares one drift worker, and the first tab to
+    // connect opens the store. A tab still running the previous release keeps
+    // it open at the old schema; a tab with this release then connects to
+    // that same open store and drift, seeing it already open, never runs the
+    // upgrade. Every write then fails on a column the old schema lacks.
+    Future<AppDatabase> joinStoreOpenedAtV3() async {
+      final executor = NativeDatabase.memory();
+      final older = _OlderRelease(executor);
+      await older.customStatement(
+        'CREATE TABLE rooms (id INTEGER PRIMARY KEY AUTOINCREMENT, '
+        'title TEXT NOT NULL)',
+      );
+
+      final db = AppDatabase.forTesting(executor);
+      addTearDown(db.close);
+      return db;
+    }
+
+    test('refuses writes, which is the bug being guarded against', () async {
+      final db = await joinStoreOpenedAtV3();
+
+      await expectLater(
+        db
+            .into(db.rooms)
+            .insert(
+              RoomsCompanion.insert(
+                title: 'The Vault',
+                happenedOn: DateTime(2026, 3, 14),
+                escaped: true,
+                updatedAt: DateTime(2026, 3, 14),
+              ),
+            ),
+        throwsA(anything),
+      );
+    });
+
+    test('is reported as held by an older version, not healthy', () async {
+      final db = await joinStoreOpenedAtV3();
+
+      final health = await probeDatabase(db);
+
+      expect(health, isA<DatabaseHeldByOlderVersion>());
+      expect((health as DatabaseHeldByOlderVersion).foundVersion, 3);
+    });
+  });
+}
+
+class _OlderRelease extends GeneratedDatabase {
+  _OlderRelease(super.executor);
+
+  @override
+  Iterable<TableInfo<Table, dynamic>> get allTables => const [];
+
+  @override
+  int get schemaVersion => 3;
 }

@@ -915,4 +915,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get updateActionDismiss => 'Ahora no';
+
+  @override
+  String get saveFailed => 'No se pudo guardar. Intentá de nuevo.';
+
+  @override
+  String get staleStoreTitle => 'Hay otra pestaña con una versión anterior';
+
+  @override
+  String get staleStoreBody =>
+      'Memini está abierto en otra pestaña o ventana con una versión anterior, y mientras siga abierta esta no puede guardar nada. Tus datos están intactos. Cerrá todas las demás pestañas de Memini y volvé a cargar esta página.';
 }

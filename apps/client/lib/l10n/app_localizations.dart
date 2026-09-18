@@ -1705,6 +1705,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get updateActionDismiss;
+
+  /// No description provided for @saveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Please try again.'**
+  String get saveFailed;
+
+  /// No description provided for @staleStoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Another tab is running an older version'**
+  String get staleStoreTitle;
+
+  /// No description provided for @staleStoreBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Memini is open in another tab or window with an older version, and while it stays open this one cannot save anything. Your data is intact. Close every other Memini tab, then reload this page.'**
+  String get staleStoreBody;
 }
 
 class _AppLocalizationsDelegate
