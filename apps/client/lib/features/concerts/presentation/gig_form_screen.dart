@@ -8,6 +8,7 @@ import '../../../core/tracking/presentation/form_fields.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/gig.dart';
 import 'gig_providers.dart';
+import '../../shared/save_failure.dart';
 
 class GigFormScreen extends ConsumerStatefulWidget {
   const GigFormScreen({super.key, this.gig});
@@ -108,44 +109,50 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
     setState(() => _saving = true);
 
     final navigator = Navigator.of(context);
-    final repository = ref.read(gigRepositoryProvider);
+    final saved = await guardSave(context, () async {
+      final repository = ref.read(gigRepositoryProvider);
 
-    final existing = widget.gig;
-    if (existing == null) {
-      await repository.create(
-        GigDraft(
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          venue: _trimmedOrNull(_venue),
-          city: _trimmedOrNull(_city),
-          supportActs: _trimmedOrNull(_supportActs),
-          setlist: _trimmedOrNull(_setlist),
-          company: _trimmedOrNull(_company),
-          externalId: _externalId,
-        ),
-      );
-    } else {
-      await repository.update(
-        Gig(
-          id: existing.id,
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          venue: _trimmedOrNull(_venue),
-          city: _trimmedOrNull(_city),
-          supportActs: _trimmedOrNull(_supportActs),
-          setlist: _trimmedOrNull(_setlist),
-          company: _trimmedOrNull(_company),
-          externalId: _externalId,
-        ),
-      );
+      final existing = widget.gig;
+      if (existing == null) {
+        await repository.create(
+          GigDraft(
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            venue: _trimmedOrNull(_venue),
+            city: _trimmedOrNull(_city),
+            supportActs: _trimmedOrNull(_supportActs),
+            setlist: _trimmedOrNull(_setlist),
+            company: _trimmedOrNull(_company),
+            externalId: _externalId,
+          ),
+        );
+      } else {
+        await repository.update(
+          Gig(
+            id: existing.id,
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            venue: _trimmedOrNull(_venue),
+            city: _trimmedOrNull(_city),
+            supportActs: _trimmedOrNull(_supportActs),
+            setlist: _trimmedOrNull(_setlist),
+            company: _trimmedOrNull(_company),
+            externalId: _externalId,
+          ),
+        );
+      }
+    });
+    if (!mounted) return;
+    if (!saved) {
+      setState(() => _saving = false);
+      return;
     }
-
     navigator.pop();
   }
 

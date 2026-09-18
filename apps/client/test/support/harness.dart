@@ -128,6 +128,21 @@ Future<void> fillField(WidgetTester tester, String label, String value) async {
   await tester.pump();
 }
 
+/// Makes every insert into and update of [table] fail, the way a store held
+/// at an older schema by another tab refuses them.
+Future<void> refuseWrites(AppDatabase db, String table) async {
+  for (final event in ['INSERT', 'UPDATE']) {
+    await db.customStatement(
+      'CREATE TRIGGER refuse_${event.toLowerCase()}_$table '
+      'BEFORE $event ON $table '
+      "BEGIN SELECT RAISE(ABORT, 'refused'); END",
+    );
+  }
+}
+
+/// What a form shows when its write was refused.
+const saveFailedMessage = "Couldn't save. Please try again.";
+
 /// Both the app bar and the foot of every form offer Save; the button at the
 /// bottom is the one a finger actually reaches.
 Future<void> tapSave(WidgetTester tester) async {

@@ -108,4 +108,35 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A write that throws used to vanish: the form stayed put with its Save
+  // button spinning, and nothing told the owner the entry was never kept.
+  testWidgets('says so when the new gig could not be saved', (tester) async {
+    await refuseWrites(db, 'gigs');
+    await pumpForm(tester);
+
+    await fillField(tester, 'Band', 'Divididos');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(GigFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('says so when the edited gig could not be saved', (tester) async {
+    final original = await gigs.create(
+      GigDraft(title: 'Divididos', happenedOn: DateTime(2026, 4, 18)),
+    );
+    await refuseWrites(db, 'gigs');
+    await pumpForm(tester, gig: original);
+
+    await fillField(tester, 'Venue', 'Luna Park');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(GigFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
 }

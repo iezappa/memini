@@ -10,6 +10,7 @@ import '../../../core/tracking/domain/trackable.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/widgets.dart';
 import '../domain/room.dart';
+import '../../shared/save_failure.dart';
 
 /// Create or edit a room. Passing [room] switches the screen to edit mode.
 class RoomFormScreen extends ConsumerStatefulWidget {
@@ -96,49 +97,55 @@ class _RoomFormScreenState extends ConsumerState<RoomFormScreen> {
     setState(() => _saving = true);
 
     final navigator = Navigator.of(context);
-    final franchiseName = _trimmedOrNull(_franchise);
-    final franchiseId = franchiseName == null
-        ? null
-        : (await ref
-                  .read(franchiseRepositoryProvider)
-                  .ensureByName(franchiseName))
-              .id;
+    final saved = await guardSave(context, () async {
+      final franchiseName = _trimmedOrNull(_franchise);
+      final franchiseId = franchiseName == null
+          ? null
+          : (await ref
+                    .read(franchiseRepositoryProvider)
+                    .ensureByName(franchiseName))
+                .id;
 
-    // Time left only means something for a room that was escaped.
-    final timeLeft = _escaped ? int.tryParse(_timeLeft.text.trim()) : null;
+      // Time left only means something for a room that was escaped.
+      final timeLeft = _escaped ? int.tryParse(_timeLeft.text.trim()) : null;
 
-    final repository = ref.read(roomRepositoryProvider);
-    final existing = widget.room;
+      final repository = ref.read(roomRepositoryProvider);
+      final existing = widget.room;
 
-    if (existing == null) {
-      await repository.create(
-        RoomDraft(
-          title: _name.text,
-          description: _trimmedOrNull(_description),
-          franchiseId: franchiseId,
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          happenedOn: _playedOn,
-          escaped: _escaped,
-          timeLeftMinutes: timeLeft,
-        ),
-      );
-    } else {
-      await repository.update(
-        Room(
-          id: existing.id,
-          title: _name.text,
-          description: _trimmedOrNull(_description),
-          franchiseId: franchiseId,
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          happenedOn: _playedOn,
-          escaped: _escaped,
-          timeLeftMinutes: timeLeft,
-        ),
-      );
+      if (existing == null) {
+        await repository.create(
+          RoomDraft(
+            title: _name.text,
+            description: _trimmedOrNull(_description),
+            franchiseId: franchiseId,
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            happenedOn: _playedOn,
+            escaped: _escaped,
+            timeLeftMinutes: timeLeft,
+          ),
+        );
+      } else {
+        await repository.update(
+          Room(
+            id: existing.id,
+            title: _name.text,
+            description: _trimmedOrNull(_description),
+            franchiseId: franchiseId,
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            happenedOn: _playedOn,
+            escaped: _escaped,
+            timeLeftMinutes: timeLeft,
+          ),
+        );
+      }
+    });
+    if (!mounted) return;
+    if (!saved) {
+      setState(() => _saving = false);
+      return;
     }
-
     if (mounted) navigator.pop(true);
   }
 

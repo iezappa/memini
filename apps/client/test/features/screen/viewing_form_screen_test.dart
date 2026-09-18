@@ -126,4 +126,43 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A write that throws used to vanish: the form stayed put with its Save
+  // button spinning, and nothing told the owner the entry was never kept.
+  testWidgets('says so when the new viewing could not be saved', (
+    tester,
+  ) async {
+    await refuseWrites(db, 'viewings');
+    await pumpForm(tester);
+
+    await fillField(tester, 'Title', 'Severance');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(ViewingFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('says so when the edited viewing could not be saved', (
+    tester,
+  ) async {
+    final original = await viewings.create(
+      ViewingDraft(
+        title: 'Severance',
+        happenedOn: DateTime(2026, 2, 9),
+        kind: ViewingKind.film,
+      ),
+    );
+    await refuseWrites(db, 'viewings');
+    await pumpForm(tester, viewing: original);
+
+    await fillField(tester, 'Title', 'Severance, again');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(ViewingFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
 }

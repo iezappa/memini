@@ -6,6 +6,7 @@ import '../../../core/tracking/presentation/form_fields.dart';
 import '../../../l10n/app_localizations.dart';
 import '../domain/meal.dart';
 import 'meal_providers.dart';
+import '../../shared/save_failure.dart';
 
 class MealFormScreen extends ConsumerStatefulWidget {
   const MealFormScreen({super.key, this.meal});
@@ -77,43 +78,49 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     setState(() => _saving = true);
 
     final navigator = Navigator.of(context);
-    final repository = ref.read(mealRepositoryProvider);
-    // A comma is the decimal separator here, and a stray one would otherwise
-    // silently drop the price rather than record it.
-    final price = double.tryParse(_price.text.trim().replaceAll(',', '.'));
+    final saved = await guardSave(context, () async {
+      final repository = ref.read(mealRepositoryProvider);
+      // A comma is the decimal separator here, and a stray one would otherwise
+      // silently drop the price rather than record it.
+      final price = double.tryParse(_price.text.trim().replaceAll(',', '.'));
 
-    final existing = widget.meal;
-    if (existing == null) {
-      await repository.create(
-        MealDraft(
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          dish: _trimmedOrNull(_dish),
-          price: price,
-          company: _trimmedOrNull(_company),
-          location: _trimmedOrNull(_location),
-        ),
-      );
-    } else {
-      await repository.update(
-        Meal(
-          id: existing.id,
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          dish: _trimmedOrNull(_dish),
-          price: price,
-          company: _trimmedOrNull(_company),
-          location: _trimmedOrNull(_location),
-        ),
-      );
+      final existing = widget.meal;
+      if (existing == null) {
+        await repository.create(
+          MealDraft(
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            dish: _trimmedOrNull(_dish),
+            price: price,
+            company: _trimmedOrNull(_company),
+            location: _trimmedOrNull(_location),
+          ),
+        );
+      } else {
+        await repository.update(
+          Meal(
+            id: existing.id,
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            dish: _trimmedOrNull(_dish),
+            price: price,
+            company: _trimmedOrNull(_company),
+            location: _trimmedOrNull(_location),
+          ),
+        );
+      }
+    });
+    if (!mounted) return;
+    if (!saved) {
+      setState(() => _saving = false);
+      return;
     }
-
     navigator.pop();
   }
 

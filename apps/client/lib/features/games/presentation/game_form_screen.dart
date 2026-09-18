@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/game.dart';
 import 'game_labels.dart';
 import 'game_providers.dart';
+import '../../shared/save_failure.dart';
 
 class GameFormScreen extends ConsumerStatefulWidget {
   const GameFormScreen({super.key, this.game});
@@ -125,48 +126,54 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
     setState(() => _saving = true);
 
     final navigator = Navigator.of(context);
-    final repository = ref.read(gameRepositoryProvider);
-    // A comma is the decimal separator here, and a stray one would otherwise
-    // silently drop the hours rather than record them.
-    final hours = double.tryParse(
-      _hoursPlayed.text.trim().replaceAll(',', '.'),
-    );
-    final releaseYear = int.tryParse(_releaseYear.text.trim());
+    final saved = await guardSave(context, () async {
+      final repository = ref.read(gameRepositoryProvider);
+      // A comma is the decimal separator here, and a stray one would otherwise
+      // silently drop the hours rather than record them.
+      final hours = double.tryParse(
+        _hoursPlayed.text.trim().replaceAll(',', '.'),
+      );
+      final releaseYear = int.tryParse(_releaseYear.text.trim());
 
-    final existing = widget.game;
-    if (existing == null) {
-      await repository.create(
-        GameDraft(
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          status: _status,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          platform: _trimmedOrNull(_platform),
-          hoursPlayed: hours,
-          releaseYear: releaseYear,
-          externalId: _externalId,
-        ),
-      );
-    } else {
-      await repository.update(
-        Game(
-          id: existing.id,
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          status: _status,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          platform: _trimmedOrNull(_platform),
-          hoursPlayed: hours,
-          releaseYear: releaseYear,
-          externalId: _externalId,
-        ),
-      );
+      final existing = widget.game;
+      if (existing == null) {
+        await repository.create(
+          GameDraft(
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            status: _status,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            platform: _trimmedOrNull(_platform),
+            hoursPlayed: hours,
+            releaseYear: releaseYear,
+            externalId: _externalId,
+          ),
+        );
+      } else {
+        await repository.update(
+          Game(
+            id: existing.id,
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            status: _status,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            platform: _trimmedOrNull(_platform),
+            hoursPlayed: hours,
+            releaseYear: releaseYear,
+            externalId: _externalId,
+          ),
+        );
+      }
+    });
+    if (!mounted) return;
+    if (!saved) {
+      setState(() => _saving = false);
+      return;
     }
-
     navigator.pop();
   }
 

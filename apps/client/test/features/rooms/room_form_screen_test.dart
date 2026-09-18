@@ -207,4 +207,57 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A write that throws used to vanish: the form stayed put with its Save
+  // button spinning, and nothing told the owner the entry was never kept.
+  testWidgets('says so when the new room could not be saved', (tester) async {
+    await refuseWrites(db, 'rooms');
+    await pumpForm(tester);
+
+    await fillField(tester, 'Name', 'The Vault');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(RoomFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('says so when the edited room could not be saved', (
+    tester,
+  ) async {
+    final original = await rooms.create(
+      RoomDraft(
+        title: 'The Vault',
+        happenedOn: DateTime(2026, 3, 14),
+        escaped: true,
+      ),
+    );
+    await refuseWrites(db, 'rooms');
+    await pumpForm(tester, room: original);
+
+    await fillField(tester, 'Name', 'The Vault II');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(RoomFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('says so when the new franchise could not be saved', (
+    tester,
+  ) async {
+    await refuseWrites(db, 'franchises');
+    await pumpForm(tester);
+
+    await fillField(tester, 'Name', 'The Vault');
+    await fillField(tester, 'Franchise', 'Enigma Rooms');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(RoomFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
 }

@@ -10,6 +10,7 @@ import '../../../l10n/app_localizations.dart';
 import '../domain/viewing.dart';
 import 'viewing_labels.dart';
 import 'viewing_providers.dart';
+import '../../shared/save_failure.dart';
 
 class ViewingFormScreen extends ConsumerStatefulWidget {
   const ViewingFormScreen({super.key, this.viewing});
@@ -132,46 +133,52 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
     setState(() => _saving = true);
 
     final navigator = Navigator.of(context);
-    final repository = ref.read(viewingRepositoryProvider);
-    final season = _takesSeason ? int.tryParse(_season.text.trim()) : null;
-    final releaseYear = int.tryParse(_releaseYear.text.trim());
+    final saved = await guardSave(context, () async {
+      final repository = ref.read(viewingRepositoryProvider);
+      final season = _takesSeason ? int.tryParse(_season.text.trim()) : null;
+      final releaseYear = int.tryParse(_releaseYear.text.trim());
 
-    final existing = widget.viewing;
-    if (existing == null) {
-      await repository.create(
-        ViewingDraft(
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          kind: _kind,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          releaseYear: releaseYear,
-          director: _trimmedOrNull(_director),
-          cast: _trimmedOrNull(_cast),
-          season: season,
-          externalId: _externalId,
-        ),
-      );
-    } else {
-      await repository.update(
-        Viewing(
-          id: existing.id,
-          title: _title.text.trim(),
-          happenedOn: _happenedOn,
-          kind: _kind,
-          description: _trimmedOrNull(_description),
-          rating: _rating,
-          review: _trimmedOrNull(_review),
-          releaseYear: releaseYear,
-          director: _trimmedOrNull(_director),
-          cast: _trimmedOrNull(_cast),
-          season: season,
-          externalId: _externalId,
-        ),
-      );
+      final existing = widget.viewing;
+      if (existing == null) {
+        await repository.create(
+          ViewingDraft(
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            kind: _kind,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            releaseYear: releaseYear,
+            director: _trimmedOrNull(_director),
+            cast: _trimmedOrNull(_cast),
+            season: season,
+            externalId: _externalId,
+          ),
+        );
+      } else {
+        await repository.update(
+          Viewing(
+            id: existing.id,
+            title: _title.text.trim(),
+            happenedOn: _happenedOn,
+            kind: _kind,
+            description: _trimmedOrNull(_description),
+            rating: _rating,
+            review: _trimmedOrNull(_review),
+            releaseYear: releaseYear,
+            director: _trimmedOrNull(_director),
+            cast: _trimmedOrNull(_cast),
+            season: season,
+            externalId: _externalId,
+          ),
+        );
+      }
+    });
+    if (!mounted) return;
+    if (!saved) {
+      setState(() => _saving = false);
+      return;
     }
-
     navigator.pop();
   }
 

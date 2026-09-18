@@ -109,4 +109,41 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A write that throws used to vanish: the form stayed put with its Save
+  // button spinning, and nothing told the owner the entry was never kept.
+  testWidgets('says so when the new game could not be saved', (tester) async {
+    await refuseWrites(db, 'games');
+    await pumpForm(tester);
+
+    await fillField(tester, 'Title', 'Outer Wilds');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(GameFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('says so when the edited game could not be saved', (
+    tester,
+  ) async {
+    final original = await games.create(
+      GameDraft(
+        title: 'Outer Wilds',
+        happenedOn: DateTime(2026, 1, 20),
+        status: GameStatus.playing,
+      ),
+    );
+    await refuseWrites(db, 'games');
+    await pumpForm(tester, game: original);
+
+    await fillField(tester, 'Hours played', '22');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(GameFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
 }

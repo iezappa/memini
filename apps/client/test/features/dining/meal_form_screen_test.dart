@@ -103,4 +103,37 @@ void main() {
 
     await unmount(tester);
   });
+
+  // A write that throws used to vanish: the form stayed put with its Save
+  // button spinning, and nothing told the owner the entry was never kept.
+  testWidgets('says so when the new meal could not be saved', (tester) async {
+    await refuseWrites(db, 'meals');
+    await pumpForm(tester);
+
+    await fillField(tester, 'Place', 'Don Julio');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(MealFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('says so when the edited meal could not be saved', (
+    tester,
+  ) async {
+    final original = await meals.create(
+      MealDraft(title: 'Don Julio', happenedOn: DateTime(2026, 5, 2)),
+    );
+    await refuseWrites(db, 'meals');
+    await pumpForm(tester, meal: original);
+
+    await fillField(tester, 'Dish', 'Entraña');
+    await tapSave(tester);
+
+    expect(find.text(saveFailedMessage), findsOneWidget);
+    expect(find.byType(MealFormScreen), findsOneWidget);
+
+    await unmount(tester);
+  });
 }
