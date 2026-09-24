@@ -85,8 +85,11 @@ class GameListScreen extends ConsumerWidget {
           icon: Icons.sports_esports_outlined,
           posterUrl: game.coverUrl,
           pill: _StatusPill(game: game),
-          onTap: () =>
-              showEntryDialog(context, GameDetailScreen(gameId: game.id)),
+          onTap: () => showEntryDialog(
+            context,
+            GameDetailScreen(gameId: game.id),
+            wide: true,
+          ),
         );
       },
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/providers.dart';
@@ -8,6 +7,8 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
+import '../../shared/entry_screens.dart';
 import '../../shared/settings_button.dart';
 import '../../shared/widgets.dart';
 import 'home_providers.dart';
@@ -116,7 +117,11 @@ class _RecentRow extends StatelessWidget {
       title: Text(entry.title, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Text(DateFormat.yMMMd(locale).format(entry.happenedOn)),
       trailing: ScoreBadge(rating: entry.rating),
-      onTap: () => context.push('${item.domain.route}/${entry.id}'),
+      onTap: () => showEntryDialog(
+        context,
+        detailScreenFor(item.domain, entry.id),
+        wide: true,
+      ),
     );
   }
 }
@@ -141,7 +146,7 @@ class _Shortcuts extends StatelessWidget {
           ActionChip(
             avatar: Icon(domain.icon, size: 18),
             label: Text(domain.label(l10n)),
-            onPressed: () => context.push('${domain.route}/new'),
+            onPressed: () => showEntryDialog(context, formScreenFor(domain)),
           ),
       ],
     );

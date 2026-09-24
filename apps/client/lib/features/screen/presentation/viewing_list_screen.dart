@@ -74,6 +74,7 @@ class ViewingListScreen extends ConsumerWidget {
           onTap: () => showEntryDialog(
             context,
             ViewingDetailScreen(viewingId: viewing.id),
+            wide: true,
           ),
         );
       },

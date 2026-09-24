@@ -72,7 +72,11 @@ class GigListScreen extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-          onTap: () => showEntryDialog(context, GigDetailScreen(gigId: gig.id)),
+          onTap: () => showEntryDialog(
+            context,
+            GigDetailScreen(gigId: gig.id),
+            wide: true,
+          ),
         );
       },
     );

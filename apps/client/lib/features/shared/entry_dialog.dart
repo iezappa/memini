@@ -15,9 +15,17 @@ import '../../core/theme/tokens.dart';
 /// closes the modal, because the route being popped is the dialog itself.
 /// That is what lets the same widget still answer a deep link as a page.
 ///
+/// [wide] is for the pages that show artwork. A form gets the narrower box:
+/// a column of fields stretched across a desktop window is a worse form
+/// than a small one.
+///
 /// Full screen on a phone, where a dialog with margins is just a page with
 /// the corners cut off.
-Future<T?> showEntryDialog<T>(BuildContext context, Widget screen) {
+Future<T?> showEntryDialog<T>(
+  BuildContext context,
+  Widget screen, {
+  bool wide = false,
+}) {
   final narrow = MediaQuery.sizeOf(context).width < 700;
 
   return showDialog<T>(

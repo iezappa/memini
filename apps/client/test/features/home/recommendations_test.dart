@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:memini/core/tracking/domain/tracked_domain.dart';
 import 'package:memini/features/home/data/rawg_recommendations.dart';
 import 'package:memini/features/home/data/tmdb_recommendations.dart';
+import 'package:memini/features/home/domain/mood.dart';
 import 'package:memini/features/home/domain/recommendation.dart';
 
 void main() {
@@ -111,6 +112,28 @@ void main() {
 
       expect(source.isConfigured, isFalse);
       expect(source.popular, throwsA(isA<RecommendationException>()));
+      expect(
+        () => source.forMood(Mood.scare),
+        throwsA(isA<RecommendationException>()),
+      );
+    });
+
+    test('answers a mood too, by genre or by tag', () {
+      // The two catalogues do not line up: RAWG has a genre for "something
+      // for everyone" and only a tag for horror. Every mood has to be one
+      // or the other, or the shelf would ask for nothing at all.
+      for (final mood in Mood.values) {
+        expect(
+          mood.rawgGenre ?? mood.rawgTag,
+          isNotNull,
+          reason: '${mood.name} has no answer in a games catalogue',
+        );
+        expect(
+          mood.rawgGenre == null || mood.rawgTag == null,
+          isTrue,
+          reason: '${mood.name} asks RAWG two things at once',
+        );
+      }
     });
   });
 }

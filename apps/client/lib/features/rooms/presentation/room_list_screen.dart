@@ -82,8 +82,11 @@ class RoomListScreen extends ConsumerWidget {
             escaped: room.escaped,
             timeLeftMinutes: room.timeLeftMinutes,
           ),
-          onTap: () =>
-              showEntryDialog(context, RoomDetailScreen(roomId: room.id)),
+          onTap: () => showEntryDialog(
+            context,
+            RoomDetailScreen(roomId: room.id),
+            wide: true,
+          ),
         );
       },
     );

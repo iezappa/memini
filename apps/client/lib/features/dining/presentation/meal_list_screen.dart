@@ -65,8 +65,11 @@ class MealListScreen extends ConsumerWidget {
           rating: meal.rating,
           icon: Icons.restaurant_outlined,
           pill: meal.dish == null ? null : _DishPill(dish: meal.dish!),
-          onTap: () =>
-              showEntryDialog(context, MealDetailScreen(mealId: meal.id)),
+          onTap: () => showEntryDialog(
+            context,
+            MealDetailScreen(mealId: meal.id),
+            wide: true,
+          ),
         );
       },
     );

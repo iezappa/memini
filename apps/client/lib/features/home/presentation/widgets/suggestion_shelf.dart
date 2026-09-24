@@ -35,8 +35,9 @@ class SuggestionShelf extends ConsumerWidget {
 
 /// "I feel…", and the answer changes what the shelf asks for.
 ///
-/// Chips rather than a dropdown: there are eight of them, they are short,
-/// and the whole point is to be able to pick one without reading a menu.
+/// A dropdown rather than a row of chips. Eight chips is a paragraph of
+/// buttons across the hub, and this is one question with one answer — the
+/// shape of a single choice is a field, not a wall.
 class _MoodPicker extends ConsumerWidget {
   const _MoodPicker();
 
@@ -45,41 +46,29 @@ class _MoodPicker extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final chosen = ref.watch(chosenMoodProvider);
 
-    void choose(Mood? mood) {
-      ref.read(chosenMoodProvider.notifier).state = mood;
-      // A new question deserves a fresh draw, not the pick that was
-      // already on screen.
-      ref.read(suggestionRollProvider.notifier).update((roll) => roll + 1);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.homeMoodPrompt,
-          style: context.text.bodySmall?.copyWith(
-            color: context.semantics.muted,
-          ),
+    return SizedBox(
+      // The width of the answer, not of the page: stretched across a
+      // desktop window a one-line dropdown reads as a search box.
+      width: 320,
+      child: DropdownButtonFormField<Mood?>(
+        initialValue: chosen,
+        isExpanded: true,
+        decoration: InputDecoration(
+          labelText: l10n.homeMoodPrompt,
+          prefixIcon: const Icon(Icons.mood_outlined, size: 18),
         ),
-        Gap.vXs,
-        Wrap(
-          spacing: Gap.sm,
-          runSpacing: Gap.xs,
-          children: [
-            ChoiceChip(
-              label: Text(l10n.homeMoodAny),
-              selected: chosen == null,
-              onSelected: (_) => choose(null),
-            ),
-            for (final mood in Mood.values)
-              ChoiceChip(
-                label: Text(moodLabel(l10n, mood)),
-                selected: chosen == mood,
-                onSelected: (selected) => choose(selected ? mood : null),
-              ),
-          ],
-        ),
-      ],
+        items: [
+          DropdownMenuItem(value: null, child: Text(l10n.homeMoodAny)),
+          for (final mood in Mood.values)
+            DropdownMenuItem(value: mood, child: Text(moodLabel(l10n, mood))),
+        ],
+        onChanged: (mood) {
+          ref.read(chosenMoodProvider.notifier).state = mood;
+          // A new question deserves a fresh draw, not the pick that was
+          // already on screen.
+          ref.read(suggestionRollProvider.notifier).update((roll) => roll + 1);
+        },
+      ),
     );
   }
 }

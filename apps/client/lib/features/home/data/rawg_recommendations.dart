@@ -36,10 +36,13 @@ class RawgRecommendations implements RecommendationSource {
     // Ordered by how many people added it lately rather than by score: a
     // list of the highest-rated games of all time never changes, and this
     // shelf is supposed to.
+    return _ask({'ordering': '-added', 'page_size': '20'});
+  }
+
+  Future<List<Recommendation>> _ask(Map<String, String> query) async {
     final uri = Uri.https(_host, '/api/games', {
       'key': apiKey!.trim(),
-      'ordering': '-added',
-      'page_size': '20',
+      ...query,
     });
 
     final connection = client ?? http.Client();
@@ -58,13 +61,24 @@ class RawgRecommendations implements RecommendationSource {
     }
   }
 
-  /// Null: a mood is asked of the films.
-  ///
-  /// RAWG has genres of its own and they do not line up — "something to
-  /// make me cry" has no answer in a games catalogue, and mapping it onto
-  /// whatever is nearest would be inventing a reply.
   @override
-  Future<List<Recommendation>>? forMood(Mood mood) => null;
+  Future<List<Recommendation>> forMood(Mood mood) async {
+    if (!isConfigured) {
+      throw const RecommendationException(RecommendationFailure.missingKey);
+    }
+
+    // A genre where RAWG has one for the mood, its nearest tag where it
+    // does not — horror is a tag here, not a genre. Either way the answer
+    // is narrowed to what somebody actually asked for rather than being
+    // the week's most-added list wearing a label.
+    return _ask({
+      'ordering': '-added',
+      'page_size': '20',
+      // Only one of the two is ever set; the other is dropped.
+      'genres': ?mood.rawgGenre,
+      'tags': ?mood.rawgTag,
+    });
+  }
 
   /// Split out so the mapping can be tested without a network.
   static List<Recommendation> parse(String body) {
