@@ -56,6 +56,28 @@ void main() {
     await settle(tester);
   }
 
+  testWidgets('heads every block, so one section ends where the next '
+      'begins', (tester) async {
+    useTallWindow(tester);
+
+    await pump(tester);
+
+    // The five blocks of the hub, each with the icon that tells it apart
+    // from the others at a glance.
+    for (final (label, icon) in [
+      ('Activity', Icons.calendar_today_outlined),
+      ('Log something', Icons.add_circle_outline),
+      ('To watch or play', Icons.auto_awesome_outlined),
+      ('In numbers', Icons.insights_outlined),
+      ('Recently logged', Icons.history_outlined),
+    ]) {
+      expect(find.text(label.toUpperCase()), findsOneWidget, reason: label);
+      expect(find.byIcon(icon), findsOneWidget, reason: label);
+    }
+
+    await unmount(tester);
+  });
+
   testWidgets('offers a shortcut per domain, and the figures empty', (
     tester,
   ) async {

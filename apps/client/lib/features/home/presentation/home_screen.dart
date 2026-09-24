@@ -63,24 +63,34 @@ class HomeScreen extends ConsumerWidget {
                 ],
               ),
               Gap.vLg,
-              SectionLabel(l10n.homeActivity),
-              Gap.vSm,
+              _SectionHeader(
+                label: l10n.homeActivity,
+                icon: Icons.calendar_today_outlined,
+              ),
               const ActivityGridCard(),
               Gap.vLg,
-              SectionLabel(l10n.homeShortcuts),
-              Gap.vSm,
+              _SectionHeader(
+                label: l10n.homeShortcuts,
+                icon: Icons.add_circle_outline,
+              ),
               const _Shortcuts(),
               Gap.vLg,
-              SectionLabel(l10n.homeSuggestions),
-              Gap.vSm,
+              _SectionHeader(
+                label: l10n.homeSuggestions,
+                icon: Icons.auto_awesome_outlined,
+              ),
               const SuggestionShelf(),
               Gap.vLg,
-              SectionLabel(l10n.homeNumbers),
-              Gap.vSm,
+              _SectionHeader(
+                label: l10n.homeNumbers,
+                icon: Icons.insights_outlined,
+              ),
               const _Numbers(),
               Gap.vLg,
-              SectionLabel(l10n.homeRecent),
-              Gap.vSm,
+              _SectionHeader(
+                label: l10n.homeRecent,
+                icon: Icons.history_outlined,
+              ),
               if (recent.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: Gap.md),
@@ -96,6 +106,49 @@ class HomeScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The heading over one block of the hub.
+///
+/// Five blocks ran together under five identical labels, and reading the
+/// page meant reading every word of it to find where one thing ended and
+/// the next began. An icon gives each block a shape to recognise from
+/// across the page, and the rule carries the eye to the edge so the break
+/// is visible before anything is read.
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Gap.xs),
+      child: Row(
+        children: [
+          // The label carries the standard's own bottom padding, so the
+          // icon and the rule take the same one — otherwise the row centres
+          // three boxes of three different heights and nothing lines up.
+          Padding(
+            padding: const EdgeInsets.only(bottom: Gap.sm),
+            child: Icon(icon, size: 15, color: context.colors.primary),
+          ),
+          Gap.hSm,
+          // The app's standard section label, kept as it is everywhere else;
+          // only what surrounds it is new.
+          SectionLabel(label),
+          Gap.hMd,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: Gap.sm),
+              child: Divider(height: 1, color: context.semantics.hairline),
+            ),
+          ),
+        ],
       ),
     );
   }
