@@ -340,5 +340,61 @@
         "type": "int"
       }
     }
-  }
+  },
+  "homeActivity": "Actividad",
+  "homeActivityCaption": "Últimas {weeks} semanas",
+  "@homeActivityCaption": {
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityEmpty": "Todavía no anotaste nada. Cada cosa que registres pinta un cuadradito.",
+  "homeActivityTotal": "{count} registros",
+  "@homeActivityTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityDays": "{days} días con algo",
+  "@homeActivityDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityRun": "Racha más larga: {days} días",
+  "@homeActivityRun": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityLess": "Menos",
+  "homeActivityMore": "Más",
+  "homeActivityCell": "{date}: {count} registros",
+  "@homeActivityCell": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityCellEmpty": "{date}: nada anotado",
+  "@homeActivityCellEmpty": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeShortcuts": "Anotar algo"
 }

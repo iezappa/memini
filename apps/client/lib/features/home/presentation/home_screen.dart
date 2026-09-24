@@ -8,13 +8,17 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/settings_button.dart';
 import '../../shared/widgets.dart';
 import 'home_providers.dart';
+import 'widgets/activity_grid_card.dart';
 
-/// The hub: every domain at a glance, plus whatever was logged last.
+/// The hub: what the last six months look like, a way into each domain, and
+/// whatever was logged last.
 ///
-/// Five domains do not fit in a bottom bar without turning it into a remote
-/// control, so the bar keeps three tabs and the domains live one tap deeper.
+/// The five domains have their own tabs now, so the tiles here are not the
+/// only way in any more — they are the count, and the shortcuts under them
+/// go straight to the form rather than to the list.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -31,13 +35,38 @@ class HomeScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.only(bottom: Gap.xl),
             children: [
-              Gap.vLg,
-              Text(
-                name == null ? l10n.greetingAnonymous : l10n.greeting(name),
-                style: context.text.displaySmall,
+              Gap.vSm,
+              // The gear lives on the screen, not in the bar: the bar is for
+              // the app's sections, and settings is not one of them.
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name == null
+                              ? l10n.greetingAnonymous
+                              : l10n.greeting(name),
+                          style: context.text.displaySmall,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(l10n.homeTagline, style: context.text.bodySmall),
+                      ],
+                    ),
+                  ),
+                  const SettingsButton(),
+                ],
               ),
-              const SizedBox(height: 2),
-              Text(l10n.homeTagline, style: context.text.bodySmall),
+              Gap.vLg,
+              SectionLabel(l10n.homeActivity),
+              Gap.vSm,
+              const ActivityGridCard(),
+              Gap.vLg,
+              SectionLabel(l10n.homeShortcuts),
+              Gap.vSm,
+              const _Shortcuts(),
               Gap.vLg,
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -134,6 +163,33 @@ class _RecentRow extends StatelessWidget {
       subtitle: Text(DateFormat.yMMMd(locale).format(entry.happenedOn)),
       trailing: ScoreBadge(rating: entry.rating),
       onTap: () => context.push('${item.domain.route}/${entry.id}'),
+    );
+  }
+}
+
+/// One chip per domain, straight to its form.
+///
+/// The tiles above answer "how much have I got"; these answer "I want to
+/// write something down now", which is the other reason the hub is opened.
+/// A tap lands on the form rather than on the list: the list is a tab away.
+class _Shortcuts extends StatelessWidget {
+  const _Shortcuts();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Wrap(
+      spacing: Gap.sm,
+      runSpacing: Gap.sm,
+      children: [
+        for (final domain in TrackedDomain.values)
+          ActionChip(
+            avatar: Icon(domain.icon, size: 18),
+            label: Text(domain.label(l10n)),
+            onPressed: () => context.push('${domain.route}/new'),
+          ),
+      ],
     );
   }
 }

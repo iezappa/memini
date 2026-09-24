@@ -51,7 +51,18 @@ extension MeminiThemeX on BuildContext {
 }
 
 abstract final class MeminiTheme {
-  static const _display = 'Fraunces';
+  /// One family for everything.
+  ///
+  /// The headings used to be set in Fraunces, a high-contrast serif. It is a
+  /// handsome face and it made a log of meals out and games read like a
+  /// wine list: the app is somebody's own notebook, and the type should
+  /// sound like them rather than like a printed menu. Inter at a heavier
+  /// weight and tighter tracking does the work of a display face without
+  /// the formality.
+  ///
+  /// Fraunces stays bundled and licensed, because the licence page lists
+  /// what the build ships and the file is still in it.
+  static const _display = 'Inter';
   static const _body = 'Inter';
 
   /// The accent replaces the primary role only.
@@ -114,32 +125,32 @@ abstract final class MeminiTheme {
   }) {
     final base = ThemeData(brightness: brightness, colorScheme: scheme);
 
-    // Serif for anything that names a thing, sans for anything that is read
-    // in bulk. Tight letter spacing on display sizes keeps the serif elegant
-    // rather than airy.
+    // One face throughout, told apart by size and weight rather than by
+    // family. Tight letter spacing on the big sizes is what keeps a sans
+    // from reading as a sign rather than as a heading.
     final text = base.textTheme.copyWith(
       displaySmall: TextStyle(
         fontFamily: _display,
-        fontSize: 34,
+        fontSize: 32,
         height: 1.15,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.6,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.8,
         color: scheme.onSurface,
       ),
       headlineMedium: TextStyle(
         fontFamily: _display,
-        fontSize: 26,
+        fontSize: 25,
         height: 1.2,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.4,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
         color: scheme.onSurface,
       ),
       titleLarge: TextStyle(
         fontFamily: _display,
-        fontSize: 20,
-        height: 1.25,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
+        fontSize: 19,
+        height: 1.3,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.3,
         color: scheme.onSurface,
       ),
       titleMedium: TextStyle(

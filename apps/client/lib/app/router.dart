@@ -25,6 +25,7 @@ import '../features/screen/presentation/viewing_form_screen.dart';
 import '../features/screen/presentation/viewing_list_screen.dart';
 import '../features/rooms/presentation/room_detail_screen.dart';
 import '../features/rooms/presentation/room_form_screen.dart';
+import '../core/tracking/presentation/tracking_labels.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/stats/presentation/stats_screen.dart';
 import '../l10n/app_localizations.dart';
@@ -44,6 +45,41 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          // One branch per domain, so each of the five is a tab and keeps
+          // its own scroll position and its own search box. Their forms and
+          // detail pages are branch routes rather than top-level ones: the
+          // bar stays put while the user is inside one, which is what makes
+          // it a section rather than a detour.
+          _domainBranch(
+            segment: 'rooms',
+            list: () => const RoomListScreen(),
+            form: () => const RoomFormScreen(),
+            detail: (id) => RoomDetailScreen(roomId: id),
+          ),
+          _domainBranch(
+            segment: 'meals',
+            list: () => const MealListScreen(),
+            form: () => const MealFormScreen(),
+            detail: (id) => MealDetailScreen(mealId: id),
+          ),
+          _domainBranch(
+            segment: 'gigs',
+            list: () => const GigListScreen(),
+            form: () => const GigFormScreen(),
+            detail: (id) => GigDetailScreen(gigId: id),
+          ),
+          _domainBranch(
+            segment: 'viewings',
+            list: () => const ViewingListScreen(),
+            form: () => const ViewingFormScreen(),
+            detail: (id) => ViewingDetailScreen(viewingId: id),
+          ),
+          _domainBranch(
+            segment: 'games',
+            list: () => const GameListScreen(),
+            form: () => const GameFormScreen(),
+            detail: (id) => GameDetailScreen(gameId: id),
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -52,72 +88,51 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/settings',
-                builder: (context, state) => const SettingsScreen(),
-              ),
-            ],
-          ),
         ],
       ),
-      ..._domainRoutes(
-        segment: 'rooms',
-        list: () => const RoomListScreen(),
-        form: () => const RoomFormScreen(),
-        detail: (id) => RoomDetailScreen(roomId: id),
-      ),
-      ..._domainRoutes(
-        segment: 'meals',
-        list: () => const MealListScreen(),
-        form: () => const MealFormScreen(),
-        detail: (id) => MealDetailScreen(mealId: id),
-      ),
-      ..._domainRoutes(
-        segment: 'gigs',
-        list: () => const GigListScreen(),
-        form: () => const GigFormScreen(),
-        detail: (id) => GigDetailScreen(gigId: id),
-      ),
-      ..._domainRoutes(
-        segment: 'viewings',
-        list: () => const ViewingListScreen(),
-        form: () => const ViewingFormScreen(),
-        detail: (id) => ViewingDetailScreen(viewingId: id),
-      ),
-      ..._domainRoutes(
-        segment: 'games',
-        list: () => const GameListScreen(),
-        form: () => const GameFormScreen(),
-        detail: (id) => GameDetailScreen(gameId: id),
+      // Outside the shell on purpose: it is pushed over whatever tab is
+      // open, gets a real back arrow, and is reached from the gear on every
+      // screen rather than from a slot in the bar.
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );
 });
 
-/// The three routes every domain needs: its list, the add form, and one
-/// entry. Declared once so a sixth domain is three lines, not thirty.
+/// One domain as a tab: its list, the add form, and one entry.
 ///
-/// The `/new` route has to be declared before `/:id`, or go_router would
+/// Declared once so a sixth domain is five lines, not fifty. The form and
+/// the detail hang off the list as children, which is what keeps them in
+/// the same branch — and the bar on screen — instead of covering the app.
+///
+/// The `new` child has to be declared before `:id`, or go_router would
 /// match "new" as an id and hand the detail screen a null.
-List<RouteBase> _domainRoutes({
+StatefulShellBranch _domainBranch({
   required String segment,
   required Widget Function() list,
   required Widget Function() form,
   required Widget Function(String id) detail,
 }) {
-  return [
-    GoRoute(path: '/$segment', builder: (context, state) => list()),
-    GoRoute(path: '/$segment/new', builder: (context, state) => form()),
-    GoRoute(
-      path: '/$segment/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id'];
-        return id == null || id.isEmpty ? list() : detail(id);
-      },
-    ),
-  ];
+  return StatefulShellBranch(
+    routes: [
+      GoRoute(
+        path: '/$segment',
+        builder: (context, state) => list(),
+        routes: [
+          GoRoute(path: 'new', builder: (context, state) => form()),
+          GoRoute(
+            path: ':id',
+            builder: (context, state) {
+              final id = state.pathParameters['id'];
+              return id == null || id.isEmpty ? list() : detail(id);
+            },
+          ),
+        ],
+      ),
+    ],
+  );
 }
 
 /// Bottom navigation on phones, a rail on anything wider — one shell so the
@@ -132,10 +147,13 @@ class _HomeShell extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final wide = MediaQuery.sizeOf(context).width >= 720;
 
+    // Home, the five sections, and the figures — in the order the domains
+    // are declared in, so the bar reads the same as everything else.
     final destinations = [
       (Icons.home_outlined, Icons.home, l10n.navHome),
+      for (final domain in TrackedDomain.values)
+        (domain.icon, domain.icon, domain.label(l10n)),
       (Icons.insights_outlined, Icons.insights, l10n.navStats),
-      (Icons.settings_outlined, Icons.settings, l10n.navSettings),
     ];
 
     if (!wide) {
@@ -144,6 +162,12 @@ class _HomeShell extends StatelessWidget {
         bottomNavigationBar: NavigationBar(
           selectedIndex: shell.currentIndex,
           onDestinationSelected: shell.goBranch,
+          // Seven destinations share a phone's width, and a label broken
+          // mid-word reads worse than a clipped one. Past Material's five
+          // only the open tab is named; the rest keep their icon.
+          labelBehavior: destinations.length > 5
+              ? NavigationDestinationLabelBehavior.onlyShowSelected
+              : null,
           destinations: [
             for (final (icon, selected, label) in destinations)
               // Per destination: the bar's own Material resets any text

@@ -32,7 +32,7 @@ void main() {
   /// ListView never builds rows it cannot show — so a taller window is what
   /// lets the assertions see every row.
   void useTallWindow(WidgetTester tester) {
-    tester.view.physicalSize = const Size(1000, 2000);
+    tester.view.physicalSize = const Size(1000, 2600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
   }
@@ -52,11 +52,16 @@ void main() {
   ) async {
     await pump(tester);
 
-    expect(find.text('Escape rooms'), findsOneWidget);
-    expect(find.text('Places I ate'), findsOneWidget);
-    expect(find.text('Bands I saw'), findsOneWidget);
-    expect(find.text('Films and series'), findsOneWidget);
-    expect(find.text('Games'), findsOneWidget);
+    // Scoped to the grid: every domain is also a shortcut chip further
+    // down, so its name is on the hub twice.
+    Finder tile(String name) =>
+        find.descendant(of: find.byType(GridView), matching: find.text(name));
+
+    expect(tile('Escape rooms'), findsOneWidget);
+    expect(tile('Places I ate'), findsOneWidget);
+    expect(tile('Bands I saw'), findsOneWidget);
+    expect(tile('Films and series'), findsOneWidget);
+    expect(tile('Games'), findsOneWidget);
     expect(find.text('0'), findsNWidgets(5));
 
     await unmount(tester);
@@ -124,6 +129,8 @@ void main() {
   testWidgets('says so when nothing has been logged in any domain', (
     tester,
   ) async {
+    // The line sits under the grid, the tiles and the shortcuts now.
+    useTallWindow(tester);
     await pump(tester);
 
     expect(
@@ -137,11 +144,14 @@ void main() {
   });
 
   testWidgets('renders in Spanish when the locale is es', (tester) async {
+    // Tall enough for the shortcuts under the tiles to be built.
+    useTallWindow(tester);
     await pump(tester, locale: const Locale('es'));
 
-    expect(find.text('Salas de escape'), findsOneWidget);
-    expect(find.text('Lugares donde comí'), findsOneWidget);
-    expect(find.text('Videojuegos'), findsOneWidget);
+    // Twice each: the tile and the shortcut under it.
+    expect(find.text('Salas de escape'), findsNWidgets(2));
+    expect(find.text('Lugares donde comí'), findsNWidgets(2));
+    expect(find.text('Videojuegos'), findsNWidgets(2));
 
     await unmount(tester);
   });

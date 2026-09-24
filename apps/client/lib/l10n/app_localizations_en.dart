@@ -939,4 +939,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String tutorialPageOf(int page, int total) {
     return '$page of $total';
   }
+
+  @override
+  String get homeActivity => 'Activity';
+
+  @override
+  String homeActivityCaption(int weeks) {
+    return 'Last $weeks weeks';
+  }
+
+  @override
+  String get homeActivityEmpty =>
+      'Nothing logged yet. Everything you record fills in a square.';
+
+  @override
+  String homeActivityTotal(int count) {
+    return '$count entries';
+  }
+
+  @override
+  String homeActivityDays(int days) {
+    return '$days days with something';
+  }
+
+  @override
+  String homeActivityRun(int days) {
+    return 'Longest run: $days days';
+  }
+
+  @override
+  String get homeActivityLess => 'Less';
+
+  @override
+  String get homeActivityMore => 'More';
+
+  @override
+  String homeActivityCell(String date, int count) {
+    return '$date: $count entries';
+  }
+
+  @override
+  String homeActivityCellEmpty(String date) {
+    return '$date: nothing logged';
+  }
+
+  @override
+  String get homeShortcuts => 'Log something';
 }

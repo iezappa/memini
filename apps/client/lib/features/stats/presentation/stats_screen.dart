@@ -7,6 +7,7 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/settings_button.dart';
 import '../../shared/widgets.dart';
 import '../domain/room_stats.dart';
 import 'stats_providers.dart';
@@ -20,7 +21,10 @@ class StatsScreen extends ConsumerWidget {
     final stats = ref.watch(meminiStatsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.navStats)),
+      appBar: AppBar(
+        title: Text(l10n.navStats),
+        actions: const [SettingsButton()],
+      ),
       body: SafeArea(
         child: stats.isEmpty
             ? EmptyState(icon: Icons.insights_outlined, title: l10n.statsEmpty)

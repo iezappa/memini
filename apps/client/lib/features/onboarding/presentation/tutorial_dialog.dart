@@ -105,12 +105,15 @@ class _TutorialDialogState extends ConsumerState<_TutorialDialog> {
     final canFinish = !widget.onboarding || _noticeAcknowledged;
 
     return AlertDialog(
-      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      contentPadding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
       content: SizedBox(
         // Fixed, so the dialog does not resize under the reader as the
-        // slides change: three lines of copy and four are different heights.
-        width: 460,
-        height: 460,
+        // slides change: three lines of copy and four are different
+        // heights. Sized for the longest slide — the disclaimer — and the
+        // short ones centre their content in it rather than leaving the
+        // hole at the bottom that made this look unfinished.
+        width: 440,
+        height: 420,
         child: Column(
           children: [
             Expanded(
@@ -216,24 +219,36 @@ class _Slide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          art,
-          Gap.vLg,
-          Text(
-            title,
-            style: context.text.titleLarge,
-            textAlign: TextAlign.center,
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          // Centred while it fits, scrollable when it does not: the
+          // disclaimer is a paragraph and a checkbox, the other three are
+          // two lines.
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              art,
+              Gap.vLg,
+              Text(
+                title,
+                style: context.text.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+              Gap.vSm,
+              Text(
+                body,
+                style: context.text.bodyMedium?.copyWith(
+                  height: 1.55,
+                  color: context.semantics.muted,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (extra case final extra?) ...[Gap.vLg, extra],
+            ],
           ),
-          Gap.vSm,
-          Text(
-            body,
-            style: context.text.bodyMedium?.copyWith(height: 1.5),
-            textAlign: TextAlign.center,
-          ),
-          if (extra case final extra?) ...[Gap.vLg, extra],
-        ],
+        ),
       ),
     );
   }
@@ -248,13 +263,18 @@ class _Glyph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 88,
-      height: 88,
+      width: 76,
+      height: 76,
       decoration: BoxDecoration(
         color: context.colors.primary.withValues(alpha: 0.10),
         shape: BoxShape.circle,
+        // A hairline ring on the tint: the flat disc read as a placeholder
+        // where an illustration had not been drawn yet.
+        border: Border.all(
+          color: context.colors.primary.withValues(alpha: 0.28),
+        ),
       ),
-      child: Icon(icon, size: 38, color: context.colors.primary),
+      child: Icon(icon, size: 34, color: context.colors.primary),
     );
   }
 }

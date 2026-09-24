@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../features/shared/settings_button.dart';
 import '../../../features/shared/widgets.dart';
 import '../../theme/theme.dart';
 import '../../theme/tokens.dart';
@@ -98,7 +99,11 @@ class _TrackerListScreenState<T extends Trackable>
     final entries = widget.entries;
 
     return Scaffold(
-      appBar: AppBar(title: Text(labels.title)),
+      appBar: AppBar(
+        title: Text(labels.title),
+        // Every screen of the app carries it, in the same corner.
+        actions: const [SettingsButton()],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: widget.onAdd,
         icon: const Icon(Icons.add),

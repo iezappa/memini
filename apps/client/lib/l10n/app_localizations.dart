@@ -1747,6 +1747,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{page} of {total}'**
   String tutorialPageOf(int page, int total);
+
+  /// No description provided for @homeActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get homeActivity;
+
+  /// No description provided for @homeActivityCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Last {weeks} weeks'**
+  String homeActivityCaption(int weeks);
+
+  /// No description provided for @homeActivityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing logged yet. Everything you record fills in a square.'**
+  String get homeActivityEmpty;
+
+  /// No description provided for @homeActivityTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} entries'**
+  String homeActivityTotal(int count);
+
+  /// No description provided for @homeActivityDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days with something'**
+  String homeActivityDays(int days);
+
+  /// No description provided for @homeActivityRun.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest run: {days} days'**
+  String homeActivityRun(int days);
+
+  /// No description provided for @homeActivityLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get homeActivityLess;
+
+  /// No description provided for @homeActivityMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get homeActivityMore;
+
+  /// No description provided for @homeActivityCell.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}: {count} entries'**
+  String homeActivityCell(String date, int count);
+
+  /// No description provided for @homeActivityCellEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}: nothing logged'**
+  String homeActivityCellEmpty(String date);
+
+  /// No description provided for @homeShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Log something'**
+  String get homeShortcuts;
 }
 
 class _AppLocalizationsDelegate

@@ -403,5 +403,61 @@
         "type": "int"
       }
     }
-  }
+  },
+  "homeActivity": "Activity",
+  "homeActivityCaption": "Last {weeks} weeks",
+  "@homeActivityCaption": {
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityEmpty": "Nothing logged yet. Everything you record fills in a square.",
+  "homeActivityTotal": "{count} entries",
+  "@homeActivityTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityDays": "{days} days with something",
+  "@homeActivityDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityRun": "Longest run: {days} days",
+  "@homeActivityRun": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityLess": "Less",
+  "homeActivityMore": "More",
+  "homeActivityCell": "{date}: {count} entries",
+  "@homeActivityCell": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeActivityCellEmpty": "{date}: nothing logged",
+  "@homeActivityCellEmpty": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeShortcuts": "Log something"
 }
