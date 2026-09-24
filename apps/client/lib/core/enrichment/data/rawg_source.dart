@@ -86,34 +86,103 @@ class RawgSource implements EnrichmentSource {
     }
   }
 
-  /// The first paragraph of a game's description, or null.
+  /// What RAWG's game page says about a game, in the shape a form can hold.
   ///
-  /// RAWG's `description_raw` runs to several paragraphs and often repeats
-  /// itself in three languages, one after another. The owner asked for a
-  /// short "about", and the first paragraph is the one that reads like one;
-  /// the rest belongs on RAWG's own page.
+  /// Two parts, because the prose alone did not tell the owner anything:
+  /// a line of facts — what kind of game it is, who made it, what it scored,
+  /// how long it takes — and then the description itself. The facts are the
+  /// half you can read at a glance; the prose is the half that says what
+  /// playing it is like.
   static String? parseAbout(String body) {
     final decoded = jsonDecode(body);
     if (decoded is! Map<String, dynamic>) return null;
 
-    final raw = decoded['description_raw'];
-    if (raw is! String) return null;
+    final facts = _facts(decoded);
+    final prose = _prose(decoded['description_raw']);
 
-    final paragraph = raw
-        .split(RegExp(r'\n\s*\n'))
-        .map((part) => part.trim())
-        .firstWhere((part) => part.isNotEmpty, orElse: () => '');
-    if (paragraph.isEmpty) return null;
-
-    return _shortened(paragraph.replaceAll(RegExp(r'\s+'), ' '));
+    return switch ((facts, prose)) {
+      (null, null) => null,
+      (final String only, null) => only,
+      (null, final String only) => only,
+      (final String head, final String body) => '$head\n\n$body',
+    };
   }
 
-  /// Caps a paragraph at a sentence rather than mid-word.
+  /// The line above the description: genre, who made it, what it scored,
+  /// how long it takes. Everything optional — RAWG knows all of it for a
+  /// big release and almost none of it for a small one.
+  static String? _facts(Map<String, dynamic> raw) {
+    final developer = _namesOf(raw['developers'], limit: 2);
+    final publisher = _namesOf(raw['publishers'], limit: 1);
+
+    final parts = <String>[
+      ?_namesOf(raw['genres'], limit: 3),
+      ?developer,
+      // Only when it is somebody else: on plenty of games the studio
+      // publishes itself, and printing the same name twice says nothing.
+      if (publisher != null && publisher != developer) publisher,
+      ?_metacritic(raw['metacritic']),
+      ?_playtime(raw['playtime']),
+    ];
+
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
+
+  static String? _namesOf(Object? list, {required int limit}) {
+    if (list is! List) return null;
+
+    final names = <String>[];
+    for (final entry in list) {
+      if (entry is! Map<String, dynamic>) continue;
+      final name = entry['name'];
+      if (name is String && name.trim().isNotEmpty) names.add(name.trim());
+      if (names.length == limit) break;
+    }
+
+    return names.isEmpty ? null : names.join(', ');
+  }
+
+  static String? _metacritic(Object? score) =>
+      score is int ? 'Metacritic $score' : null;
+
+  /// RAWG's `playtime` is the hours an average player put in. Rounded and
+  /// marked as approximate, because that is what it is.
+  static String? _playtime(Object? hours) =>
+      hours is int && hours > 0 ? '~$hours h' : null;
+
+  /// The description, kept to what fits in a form.
   ///
-  /// A few games answer with a wall of text in one paragraph, and the point
-  /// of this field is a description the owner can read at a glance and then
-  /// edit — it lands in a form, not in an article.
-  static String _shortened(String text, {int limit = 600}) {
+  /// RAWG's `description_raw` often repeats itself in three languages, one
+  /// block after another, so anything past a blank line followed by a
+  /// language name is dropped. What is left is capped at a sentence.
+  static String? _prose(Object? raw) {
+    if (raw is! String) return null;
+
+    final paragraphs = <String>[];
+    for (final part in raw.split(RegExp(r'\n\s*\n'))) {
+      final paragraph = part.trim().replaceAll(RegExp(r'\s+'), ' ');
+      if (paragraph.isEmpty) continue;
+      if (_isAnotherLanguage(paragraph)) break;
+      paragraphs.add(paragraph);
+      if (paragraphs.join(' ').length >= _proseLimit) break;
+    }
+    if (paragraphs.isEmpty) return null;
+
+    return _shortened(paragraphs.join('\n\n'));
+  }
+
+  static const _proseLimit = 900;
+
+  /// RAWG marks a translated block by naming the language on its own line,
+  /// which is the only thing separating the English text from the rest.
+  static bool _isAnotherLanguage(String paragraph) => RegExp(
+    r'^(español|português|portugues|deutsch|français|francais|italiano|'
+    r'русский|polski|中文|日本語|한국어)\b',
+    caseSensitive: false,
+  ).hasMatch(paragraph);
+
+  /// Caps the text at a sentence rather than mid-word.
+  static String _shortened(String text, {int limit = _proseLimit}) {
     if (text.length <= limit) return text;
 
     final cut = text.substring(0, limit);

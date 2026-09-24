@@ -139,6 +139,11 @@ class BackupDocument {
           'cast': v.cast,
           'season': v.season,
           'externalId': v.externalId,
+          // The addresses, not the pictures: two short strings that save a
+          // restored library from opening as a wall of placeholder icons
+          // while it fetches every cover again.
+          'posterUrl': v.posterUrl,
+          'backdropUrl': v.backdropUrl,
         },
     ],
     'games': [
@@ -150,6 +155,7 @@ class BackupDocument {
           'hoursPlayed': g.hoursPlayed,
           'releaseYear': g.releaseYear,
           'externalId': g.externalId,
+          'coverUrl': g.coverUrl,
         },
     ],
   };
@@ -382,6 +388,11 @@ class BackupDocument {
       cast: json['cast'] as String?,
       season: json['season'] as int?,
       externalId: json['externalId'] as String?,
+      // Absent from every file written before this, which simply reads as
+      // an entry with no artwork — the same state it was restored into
+      // before, and the backfill still fills it in on first open.
+      posterUrl: json['posterUrl'] as String?,
+      backdropUrl: json['backdropUrl'] as String?,
     );
   }
 
@@ -401,6 +412,7 @@ class BackupDocument {
       hoursPlayed: (json['hoursPlayed'] as num?)?.toDouble(),
       releaseYear: json['releaseYear'] as int?,
       externalId: json['externalId'] as String?,
+      coverUrl: json['coverUrl'] as String?,
     );
   }
 

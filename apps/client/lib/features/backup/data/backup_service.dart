@@ -110,6 +110,8 @@ class BackupService {
             cast: row.cast,
             season: row.season,
             externalId: row.externalId,
+            posterUrl: row.posterUrl,
+            backdropUrl: row.backdropUrl,
           ),
       ],
       games: [
@@ -127,6 +129,7 @@ class BackupService {
             hoursPlayed: row.hoursPlayed,
             releaseYear: row.releaseYear,
             externalId: row.externalId,
+            coverUrl: row.coverUrl,
           ),
       ],
     );
@@ -289,6 +292,8 @@ class BackupService {
               cast: Value(v.cast),
               season: Value(v.season),
               externalId: Value(v.externalId),
+              posterUrl: Value(v.posterUrl),
+              backdropUrl: Value(v.backdropUrl),
             ),
         ]);
         batch.insertAll(_db.games, [
@@ -306,6 +311,7 @@ class BackupService {
               hoursPlayed: Value(g.hoursPlayed),
               releaseYear: Value(g.releaseYear),
               externalId: Value(g.externalId),
+              coverUrl: Value(g.coverUrl),
             ),
         ]);
       });

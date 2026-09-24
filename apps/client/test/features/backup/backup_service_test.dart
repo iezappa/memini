@@ -177,6 +177,8 @@ void main() {
           season: 2,
           happenedOn: DateTime(2026, 3, 3),
           director: 'Ben Stiller',
+          posterUrl: 'https://image.tmdb.org/t/p/w500/severance.jpg',
+          backdropUrl: 'https://image.tmdb.org/t/p/w1280/severance-wide.jpg',
         ),
       );
       await DriftGameRepository(db).create(
@@ -186,6 +188,7 @@ void main() {
           hoursPlayed: 27.5,
           platform: 'PC',
           happenedOn: DateTime(2026, 3, 4),
+          coverUrl: 'https://media.rawg.io/outer-wilds.jpg',
         ),
       );
     }
@@ -235,12 +238,23 @@ void main() {
       expect(viewing.kind, ViewingKind.series);
       expect(viewing.season, 2);
       expect(viewing.director, 'Ben Stiller');
+      // The addresses travel with the entry, so a restored library is not a
+      // wall of placeholder icons waiting to be opened one by one.
+      expect(
+        viewing.posterUrl,
+        'https://image.tmdb.org/t/p/w500/severance.jpg',
+      );
+      expect(
+        viewing.backdropUrl,
+        'https://image.tmdb.org/t/p/w1280/severance-wide.jpg',
+      );
 
       final game = (await DriftGameRepository(db).list(const GameFilter()))
           .single;
       expect(game.status, GameStatus.hundredPercent);
       expect(game.hoursPlayed, 27.5);
       expect(game.platform, 'PC');
+      expect(game.coverUrl, 'https://media.rawg.io/outer-wilds.jpg');
     });
 
     test(

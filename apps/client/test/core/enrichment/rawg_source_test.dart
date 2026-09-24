@@ -104,24 +104,94 @@ void main() {
       expect(detailed.posterUrl, 'https://media.rawg.io/outer-wilds.jpg');
     });
 
-    test('keeps the first paragraph and leaves the rest on RAWG', () async {
+    test('leads with the facts, then says what playing it is like', () async {
       final source = RawgSource(
         apiKey: 'k',
         client: answering(
           jsonEncode({
-            'description_raw':
-                'You are the newest recruit.\n\nEspañol: Eres el recluta.',
+            'description_raw': 'You are the newest recruit.',
+            'genres': [
+              {'name': 'Adventure'},
+              {'name': 'Puzzle'},
+            ],
+            'developers': [
+              {'name': 'Mobius Digital'},
+            ],
+            'publishers': [
+              {'name': 'Annapurna Interactive'},
+            ],
+            'metacritic': 85,
+            'playtime': 16,
           }),
         ),
       );
 
       final detailed = await source.details(picked);
 
-      expect(detailed.description, 'You are the newest recruit.');
+      expect(
+        detailed.description,
+        'Adventure, Puzzle · Mobius Digital · Annapurna Interactive · '
+        'Metacritic 85 · ~16 h\n\n'
+        'You are the newest recruit.',
+      );
     });
 
-    test('a paragraph too long for a form is cut at a sentence', () async {
-      final sentence = '${'Wide open space. ' * 60}And then the sun.';
+    test('a studio that publishes itself is named once', () async {
+      final source = RawgSource(
+        apiKey: 'k',
+        client: answering(
+          jsonEncode({
+            'developers': [
+              {'name': 'FromSoftware'},
+            ],
+            'publishers': [
+              {'name': 'FromSoftware'},
+            ],
+          }),
+        ),
+      );
+
+      expect((await source.details(picked)).description, 'FromSoftware');
+    });
+
+    test('a game RAWG has no facts about still gets its prose', () async {
+      final source = RawgSource(
+        apiKey: 'k',
+        client: answering(
+          jsonEncode({
+            'description_raw': 'A small game about a bird.',
+            'metacritic': null,
+            'playtime': 0,
+          }),
+        ),
+      );
+
+      expect(
+        (await source.details(picked)).description,
+        'A small game about a bird.',
+      );
+    });
+
+    test('the translations RAWG appends are left on RAWG', () async {
+      final source = RawgSource(
+        apiKey: 'k',
+        client: answering(
+          jsonEncode({
+            'description_raw':
+                'You are the newest recruit.\n\nIt loops.'
+                '\n\nEspañol\n\nEres el recluta.',
+          }),
+        ),
+      );
+
+      final detailed = await source.details(picked);
+
+      expect(detailed.description, 'You are the newest recruit.\n\nIt loops.');
+      expect(detailed.description, isNot(contains('recluta')));
+    });
+
+    test('a description too long for a form is cut at a sentence', () async {
+      final sentence = '${'Wide open space. ' * 90}And then the sun.';
       final source = RawgSource(
         apiKey: 'k',
         client: answering(jsonEncode({'description_raw': sentence})),
@@ -129,12 +199,12 @@ void main() {
 
       final detailed = await source.details(picked);
 
-      expect(detailed.description!.length, lessThanOrEqualTo(600));
+      expect(detailed.description!.length, lessThanOrEqualTo(900));
       expect(detailed.description, endsWith('.'));
       expect(detailed.description, isNot(contains('And then the sun')));
     });
 
-    test('a game with no text keeps its description null', () async {
+    test('a game with no text and no facts keeps its description null', () async {
       final source = RawgSource(
         apiKey: 'k',
         client: answering(jsonEncode({'description_raw': '   '})),
