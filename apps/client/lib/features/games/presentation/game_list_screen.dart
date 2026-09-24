@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
+import 'game_detail_screen.dart';
+import 'game_form_screen.dart';
 import '../domain/game.dart';
 import 'game_labels.dart';
 import 'game_providers.dart';
@@ -40,7 +42,7 @@ class GameListScreen extends ConsumerWidget {
       onQueryChanged: controller.setQuery,
       onSortChanged: controller.setSort,
       onClearFilters: controller.clear,
-      onAdd: () => context.push('/games/new'),
+      onAdd: () => showEntryDialog(context, const GameFormScreen()),
       filterChips: [
         PopupMenuButton<GameStatus?>(
           onSelected: controller.setStatus,
@@ -83,7 +85,8 @@ class GameListScreen extends ConsumerWidget {
           icon: Icons.sports_esports_outlined,
           posterUrl: game.coverUrl,
           pill: _StatusPill(game: game),
-          onTap: () => context.push('/games/${game.id}'),
+          onTap: () =>
+              showEntryDialog(context, GameDetailScreen(gameId: game.id)),
         );
       },
     );

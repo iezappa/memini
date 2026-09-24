@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
+import 'meal_detail_screen.dart';
+import 'meal_form_screen.dart';
 import 'meal_providers.dart';
 
 class MealListScreen extends ConsumerWidget {
@@ -38,7 +40,7 @@ class MealListScreen extends ConsumerWidget {
       onQueryChanged: controller.setQuery,
       onSortChanged: controller.setSort,
       onClearFilters: controller.clear,
-      onAdd: () => context.push('/meals/new'),
+      onAdd: () => showEntryDialog(context, const MealFormScreen()),
       filterChips: [
         if (locations.isNotEmpty)
           PopupMenuButton<String?>(
@@ -63,7 +65,8 @@ class MealListScreen extends ConsumerWidget {
           rating: meal.rating,
           icon: Icons.restaurant_outlined,
           pill: meal.dish == null ? null : _DishPill(dish: meal.dish!),
-          onTap: () => context.push('/meals/${meal.id}'),
+          onTap: () =>
+              showEntryDialog(context, MealDetailScreen(mealId: meal.id)),
         );
       },
     );

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
+import 'gig_detail_screen.dart';
+import 'gig_form_screen.dart';
 import 'gig_providers.dart';
 
 class GigListScreen extends ConsumerWidget {
@@ -38,7 +40,7 @@ class GigListScreen extends ConsumerWidget {
       onQueryChanged: controller.setQuery,
       onSortChanged: controller.setSort,
       onClearFilters: controller.clear,
-      onAdd: () => context.push('/gigs/new'),
+      onAdd: () => showEntryDialog(context, const GigFormScreen()),
       filterChips: [
         if (cities.isNotEmpty)
           PopupMenuButton<String?>(
@@ -70,7 +72,7 @@ class GigListScreen extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-          onTap: () => context.push('/gigs/${gig.id}'),
+          onTap: () => showEntryDialog(context, GigDetailScreen(gigId: gig.id)),
         );
       },
     );

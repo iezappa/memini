@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/meal.dart';
@@ -15,9 +16,7 @@ class MealDetailScreen extends ConsumerWidget {
   final String mealId;
 
   Future<void> _edit(BuildContext context, Meal meal) async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => MealFormScreen(meal: meal)));
+    await showEntryDialog(context, MealFormScreen(meal: meal));
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Meal meal) async {

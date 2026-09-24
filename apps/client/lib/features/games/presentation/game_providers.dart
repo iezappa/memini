@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
 import '../../../core/time/clock.dart';
+import '../../../core/enrichment/data/artwork_backfill.dart';
+import '../../../core/enrichment/data/enrichment_providers.dart';
 import '../../../core/tracking/presentation/tracking_filter_controller.dart';
 import '../data/drift_game_repository.dart';
 import '../domain/game.dart';
@@ -55,4 +57,27 @@ final gamePlatformsProvider = Provider<List<String>>((ref) {
         game.platform!.trim(),
   };
   return seen.toList()..sort();
+});
+
+/// Fetches the cover for a game that was filled in from RAWG before the app
+/// kept any, and writes it down once. See `viewingArtworkProvider`.
+final gameArtworkProvider = FutureProvider.family<void, String>((
+  ref,
+  id,
+) async {
+  final entry = await ref.watch(gameProvider(id).future);
+  if (entry == null) return;
+  if (entry.coverUrl != null || entry.externalId == null) return;
+
+  final found = await findArtwork(
+    source: ref.watch(rawgSourceProvider),
+    title: entry.title,
+    externalId: entry.externalId!,
+  );
+  if (found?.posterUrl == null) return;
+
+  await ref
+      .watch(gameRepositoryProvider)
+      .update(entry.copyWith(coverUrl: found!.posterUrl));
+  ref.invalidate(allGamesProvider);
 });

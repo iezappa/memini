@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/providers.dart';
@@ -8,7 +7,10 @@ import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
 import '../../shared/widgets.dart';
+import 'room_detail_screen.dart';
+import 'room_form_screen.dart';
 
 class RoomListScreen extends ConsumerWidget {
   const RoomListScreen({super.key});
@@ -40,7 +42,7 @@ class RoomListScreen extends ConsumerWidget {
       onQueryChanged: controller.setQuery,
       onSortChanged: controller.setSort,
       onClearFilters: controller.clear,
-      onAdd: () => context.push('/rooms/new'),
+      onAdd: () => showEntryDialog(context, const RoomFormScreen()),
       filterChips: [
         FilterChip(
           label: Text(l10n.filterEscaped),
@@ -80,7 +82,8 @@ class RoomListScreen extends ConsumerWidget {
             escaped: room.escaped,
             timeLeftMinutes: room.timeLeftMinutes,
           ),
-          onTap: () => context.push('/rooms/${room.id}'),
+          onTap: () =>
+              showEntryDialog(context, RoomDetailScreen(roomId: room.id)),
         );
       },
     );

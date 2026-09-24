@@ -5,6 +5,7 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/gig.dart';
@@ -17,8 +18,7 @@ class GigDetailScreen extends ConsumerWidget {
   final String gigId;
 
   Future<void> _edit(BuildContext context, Gig gig) async {
-    await Navigator.of(context)
-        .push(MaterialPageRoute<void>(builder: (_) => GigFormScreen(gig: gig)));
+    await showEntryDialog(context, GigFormScreen(gig: gig));
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Gig gig) async {

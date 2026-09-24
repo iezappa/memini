@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
+import 'viewing_detail_screen.dart';
+import 'viewing_form_screen.dart';
 import '../domain/viewing.dart';
 import 'viewing_labels.dart';
 import 'viewing_providers.dart';
@@ -39,7 +41,7 @@ class ViewingListScreen extends ConsumerWidget {
       onQueryChanged: controller.setQuery,
       onSortChanged: controller.setSort,
       onClearFilters: controller.clear,
-      onAdd: () => context.push('/viewings/new'),
+      onAdd: () => showEntryDialog(context, const ViewingFormScreen()),
       filterChips: [
         PopupMenuButton<ViewingKind?>(
           onSelected: controller.setKind,
@@ -69,7 +71,10 @@ class ViewingListScreen extends ConsumerWidget {
           icon: Icons.movie_outlined,
           posterUrl: viewing.posterUrl,
           pill: _KindPill(viewing: viewing),
-          onTap: () => context.push('/viewings/${viewing.id}'),
+          onTap: () => showEntryDialog(
+            context,
+            ViewingDetailScreen(viewingId: viewing.id),
+          ),
         );
       },
     );

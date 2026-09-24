@@ -7,6 +7,7 @@ import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/room.dart';
@@ -18,9 +19,7 @@ class RoomDetailScreen extends ConsumerWidget {
   final String roomId;
 
   Future<void> _edit(BuildContext context, WidgetRef ref, Room room) async {
-    await Navigator.of(
-      context,
-    ).push<bool>(MaterialPageRoute(builder: (_) => RoomFormScreen(room: room)));
+    await showEntryDialog<bool>(context, RoomFormScreen(room: room));
     ref.invalidate(roomProvider(roomId));
   }
 

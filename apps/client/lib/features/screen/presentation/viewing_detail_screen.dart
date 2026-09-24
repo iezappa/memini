@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/viewing.dart';
@@ -16,11 +17,7 @@ class ViewingDetailScreen extends ConsumerWidget {
   final String viewingId;
 
   Future<void> _edit(BuildContext context, Viewing viewing) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => ViewingFormScreen(viewing: viewing),
-      ),
-    );
+    await showEntryDialog(context, ViewingFormScreen(viewing: viewing));
   }
 
   Future<void> _delete(
@@ -49,6 +46,10 @@ class ViewingDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final viewing = ref.watch(viewingProvider(viewingId));
+    // Asked for while the page is open, and only for an entry that came
+    // from a lookup and has no picture yet. It writes the artwork down and
+    // the page redraws from the store; there is nothing to wait for.
+    ref.watch(viewingArtworkProvider(viewingId));
 
     return Scaffold(
       appBar: AppBar(

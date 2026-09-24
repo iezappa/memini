@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
 import '../../shared/widgets.dart';
 import '../domain/game.dart';
@@ -16,9 +17,7 @@ class GameDetailScreen extends ConsumerWidget {
   final String gameId;
 
   Future<void> _edit(BuildContext context, Game game) async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute<void>(builder: (_) => GameFormScreen(game: game)));
+    await showEntryDialog(context, GameFormScreen(game: game));
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Game game) async {
@@ -43,6 +42,9 @@ class GameDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final game = ref.watch(gameProvider(gameId));
+    // See the films: fills in a cover for an entry saved before the app
+    // kept one, once, in the background.
+    ref.watch(gameArtworkProvider(gameId));
 
     return Scaffold(
       appBar: AppBar(
