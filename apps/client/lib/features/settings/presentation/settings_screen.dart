@@ -17,7 +17,7 @@ import '../../legal/presentation/legal_document_screen.dart';
 import '../../legal/presentation/legal_links.dart';
 import '../../release_notes/presentation/release_notes_dialog.dart';
 import '../../release_notes/presentation/release_notes_providers.dart';
-import '../../onboarding/presentation/onboarding_screen.dart';
+import '../../onboarding/presentation/tutorial_dialog.dart';
 import '../../shared/support_actions.dart';
 import '../../shared/widgets.dart';
 
@@ -677,11 +677,7 @@ class _AboutSection extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.school_outlined),
           title: Text(l10n.tutorialAgain),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const OnboardingScreen(tutorialOnly: true),
-            ),
-          ),
+          onTap: () => showTutorial(context),
         ),
       ],
     );

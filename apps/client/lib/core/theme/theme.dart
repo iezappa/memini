@@ -286,7 +286,27 @@ abstract final class MeminiTheme {
         surfaceTintColor: Colors.transparent,
         indicatorColor: scheme.primary.withValues(alpha: 0.14),
         elevation: 0,
-        labelTextStyle: WidgetStatePropertyAll(text.bodySmall),
+        // Room for an icon and one line under it. Left to Material's
+        // default the bar is taller than it needs to be on a phone.
+        height: 68,
+        labelTextStyle: WidgetStatePropertyAll(
+          text.labelSmall?.copyWith(color: semantics.muted),
+        ),
+      ),
+      // The rail is the same bar turned on its side, so it is themed here
+      // rather than at the one call site: it used to take the page's own
+      // background, which left no edge between the navigation and the
+      // content beyond a hairline.
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: background,
+        indicatorColor: scheme.primary.withValues(alpha: 0.14),
+        selectedLabelTextStyle: text.labelSmall?.copyWith(
+          color: scheme.primary,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelTextStyle: text.labelSmall?.copyWith(
+          color: semantics.muted,
+        ),
       ),
     );
   }

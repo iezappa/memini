@@ -928,4 +928,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staleStoreBody =>
       'Memini is open in another tab or window with an older version, and while it stays open this one cannot save anything. Your data is intact. Close every other Memini tab, then reload this page.';
+
+  @override
+  String get tutorialBack => 'Back';
+
+  @override
+  String get tutorialDone => 'Start';
+
+  @override
+  String tutorialPageOf(int page, int total) {
+    return '$page of $total';
+  }
 }

@@ -6,9 +6,8 @@ import '../../../l10n/app_localizations.dart';
 
 /// Shows the backup notice once to someone onboarded before it existed.
 ///
-/// Sits inside the router, where a navigator exists to open the dialog on.
-/// A first run never gets here without the notice: onboarding asks for it on
-/// its last page.
+/// Sits inside the router, where a navigator exists to open the dialog on,
+/// and yields to a first run: the tour asks for the notice on its last page.
 class BackupNoticeCheck extends ConsumerStatefulWidget {
   const BackupNoticeCheck({required this.child, super.key});
 
@@ -24,6 +23,9 @@ class _BackupNoticeCheckState extends ConsumerState<BackupNoticeCheck> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      // A first run owns the launch, and the tour's last page is where the
+      // notice is accepted. Without this both dialogs open at once.
+      if (!ref.read(onboardingDoneProvider)) return;
       if (ref.read(settingsRepositoryProvider).backupNoticeAccepted) return;
       showBackupNoticeDialog(context);
     });

@@ -1729,6 +1729,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Memini is open in another tab or window with an older version, and while it stays open this one cannot save anything. Your data is intact. Close every other Memini tab, then reload this page.'**
   String get staleStoreBody;
+
+  /// No description provided for @tutorialBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get tutorialBack;
+
+  /// No description provided for @tutorialDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get tutorialDone;
+
+  /// No description provided for @tutorialPageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{page} of {total}'**
+  String tutorialPageOf(int page, int total);
 }
 
 class _AppLocalizationsDelegate
