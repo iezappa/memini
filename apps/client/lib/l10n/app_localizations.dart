@@ -1933,6 +1933,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'like something for everyone'**
   String get moodFamily;
+
+  /// No description provided for @photosLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photosLabel;
+
+  /// No description provided for @photosAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get photosAdd;
+
+  /// No description provided for @photosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos on this one yet.'**
+  String get photosEmpty;
+
+  /// No description provided for @photosRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get photosRemove;
+
+  /// No description provided for @photosRemoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this photo?'**
+  String get photosRemoveConfirm;
+
+  /// No description provided for @photosNotInBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos do not travel in the backup file: they are copied into the folder you choose instead.'**
+  String get photosNotInBackup;
+
+  /// No description provided for @photoFolderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo folder'**
+  String get photoFolderTitle;
+
+  /// No description provided for @photoFolderChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get photoFolderChoose;
+
+  /// No description provided for @photoFolderChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get photoFolderChange;
+
+  /// No description provided for @photoFolderStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop copying'**
+  String get photoFolderStop;
+
+  /// No description provided for @photoFolderCopyAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy every photo now'**
+  String get photoFolderCopyAll;
+
+  /// No description provided for @photoFolderOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Not chosen. Photos live inside the app only.'**
+  String get photoFolderOff;
+
+  /// The folder photos are copied into, named.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying every photo into {folder}.'**
+  String photoFolderOn(String folder);
+
+  /// No description provided for @photoFolderUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This browser cannot write into a folder. Chrome and Edge can.'**
+  String get photoFolderUnsupported;
+
+  /// No description provided for @photoFolderGone.
+  ///
+  /// In en, this message translates to:
+  /// **'That folder is not there any more. Choose it again.'**
+  String get photoFolderGone;
+
+  /// No description provided for @photoFolderNeedsPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'The browser wants you to allow that folder again.'**
+  String get photoFolderNeedsPermission;
+
+  /// No description provided for @photoFolderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The last copy could not be written.'**
+  String get photoFolderFailed;
 }
 
 class _AppLocalizationsDelegate

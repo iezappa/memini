@@ -12,11 +12,14 @@ import '../../features/screen/domain/viewing.dart';
 import '../ids/uuid.dart';
 import 'app_database.steps.dart';
 import 'legacy_photos.dart';
+import '../photos/data/photo_tables.dart';
 import 'storage_durability.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Franchises, Rooms, Meals, Gigs, Viewings, Games])
+@DriftDatabase(
+  tables: [Franchises, Rooms, Meals, Gigs, Viewings, Games, EntryPhotos],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase({void Function(StorageDurability)? onStorageChosen})
     : onPhotosDropped = deleteLegacyPhotos,
@@ -51,7 +54,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 6;
+  static const currentSchemaVersion = 7;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -195,6 +198,15 @@ class AppDatabase extends _$AppDatabase {
             // the header behind the title.
             from5To6: (m, schema) async {
               await m.addColumn(schema.games, schema.games.coverUrl);
+            },
+            // v7 gives an entry somewhere to keep a picture the owner took.
+            // A new table, so nothing already stored is touched: an entry
+            // written before this simply has no photographs.
+            from6To7: (m, schema) async {
+              await m.createTable(schema.entryPhotos);
+              // createTable creates the table and nothing else, so the
+              // index the table declares has to be asked for by name.
+              await m.create(schema.photoByOwner);
             },
           ),
         );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
+import '../../../core/photos/presentation/photo_strip.dart';
+import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
@@ -86,6 +88,12 @@ class MealDetailScreen extends ConsumerWidget {
                   (label: l10n.fieldPrice, value: _money(value.price!)),
                 if (value.company != null)
                   (label: l10n.fieldCompany, value: value.company!),
+              ],
+              extra: [
+                Gap.vXl,
+                SectionLabel(l10n.photosLabel),
+                Gap.vSm,
+                PhotoStrip(ownerId: value.id),
               ],
             );
           },

@@ -6,6 +6,7 @@ import '../../../app/providers.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
+import '../../../core/photos/presentation/photo_strip.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
@@ -139,6 +140,10 @@ class _RoomBody extends ConsumerWidget {
             Gap.vSm,
             Text(room.review!, style: context.text.bodyLarge),
           ],
+          Gap.vXl,
+          SectionLabel(l10n.photosLabel),
+          Gap.vSm,
+          PhotoStrip(ownerId: room.id),
         ],
       ),
     );

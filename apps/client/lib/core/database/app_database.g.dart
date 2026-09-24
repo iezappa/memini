@@ -4055,6 +4055,378 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   }
 }
 
+class $EntryPhotosTable extends EntryPhotos
+    with TableInfo<$EntryPhotosTable, EntryPhotoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $EntryPhotosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ownerIdMeta = const VerificationMeta(
+    'ownerId',
+  );
+  @override
+  late final GeneratedColumn<String> ownerId = GeneratedColumn<String>(
+    'owner_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bytesMeta = const VerificationMeta('bytes');
+  @override
+  late final GeneratedColumn<Uint8List> bytes = GeneratedColumn<Uint8List>(
+    'bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mimeTypeMeta = const VerificationMeta(
+    'mimeType',
+  );
+  @override
+  late final GeneratedColumn<String> mimeType = GeneratedColumn<String>(
+    'mime_type',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 60),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    ownerId,
+    bytes,
+    mimeType,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'entry_photos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<EntryPhotoRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('owner_id')) {
+      context.handle(
+        _ownerIdMeta,
+        ownerId.isAcceptableOrUnknown(data['owner_id']!, _ownerIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ownerIdMeta);
+    }
+    if (data.containsKey('bytes')) {
+      context.handle(
+        _bytesMeta,
+        bytes.isAcceptableOrUnknown(data['bytes']!, _bytesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bytesMeta);
+    }
+    if (data.containsKey('mime_type')) {
+      context.handle(
+        _mimeTypeMeta,
+        mimeType.isAcceptableOrUnknown(data['mime_type']!, _mimeTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mimeTypeMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  EntryPhotoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return EntryPhotoRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      ownerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}owner_id'],
+      )!,
+      bytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}bytes'],
+      )!,
+      mimeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mime_type'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $EntryPhotosTable createAlias(String alias) {
+    return $EntryPhotosTable(attachedDatabase, alias);
+  }
+}
+
+class EntryPhotoRow extends DataClass implements Insertable<EntryPhotoRow> {
+  final String id;
+  final String ownerId;
+
+  /// The picture itself.
+  final Uint8List bytes;
+
+  /// What kind of picture it is, so it can be written back out with the
+  /// right extension and shown without guessing.
+  final String mimeType;
+  final DateTime updatedAt;
+  const EntryPhotoRow({
+    required this.id,
+    required this.ownerId,
+    required this.bytes,
+    required this.mimeType,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['owner_id'] = Variable<String>(ownerId);
+    map['bytes'] = Variable<Uint8List>(bytes);
+    map['mime_type'] = Variable<String>(mimeType);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  EntryPhotosCompanion toCompanion(bool nullToAbsent) {
+    return EntryPhotosCompanion(
+      id: Value(id),
+      ownerId: Value(ownerId),
+      bytes: Value(bytes),
+      mimeType: Value(mimeType),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory EntryPhotoRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return EntryPhotoRow(
+      id: serializer.fromJson<String>(json['id']),
+      ownerId: serializer.fromJson<String>(json['ownerId']),
+      bytes: serializer.fromJson<Uint8List>(json['bytes']),
+      mimeType: serializer.fromJson<String>(json['mimeType']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'ownerId': serializer.toJson<String>(ownerId),
+      'bytes': serializer.toJson<Uint8List>(bytes),
+      'mimeType': serializer.toJson<String>(mimeType),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  EntryPhotoRow copyWith({
+    String? id,
+    String? ownerId,
+    Uint8List? bytes,
+    String? mimeType,
+    DateTime? updatedAt,
+  }) => EntryPhotoRow(
+    id: id ?? this.id,
+    ownerId: ownerId ?? this.ownerId,
+    bytes: bytes ?? this.bytes,
+    mimeType: mimeType ?? this.mimeType,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  EntryPhotoRow copyWithCompanion(EntryPhotosCompanion data) {
+    return EntryPhotoRow(
+      id: data.id.present ? data.id.value : this.id,
+      ownerId: data.ownerId.present ? data.ownerId.value : this.ownerId,
+      bytes: data.bytes.present ? data.bytes.value : this.bytes,
+      mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EntryPhotoRow(')
+          ..write('id: $id, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('bytes: $bytes, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    ownerId,
+    $driftBlobEquality.hash(bytes),
+    mimeType,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EntryPhotoRow &&
+          other.id == this.id &&
+          other.ownerId == this.ownerId &&
+          $driftBlobEquality.equals(other.bytes, this.bytes) &&
+          other.mimeType == this.mimeType &&
+          other.updatedAt == this.updatedAt);
+}
+
+class EntryPhotosCompanion extends UpdateCompanion<EntryPhotoRow> {
+  final Value<String> id;
+  final Value<String> ownerId;
+  final Value<Uint8List> bytes;
+  final Value<String> mimeType;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const EntryPhotosCompanion({
+    this.id = const Value.absent(),
+    this.ownerId = const Value.absent(),
+    this.bytes = const Value.absent(),
+    this.mimeType = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  EntryPhotosCompanion.insert({
+    required String id,
+    required String ownerId,
+    required Uint8List bytes,
+    required String mimeType,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       ownerId = Value(ownerId),
+       bytes = Value(bytes),
+       mimeType = Value(mimeType),
+       updatedAt = Value(updatedAt);
+  static Insertable<EntryPhotoRow> custom({
+    Expression<String>? id,
+    Expression<String>? ownerId,
+    Expression<Uint8List>? bytes,
+    Expression<String>? mimeType,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (ownerId != null) 'owner_id': ownerId,
+      if (bytes != null) 'bytes': bytes,
+      if (mimeType != null) 'mime_type': mimeType,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  EntryPhotosCompanion copyWith({
+    Value<String>? id,
+    Value<String>? ownerId,
+    Value<Uint8List>? bytes,
+    Value<String>? mimeType,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return EntryPhotosCompanion(
+      id: id ?? this.id,
+      ownerId: ownerId ?? this.ownerId,
+      bytes: bytes ?? this.bytes,
+      mimeType: mimeType ?? this.mimeType,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (ownerId.present) {
+      map['owner_id'] = Variable<String>(ownerId.value);
+    }
+    if (bytes.present) {
+      map['bytes'] = Variable<Uint8List>(bytes.value);
+    }
+    if (mimeType.present) {
+      map['mime_type'] = Variable<String>(mimeType.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EntryPhotosCompanion(')
+          ..write('id: $id, ')
+          ..write('ownerId: $ownerId, ')
+          ..write('bytes: $bytes, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4064,6 +4436,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $GigsTable gigs = $GigsTable(this);
   late final $ViewingsTable viewings = $ViewingsTable(this);
   late final $GamesTable games = $GamesTable(this);
+  late final $EntryPhotosTable entryPhotos = $EntryPhotosTable(this);
+  late final Index photoByOwner = Index(
+    'photo_by_owner',
+    'CREATE INDEX IF NOT EXISTS photo_by_owner ON entry_photos (owner_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4075,6 +4452,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     gigs,
     viewings,
     games,
+    entryPhotos,
+    photoByOwner,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -6187,6 +6566,206 @@ typedef $$GamesTableProcessedTableManager =
       GameRow,
       PrefetchHooks Function()
     >;
+typedef $$EntryPhotosTableCreateCompanionBuilder =
+    EntryPhotosCompanion Function({
+      required String id,
+      required String ownerId,
+      required Uint8List bytes,
+      required String mimeType,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$EntryPhotosTableUpdateCompanionBuilder =
+    EntryPhotosCompanion Function({
+      Value<String> id,
+      Value<String> ownerId,
+      Value<Uint8List> bytes,
+      Value<String> mimeType,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$EntryPhotosTableFilterComposer
+    extends Composer<_$AppDatabase, $EntryPhotosTable> {
+  $$EntryPhotosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mimeType => $composableBuilder(
+    column: $table.mimeType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$EntryPhotosTableOrderingComposer
+    extends Composer<_$AppDatabase, $EntryPhotosTable> {
+  $$EntryPhotosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ownerId => $composableBuilder(
+    column: $table.ownerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mimeType => $composableBuilder(
+    column: $table.mimeType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$EntryPhotosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $EntryPhotosTable> {
+  $$EntryPhotosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get ownerId =>
+      $composableBuilder(column: $table.ownerId, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get bytes =>
+      $composableBuilder(column: $table.bytes, builder: (column) => column);
+
+  GeneratedColumn<String> get mimeType =>
+      $composableBuilder(column: $table.mimeType, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$EntryPhotosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $EntryPhotosTable,
+          EntryPhotoRow,
+          $$EntryPhotosTableFilterComposer,
+          $$EntryPhotosTableOrderingComposer,
+          $$EntryPhotosTableAnnotationComposer,
+          $$EntryPhotosTableCreateCompanionBuilder,
+          $$EntryPhotosTableUpdateCompanionBuilder,
+          (
+            EntryPhotoRow,
+            BaseReferences<_$AppDatabase, $EntryPhotosTable, EntryPhotoRow>,
+          ),
+          EntryPhotoRow,
+          PrefetchHooks Function()
+        > {
+  $$EntryPhotosTableTableManager(_$AppDatabase db, $EntryPhotosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EntryPhotosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EntryPhotosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$EntryPhotosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> ownerId = const Value.absent(),
+                Value<Uint8List> bytes = const Value.absent(),
+                Value<String> mimeType = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => EntryPhotosCompanion(
+                id: id,
+                ownerId: ownerId,
+                bytes: bytes,
+                mimeType: mimeType,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String ownerId,
+                required Uint8List bytes,
+                required String mimeType,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => EntryPhotosCompanion.insert(
+                id: id,
+                ownerId: ownerId,
+                bytes: bytes,
+                mimeType: mimeType,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$EntryPhotosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $EntryPhotosTable,
+      EntryPhotoRow,
+      $$EntryPhotosTableFilterComposer,
+      $$EntryPhotosTableOrderingComposer,
+      $$EntryPhotosTableAnnotationComposer,
+      $$EntryPhotosTableCreateCompanionBuilder,
+      $$EntryPhotosTableUpdateCompanionBuilder,
+      (
+        EntryPhotoRow,
+        BaseReferences<_$AppDatabase, $EntryPhotosTable, EntryPhotoRow>,
+      ),
+      EntryPhotoRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6202,4 +6781,6 @@ class $AppDatabaseManager {
       $$ViewingsTableTableManager(_db, _db.viewings);
   $$GamesTableTableManager get games =>
       $$GamesTableTableManager(_db, _db.games);
+  $$EntryPhotosTableTableManager get entryPhotos =>
+      $$EntryPhotosTableTableManager(_db, _db.entryPhotos);
 }

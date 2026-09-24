@@ -1049,4 +1049,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get moodFamily => 'like something for everyone';
+
+  @override
+  String get photosLabel => 'Photos';
+
+  @override
+  String get photosAdd => 'Add a photo';
+
+  @override
+  String get photosEmpty => 'No photos on this one yet.';
+
+  @override
+  String get photosRemove => 'Remove photo';
+
+  @override
+  String get photosRemoveConfirm => 'Remove this photo?';
+
+  @override
+  String get photosNotInBackup =>
+      'Photos do not travel in the backup file: they are copied into the folder you choose instead.';
+
+  @override
+  String get photoFolderTitle => 'Photo folder';
+
+  @override
+  String get photoFolderChoose => 'Choose';
+
+  @override
+  String get photoFolderChange => 'Change';
+
+  @override
+  String get photoFolderStop => 'Stop copying';
+
+  @override
+  String get photoFolderCopyAll => 'Copy every photo now';
+
+  @override
+  String get photoFolderOff => 'Not chosen. Photos live inside the app only.';
+
+  @override
+  String photoFolderOn(String folder) {
+    return 'Copying every photo into $folder.';
+  }
+
+  @override
+  String get photoFolderUnsupported =>
+      'This browser cannot write into a folder. Chrome and Edge can.';
+
+  @override
+  String get photoFolderGone =>
+      'That folder is not there any more. Choose it again.';
+
+  @override
+  String get photoFolderNeedsPermission =>
+      'The browser wants you to allow that folder again.';
+
+  @override
+  String get photoFolderFailed => 'The last copy could not be written.';
 }

@@ -1049,4 +1049,61 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get moodFamily => 'Para ver en familia';
+
+  @override
+  String get photosLabel => 'Fotos';
+
+  @override
+  String get photosAdd => 'Agregar foto';
+
+  @override
+  String get photosEmpty => 'Todavía no le pusiste ninguna foto.';
+
+  @override
+  String get photosRemove => 'Quitar foto';
+
+  @override
+  String get photosRemoveConfirm => '¿Quitar esta foto?';
+
+  @override
+  String get photosNotInBackup =>
+      'Las fotos no viajan en el archivo de backup: se copian aparte en la carpeta que elijas.';
+
+  @override
+  String get photoFolderTitle => 'Carpeta de fotos';
+
+  @override
+  String get photoFolderChoose => 'Elegir';
+
+  @override
+  String get photoFolderChange => 'Cambiar';
+
+  @override
+  String get photoFolderStop => 'Dejar de copiar';
+
+  @override
+  String get photoFolderCopyAll => 'Copiar todas las fotos ahora';
+
+  @override
+  String get photoFolderOff =>
+      'Sin elegir. Las fotos viven solamente dentro de la app.';
+
+  @override
+  String photoFolderOn(String folder) {
+    return 'Copiando cada foto en $folder.';
+  }
+
+  @override
+  String get photoFolderUnsupported =>
+      'Este navegador no puede escribir en una carpeta. Chrome y Edge sí.';
+
+  @override
+  String get photoFolderGone => 'Esa carpeta ya no está. Elegila de nuevo.';
+
+  @override
+  String get photoFolderNeedsPermission =>
+      'El navegador quiere que le vuelvas a dar permiso a esa carpeta.';
+
+  @override
+  String get photoFolderFailed => 'No se pudo escribir la última copia.';
 }

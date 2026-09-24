@@ -423,5 +423,22 @@
   "moodThrill": "Con ganas de tensión",
   "moodElsewhere": "En otro mundo",
   "moodLearn": "Con ganas de aprender algo",
-  "moodFamily": "Para ver en familia"
+  "moodFamily": "Para ver en familia",
+  "photosLabel": "Fotos",
+  "photosAdd": "Agregar foto",
+  "photosEmpty": "Todavía no le pusiste ninguna foto.",
+  "photosRemove": "Quitar foto",
+  "photosRemoveConfirm": "¿Quitar esta foto?",
+  "photosNotInBackup": "Las fotos no viajan en el archivo de backup: se copian aparte en la carpeta que elijas.",
+  "photoFolderTitle": "Carpeta de fotos",
+  "photoFolderChoose": "Elegir",
+  "photoFolderChange": "Cambiar",
+  "photoFolderStop": "Dejar de copiar",
+  "photoFolderCopyAll": "Copiar todas las fotos ahora",
+  "photoFolderOff": "Sin elegir. Las fotos viven solamente dentro de la app.",
+  "photoFolderOn": "Copiando cada foto en {folder}.",
+  "photoFolderUnsupported": "Este navegador no puede escribir en una carpeta. Chrome y Edge sí.",
+  "photoFolderGone": "Esa carpeta ya no está. Elegila de nuevo.",
+  "photoFolderNeedsPermission": "El navegador quiere que le vuelvas a dar permiso a esa carpeta.",
+  "photoFolderFailed": "No se pudo escribir la última copia."
 }

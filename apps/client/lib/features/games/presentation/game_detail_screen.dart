@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
+import '../../../core/photos/presentation/photo_strip.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
@@ -95,6 +97,12 @@ class GameDetailScreen extends ConsumerWidget {
               ],
               // One still, used for both: RAWG has no separate poster, so
               // the cover is what goes behind the title as well.
+              extra: [
+                Gap.vXl,
+                SectionLabel(l10n.photosLabel),
+                Gap.vSm,
+                PhotoStrip(ownerId: value.id),
+              ],
               posterUrl: value.coverUrl,
               backdropUrl: value.coverUrl,
             );

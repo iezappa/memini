@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../core/database/app_database.dart';
+import '../../../core/photos/data/photo_cascade.dart';
 import '../../../core/tracking/data/tracking_query.dart';
 import '../../../core/tracking/domain/tracking_filter.dart';
 import '../domain/game.dart';
@@ -126,6 +127,11 @@ class DriftGameRepository implements GameRepository {
 
   @override
   Future<void> delete(String id) async {
-    await (_db.delete(_db.games)..where((g) => g.id.equals(id))).go();
+    // Together, so an interrupted delete cannot leave pictures
+    // behind an entry that is no longer there.
+    await _db.transaction(() async {
+      await (_db.delete(_db.games)..where((g) => g.id.equals(id))).go();
+      await _db.deletePhotosOf(id);
+    });
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/photos/presentation/photo_folder_tile.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
@@ -520,6 +521,10 @@ class _DataSection extends ConsumerWidget {
           title: Text(l10n.importJson),
           onTap: () => _import(context, ref),
         ),
+        // Pictures are the one thing the backup file leaves out, so the
+        // folder they are copied into belongs beside the file that carries
+        // everything else.
+        const PhotoFolderTile(),
         const EraseAllDataTile(),
       ],
     );

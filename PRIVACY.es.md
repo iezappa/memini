@@ -2,13 +2,13 @@
 
 [English](PRIVACY.md) · **Español**
 
-Última actualización: 2026-09-17
+Última actualización: 2026-09-24
 
 Memini es una app gratuita desarrollada por Zeke Zappa Developments (iezappa). Esta política explica, en lenguaje simple, qué pasa con tus datos.
 
 ## Qué datos guarda la app
 
-- Todo lo que registras en la app (salas de escape, comidas, conciertos, películas y series, juegos, puntuaciones y reseñas) se guarda **solo en tu dispositivo**.
+- Todo lo que registras en la app (salas de escape, comidas, conciertos, películas y series, juegos, puntuaciones, reseñas y las fotos que agregás) se guarda **solo en tu dispositivo**.
 - **No se guarda en ningún servidor**: ni en los del desarrollador ni en el servidor que entrega la versión web.
 - El desarrollador **no puede ver, recuperar ni borrar** tus datos.
 - No hay cuentas, ni analítica, ni publicidad.
@@ -16,6 +16,10 @@ Memini es una app gratuita desarrollada por Zeke Zappa Developments (iezappa). E
 ## Almacenamiento en tu dispositivo
 
 La app usa el almacenamiento de tu dispositivo o navegador (una base de datos local y, en la versión web, `localStorage`, IndexedDB, OPFS y la caché del service worker) **solo para funcionar**: guardar tus registros, tus ajustes y abrir sin conexión. No usa cookies de seguimiento.
+
+Las fotos que agregás a un registro se guardan **como la imagen misma** dentro de esa base de datos local, así se ven en toda la app y funcionan sin conexión. Nunca se suben a ningún lado.
+
+Si elegís una carpeta de fotos en Ajustes → Tus datos → **Carpeta de fotos**, la app además escribe una copia de cada foto en esa carpeta, como un archivo de imagen común que podés abrir con cualquier cosa. Solo escribe en la carpeta que elegiste, y solo fotos; nunca lee lo que ya hay dentro. Con **Dejar de copiar** se termina, y las copias ya escritas se quedan donde están: son tus archivos, en tu carpeta, y desinstalar la app no las borra.
 
 Las claves de TMDB y RAWG que pegas en Ajustes se guardan en los ajustes locales de la app en este dispositivo, en texto plano (en el navegador, en `localStorage`). Solo se envían al servicio al que pertenecen.
 
@@ -37,7 +41,7 @@ La app funciona completa sin conexión. Solo se conecta en estos casos:
 ## Tus derechos y cómo borrar tus datos
 
 - **Borrar todo:** Ajustes → Tus datos → **Borrar todos mis datos**. También se borran al desinstalar la app o al borrar los datos del sitio en el navegador.
-- **Copia de tus datos:** Ajustes → Tus datos → **Exportar**.
+- **Copia de tus datos:** Ajustes → Tus datos → **Exportar**. El archivo exportado no lleva tus fotos: un archivo que podés mandarte por mail deja de serlo apenas tiene imágenes adentro. Para eso está la carpeta de fotos de arriba.
 - Como el desarrollador no tiene tus datos, no puede entregarlos ni borrarlos por ti.
 
 ## Menores

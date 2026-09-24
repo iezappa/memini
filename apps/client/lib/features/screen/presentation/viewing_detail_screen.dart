@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/tokens.dart';
 import '../../../core/tracking/presentation/tracker_detail.dart';
+import '../../../core/photos/presentation/photo_strip.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/entry_dialog.dart';
 import '../../shared/save_failure.dart';
@@ -99,6 +101,12 @@ class ViewingDetailScreen extends ConsumerWidget {
                   (label: l10n.fieldDirector, value: value.director!),
                 if (value.cast != null)
                   (label: l10n.fieldCast, value: value.cast!),
+              ],
+              extra: [
+                Gap.vXl,
+                SectionLabel(l10n.photosLabel),
+                Gap.vSm,
+                PhotoStrip(ownerId: value.id),
               ],
               posterUrl: value.posterUrl,
               backdropUrl: value.backdropUrl,
