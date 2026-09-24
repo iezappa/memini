@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../core/enrichment/data/tmdb_source.dart';
 import '../../../core/tracking/domain/tracked_domain.dart';
+import '../domain/mood.dart';
 import '../domain/recommendation.dart';
 
 /// What is being watched this week, from TMDB.
@@ -44,6 +45,31 @@ class TmdbRecommendations implements RecommendationSource {
       'api_key': apiKey!.trim(),
     });
 
+    return _ask(uri);
+  }
+
+  @override
+  Future<List<Recommendation>> forMood(Mood mood) async {
+    if (!isConfigured) {
+      throw const RecommendationException(RecommendationFailure.missingKey);
+    }
+
+    // `vote_count.gte` is what keeps this useful. Sorted by popularity
+    // alone a genre page fills with titles nobody has seen and nobody has
+    // scored; a hundred votes is a low bar that still means somebody
+    // watched it.
+    return _ask(
+      Uri.https(_host, '/3/discover/movie', {
+        'api_key': apiKey!.trim(),
+        'with_genres': mood.tmdbGenreId,
+        'sort_by': 'popularity.desc',
+        'vote_count.gte': '100',
+        'include_adult': 'false',
+      }),
+    );
+  }
+
+  Future<List<Recommendation>> _ask(Uri uri) async {
     final connection = client ?? http.Client();
     try {
       final response = await connection.get(uri);
@@ -78,8 +104,13 @@ class TmdbRecommendations implements RecommendationSource {
 
   static Recommendation? _oneOf(Map<String, dynamic> raw) {
     // Trending also returns people, who have no title and cannot be watched.
+    // `/discover/movie` returns films only and carries no `media_type` at
+    // all, so an absent one is fine while a present one has to be a film
+    // or a series.
     final mediaType = raw['media_type'];
-    if (mediaType != 'movie' && mediaType != 'tv') return null;
+    if (mediaType != null && mediaType != 'movie' && mediaType != 'tv') {
+      return null;
+    }
 
     final title = (raw['title'] ?? raw['name']) as String?;
     if (title == null || title.trim().isEmpty) return null;

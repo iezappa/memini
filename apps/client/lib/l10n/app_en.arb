@@ -476,5 +476,15 @@
   },
   "homeSuggestionsAnother": "Another",
   "homeSuggestionsNoKey": "Add your TMDB or RAWG key in Settings to see suggestions.",
-  "homeSuggestionsUnavailable": "Suggestions could not be fetched right now."
+  "homeSuggestionsUnavailable": "Suggestions could not be fetched right now.",
+  "homeMoodPrompt": "I feel…",
+  "homeMoodAny": "Anything",
+  "moodLaugh": "like laughing",
+  "moodCry": "like a good cry",
+  "moodScare": "like a scare",
+  "moodLove": "romantic",
+  "moodThrill": "like some tension",
+  "moodElsewhere": "like another world",
+  "moodLearn": "like learning something",
+  "moodFamily": "like something for everyone"
 }

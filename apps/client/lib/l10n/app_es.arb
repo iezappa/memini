@@ -413,5 +413,15 @@
   },
   "homeSuggestionsAnother": "Otra",
   "homeSuggestionsNoKey": "Cargá tu clave de TMDB o de RAWG en Ajustes para ver sugerencias.",
-  "homeSuggestionsUnavailable": "No se pudieron traer sugerencias ahora."
+  "homeSuggestionsUnavailable": "No se pudieron traer sugerencias ahora.",
+  "homeMoodPrompt": "Me siento…",
+  "homeMoodAny": "Lo que sea",
+  "moodLaugh": "Con ganas de reír",
+  "moodCry": "Para llorar un rato",
+  "moodScare": "Con ganas de pasar miedo",
+  "moodLove": "Romántico",
+  "moodThrill": "Con ganas de tensión",
+  "moodElsewhere": "En otro mundo",
+  "moodLearn": "Con ganas de aprender algo",
+  "moodFamily": "Para ver en familia"
 }

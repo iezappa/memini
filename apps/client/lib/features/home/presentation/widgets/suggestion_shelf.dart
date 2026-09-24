@@ -7,6 +7,7 @@ import '../../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/recommendation.dart';
 import '../home_providers.dart';
+import '../mood_labels.dart';
 
 /// Something to watch and something to play, drawn at random.
 ///
@@ -19,8 +20,78 @@ class SuggestionShelf extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
     final suggestions = ref.watch(suggestionsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _MoodPicker(),
+        Gap.vSm,
+        _Shelf(suggestions: suggestions),
+      ],
+    );
+  }
+}
+
+/// "I feel…", and the answer changes what the shelf asks for.
+///
+/// Chips rather than a dropdown: there are eight of them, they are short,
+/// and the whole point is to be able to pick one without reading a menu.
+class _MoodPicker extends ConsumerWidget {
+  const _MoodPicker();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final chosen = ref.watch(chosenMoodProvider);
+
+    void choose(Mood? mood) {
+      ref.read(chosenMoodProvider.notifier).state = mood;
+      // A new question deserves a fresh draw, not the pick that was
+      // already on screen.
+      ref.read(suggestionRollProvider.notifier).update((roll) => roll + 1);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.homeMoodPrompt,
+          style: context.text.bodySmall?.copyWith(
+            color: context.semantics.muted,
+          ),
+        ),
+        Gap.vXs,
+        Wrap(
+          spacing: Gap.sm,
+          runSpacing: Gap.xs,
+          children: [
+            ChoiceChip(
+              label: Text(l10n.homeMoodAny),
+              selected: chosen == null,
+              onSelected: (_) => choose(null),
+            ),
+            for (final mood in Mood.values)
+              ChoiceChip(
+                label: Text(moodLabel(l10n, mood)),
+                selected: chosen == mood,
+                onSelected: (selected) => choose(selected ? mood : null),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _Shelf extends ConsumerWidget {
+  const _Shelf({required this.suggestions});
+
+  final AsyncValue<List<Recommendation>> suggestions;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
 
     return suggestions.when(
       // Nothing while it loads: the hub is readable without this, and a

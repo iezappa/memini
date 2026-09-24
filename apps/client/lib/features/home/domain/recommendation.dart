@@ -1,4 +1,5 @@
 import '../../../core/tracking/domain/tracked_domain.dart';
+import 'mood.dart';
 
 /// Something to watch or play, suggested rather than logged.
 ///
@@ -57,4 +58,12 @@ abstract interface class RecommendationSource {
   /// a second look costs nothing and the same title does not come back
   /// every time the hub is opened.
   Future<List<Recommendation>> popular();
+
+  /// A page of whatever answers [mood], or null where this source cannot
+  /// be asked that.
+  ///
+  /// Null rather than falling back to [popular]: "I feel like laughing"
+  /// answered with whatever is trending is worse than not answering, since
+  /// the owner cannot tell the two apart.
+  Future<List<Recommendation>>? forMood(Mood mood);
 }

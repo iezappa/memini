@@ -13,6 +13,7 @@ import '../../screen/presentation/viewing_providers.dart';
 import '../data/rawg_recommendations.dart';
 import '../data/tmdb_recommendations.dart';
 import '../domain/activity_grid.dart';
+import '../domain/mood.dart';
 import '../domain/recommendation.dart';
 
 /// One entry from any domain, tagged with where it came from.
@@ -150,6 +151,12 @@ final recommendationSourcesProvider = Provider<List<RecommendationSource>>((
 /// Bumped by "another", so the hub asks for a fresh pick.
 final suggestionRollProvider = StateProvider<int>((ref) => 0);
 
+/// What the owner said they were in the mood for, or null for anything.
+///
+/// Not persisted: a mood is about this minute, and one remembered from
+/// last week would answer a question nobody asked.
+final chosenMoodProvider = StateProvider<Mood?>((ref) => null);
+
 /// One thing to watch and one to play, drawn at random.
 ///
 /// Fetched once per roll rather than per rebuild, and nothing is written
@@ -173,10 +180,18 @@ final suggestionsProvider = FutureProvider<List<Recommendation>>((ref) async {
   // nobody can read.
   final picker = Random(ref.watch(suggestionRollProvider));
 
+  final mood = ref.watch(chosenMoodProvider);
+
   final picks = <Recommendation>[];
   for (final source in sources) {
     try {
-      final page = await source.popular();
+      // With a mood chosen, a source that cannot be asked it is left out
+      // rather than answered with whatever is trending: "something funny"
+      // replied to with the week's top game is not an answer, and the
+      // owner cannot tell the two apart.
+      final page = await (mood == null
+          ? source.popular()
+          : source.forMood(mood) ?? Future.value(const <Recommendation>[]));
       if (page.isEmpty) continue;
       picks.add(page[picker.nextInt(page.length)]);
     } on RecommendationException {

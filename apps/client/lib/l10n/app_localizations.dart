@@ -1873,6 +1873,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Suggestions could not be fetched right now.'**
   String get homeSuggestionsUnavailable;
+
+  /// No description provided for @homeMoodPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'I feel…'**
+  String get homeMoodPrompt;
+
+  /// No description provided for @homeMoodAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything'**
+  String get homeMoodAny;
+
+  /// No description provided for @moodLaugh.
+  ///
+  /// In en, this message translates to:
+  /// **'like laughing'**
+  String get moodLaugh;
+
+  /// No description provided for @moodCry.
+  ///
+  /// In en, this message translates to:
+  /// **'like a good cry'**
+  String get moodCry;
+
+  /// No description provided for @moodScare.
+  ///
+  /// In en, this message translates to:
+  /// **'like a scare'**
+  String get moodScare;
+
+  /// No description provided for @moodLove.
+  ///
+  /// In en, this message translates to:
+  /// **'romantic'**
+  String get moodLove;
+
+  /// No description provided for @moodThrill.
+  ///
+  /// In en, this message translates to:
+  /// **'like some tension'**
+  String get moodThrill;
+
+  /// No description provided for @moodElsewhere.
+  ///
+  /// In en, this message translates to:
+  /// **'like another world'**
+  String get moodElsewhere;
+
+  /// No description provided for @moodLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'like learning something'**
+  String get moodLearn;
+
+  /// No description provided for @moodFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'like something for everyone'**
+  String get moodFamily;
 }
 
 class _AppLocalizationsDelegate

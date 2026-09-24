@@ -1019,4 +1019,34 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get homeSuggestionsUnavailable =>
       'No se pudieron traer sugerencias ahora.';
+
+  @override
+  String get homeMoodPrompt => 'Me siento…';
+
+  @override
+  String get homeMoodAny => 'Lo que sea';
+
+  @override
+  String get moodLaugh => 'Con ganas de reír';
+
+  @override
+  String get moodCry => 'Para llorar un rato';
+
+  @override
+  String get moodScare => 'Con ganas de pasar miedo';
+
+  @override
+  String get moodLove => 'Romántico';
+
+  @override
+  String get moodThrill => 'Con ganas de tensión';
+
+  @override
+  String get moodElsewhere => 'En otro mundo';
+
+  @override
+  String get moodLearn => 'Con ganas de aprender algo';
+
+  @override
+  String get moodFamily => 'Para ver en familia';
 }

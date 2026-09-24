@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../core/tracking/domain/tracked_domain.dart';
+import '../domain/mood.dart';
 import '../domain/recommendation.dart';
 
 /// What people are playing, from RAWG.
@@ -56,6 +57,14 @@ class RawgRecommendations implements RecommendationSource {
       if (client == null) connection.close();
     }
   }
+
+  /// Null: a mood is asked of the films.
+  ///
+  /// RAWG has genres of its own and they do not line up — "something to
+  /// make me cry" has no answer in a games catalogue, and mapping it onto
+  /// whatever is nearest would be inventing a reply.
+  @override
+  Future<List<Recommendation>>? forMood(Mood mood) => null;
 
   /// Split out so the mapping can be tested without a network.
   static List<Recommendation> parse(String body) {

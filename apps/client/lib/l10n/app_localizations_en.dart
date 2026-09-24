@@ -1019,4 +1019,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get homeSuggestionsUnavailable =>
       'Suggestions could not be fetched right now.';
+
+  @override
+  String get homeMoodPrompt => 'I feel…';
+
+  @override
+  String get homeMoodAny => 'Anything';
+
+  @override
+  String get moodLaugh => 'like laughing';
+
+  @override
+  String get moodCry => 'like a good cry';
+
+  @override
+  String get moodScare => 'like a scare';
+
+  @override
+  String get moodLove => 'romantic';
+
+  @override
+  String get moodThrill => 'like some tension';
+
+  @override
+  String get moodElsewhere => 'like another world';
+
+  @override
+  String get moodLearn => 'like learning something';
+
+  @override
+  String get moodFamily => 'like something for everyone';
 }
