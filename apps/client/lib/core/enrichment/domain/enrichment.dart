@@ -50,6 +50,21 @@ class EnrichmentSuggestion {
   /// same name are still tellable apart.
   String get subtitle =>
       [?releaseYear?.toString(), ?director, ?origin, ?platforms].join(' · ');
+
+  /// The same suggestion with a description on it.
+  EnrichmentSuggestion withDescription(String? description) =>
+      EnrichmentSuggestion(
+        externalId: externalId,
+        title: title,
+        description: description,
+        releaseYear: releaseYear,
+        director: director,
+        cast: cast,
+        platforms: platforms,
+        origin: origin,
+        posterUrl: posterUrl,
+        backdropUrl: backdropUrl,
+      );
 }
 
 /// Why a lookup produced nothing. The form treats all of these the same way —
@@ -91,4 +106,16 @@ abstract interface class EnrichmentSource {
   bool get isConfigured;
 
   Future<List<EnrichmentSuggestion>> search(String query);
+
+  /// Fills in what a search result does not carry, for the one candidate the
+  /// owner picked.
+  ///
+  /// Asked for one suggestion rather than ten because that is the difference
+  /// between one request and ten: a search endpoint hands back names and
+  /// dates, and the paragraph about the thing lives on its own page. A
+  /// source that already said everything in the search returns [picked]
+  /// untouched, and one that cannot answer right now must do the same rather
+  /// than throw — the owner has already chosen, and losing the year and the
+  /// cover over a missing paragraph would be the worse trade.
+  Future<EnrichmentSuggestion> details(EnrichmentSuggestion picked);
 }

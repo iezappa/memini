@@ -32,6 +32,8 @@ The app works fully offline. It only goes online in these cases:
   - games: [RAWG](https://rawg.io/) (together with your own RAWG key);
   - bands and artists: [MusicBrainz](https://musicbrainz.org/) (no key; the request identifies the app by name).
 
+  When you then pick one of the results, RAWG is asked once more — for that game's own page, which is where its description lives. That second request carries the game's id and your key, and nothing about you.
+
   Those services receive the search text, your key where one applies, and what any web request carries (such as your IP address), and handle it under their own privacy policies. **Nothing else you logged — scores, reviews, dates, places or any other entry — is ever sent.** If you never use lookups, no lookup request is made — but note the suggestions below, which are asked for on their own once a key is set.
 - **Suggestions on the home screen, when you have a key set.** If a TMDB or RAWG key is set, opening the home screen asks that service what is popular this week and shows one at random. The request carries your key and what any web request carries (such as your IP address) — never anything you logged. Nothing that comes back is stored: it is gone when you close the app. With no key set, nothing is asked and the shelf says so.
 - **Filling in a cover that is missing, once per entry.** An entry that was filled in from TMDB or RAWG before the app kept artwork has an id from that service and no picture. Opening it asks that service for the cover of the same title, once, and saves it. It tells the service nothing it was not told the day that entry was created, and an entry you typed in by hand is never asked about.

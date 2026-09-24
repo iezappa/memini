@@ -43,6 +43,10 @@ class _EnrichmentSheetState extends State<_EnrichmentSheet> {
   List<EnrichmentSuggestion>? _results;
   EnrichmentFailure? _failure;
 
+  /// The candidate whose description is being fetched, so its row can say so
+  /// and the rest stay untappable while it is in flight.
+  EnrichmentSuggestion? _opening;
+
   @override
   void initState() {
     super.initState();
@@ -73,6 +77,22 @@ class _EnrichmentSheetState extends State<_EnrichmentSheet> {
     } finally {
       if (mounted) setState(() => _searching = false);
     }
+  }
+
+  /// Takes the suggestion, with whatever the source can add to it.
+  ///
+  /// The extra request is the reason this is not a plain pop: a description
+  /// lives on the item's own page, not in a list of search results. It
+  /// cannot fail loudly — [EnrichmentSource.details] hands back what it was
+  /// given when it cannot answer — so there is nothing here but a wait.
+  Future<void> _pick(EnrichmentSuggestion suggestion) async {
+    if (_opening != null) return;
+    setState(() => _opening = suggestion);
+
+    final detailed = await widget.source.details(suggestion);
+    if (!mounted) return;
+
+    Navigator.of(context).pop(detailed);
   }
 
   String _failureMessage(AppLocalizations l10n) => switch (_failure!) {
@@ -143,14 +163,24 @@ class _EnrichmentSheetState extends State<_EnrichmentSheet> {
                       separatorBuilder: (_, _) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final suggestion = found[index];
+                        final opening = identical(_opening, suggestion);
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
+                          enabled: _opening == null,
                           title: Text(suggestion.title),
                           subtitle: suggestion.subtitle.isEmpty
                               ? null
                               : Text(suggestion.subtitle),
-                          trailing: const Icon(Icons.add, size: 20),
-                          onTap: () => Navigator.of(context).pop(suggestion),
+                          trailing: opening
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.add, size: 20),
+                          onTap: () => _pick(suggestion),
                         );
                       },
                     ),

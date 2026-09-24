@@ -80,6 +80,12 @@ class TmdbSource implements EnrichmentSource {
     }
   }
 
+  /// TMDB puts the overview in the search answer itself, so a picked film
+  /// already carries its description and there is nothing more to ask for.
+  @override
+  Future<EnrichmentSuggestion> details(EnrichmentSuggestion picked) async =>
+      picked;
+
   /// Split out from [search] so the mapping can be tested without a network.
   static List<EnrichmentSuggestion> parseSearch(String body) {
     final decoded = jsonDecode(body);
