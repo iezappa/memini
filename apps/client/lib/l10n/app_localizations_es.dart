@@ -20,7 +20,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String greeting(String name) {
-    return 'Hola, $name';
+    return 'Bienvenido, $name';
   }
 
   @override
@@ -1000,4 +1000,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeStatNone => '—';
+
+  @override
+  String get homeSuggestions => 'Para ver o jugar';
+
+  @override
+  String homeSuggestionsHint(String source) {
+    return 'De $source, al azar. No se guarda nada.';
+  }
+
+  @override
+  String get homeSuggestionsAnother => 'Otra';
+
+  @override
+  String get homeSuggestionsNoKey =>
+      'Cargá tu clave de TMDB o de RAWG en Ajustes para ver sugerencias.';
+
+  @override
+  String get homeSuggestionsUnavailable =>
+      'No se pudieron traer sugerencias ahora.';
 }

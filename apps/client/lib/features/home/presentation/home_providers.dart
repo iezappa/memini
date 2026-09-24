@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/time/clock.dart';
@@ -8,7 +10,10 @@ import '../../dining/presentation/meal_providers.dart';
 import '../../games/presentation/game_providers.dart';
 import '../../../app/providers.dart';
 import '../../screen/presentation/viewing_providers.dart';
+import '../data/rawg_recommendations.dart';
+import '../data/tmdb_recommendations.dart';
 import '../domain/activity_grid.dart';
+import '../domain/recommendation.dart';
 
 /// One entry from any domain, tagged with where it came from.
 ///
@@ -130,4 +135,59 @@ final homeNumbersProvider = Provider<HomeNumbers>((ref) {
         )
         .length,
   );
+});
+
+/// The two shelves the hub can offer, films first.
+final recommendationSourcesProvider = Provider<List<RecommendationSource>>((
+  ref,
+) {
+  return [
+    TmdbRecommendations(apiKey: ref.watch(tmdbApiKeyProvider)),
+    RawgRecommendations(apiKey: ref.watch(rawgApiKeyProvider)),
+  ];
+});
+
+/// Bumped by "another", so the hub asks for a fresh pick.
+final suggestionRollProvider = StateProvider<int>((ref) => 0);
+
+/// One thing to watch and one to play, drawn at random.
+///
+/// Fetched once per roll rather than per rebuild, and nothing is written
+/// down: this is a nudge, not a record. A source with no key is left out
+/// silently — the shelf says what to do about it once, for all of them.
+///
+/// The whole thing fails soft. A shelf that could not load is a shelf that
+/// is not there; it must never be the reason the hub does not open.
+final suggestionsProvider = FutureProvider<List<Recommendation>>((ref) async {
+  ref.watch(suggestionRollProvider);
+
+  final sources = ref
+      .watch(recommendationSourcesProvider)
+      .where((source) => source.isConfigured);
+  if (sources.isEmpty) {
+    throw const RecommendationException(RecommendationFailure.missingKey);
+  }
+
+  // Seeded from the roll, so "another" gives a different pick and a rebuild
+  // does not: a shelf that reshuffles whenever the page repaints is a shelf
+  // nobody can read.
+  final picker = Random(ref.watch(suggestionRollProvider));
+
+  final picks = <Recommendation>[];
+  for (final source in sources) {
+    try {
+      final page = await source.popular();
+      if (page.isEmpty) continue;
+      picks.add(page[picker.nextInt(page.length)]);
+    } on RecommendationException {
+      // One source being down is not the other one's problem.
+      continue;
+    }
+  }
+
+  if (picks.isEmpty) {
+    throw const RecommendationException(RecommendationFailure.unavailable);
+  }
+
+  return picks;
 });

@@ -38,6 +38,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
   late GameStatus _status;
   double? _rating;
   String? _externalId;
+  String? _coverUrl;
   bool _saving = false;
 
   @override
@@ -60,6 +61,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
     _status = game?.status ?? GameStatus.finished;
     _rating = game?.rating;
     _externalId = game?.externalId;
+    _coverUrl = game?.coverUrl;
   }
 
   @override
@@ -118,6 +120,8 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
     setState(() {
       _title.text = picked.title;
       _externalId = picked.externalId;
+      // Taken with the id: the artwork belongs to the title that was picked.
+      _coverUrl = picked.posterUrl;
     });
   }
 
@@ -149,6 +153,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
             hoursPlayed: hours,
             releaseYear: releaseYear,
             externalId: _externalId,
+            coverUrl: _coverUrl,
           ),
         );
       } else {
@@ -165,6 +170,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
             hoursPlayed: hours,
             releaseYear: releaseYear,
             externalId: _externalId,
+            coverUrl: _coverUrl,
           ),
         );
       }

@@ -89,12 +89,20 @@ class RawgSource implements EnrichmentSource {
         }
       }
 
+      // RAWG hands back a whole URL rather than a path, and one picture
+      // rather than two: the same wide still serves as the cover on a card
+      // and as the backdrop behind a page.
+      final art = raw['background_image'];
+      final image = art is String && art.trim().isNotEmpty ? art : null;
+
       suggestions.add(
         EnrichmentSuggestion(
           externalId: '$id',
           title: name,
           releaseYear: _yearOf(raw['released'] as String?),
           platforms: platforms.isEmpty ? null : platforms.join(', '),
+          posterUrl: image,
+          backdropUrl: image,
         ),
       );
     }

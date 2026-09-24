@@ -119,7 +119,7 @@ abstract class AppLocalizations {
   /// No description provided for @greeting.
   ///
   /// In en, this message translates to:
-  /// **'Hello, {name}'**
+  /// **'Welcome, {name}'**
   String greeting(String name);
 
   /// No description provided for @greetingAnonymous.
@@ -1843,6 +1843,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'—'**
   String get homeStatNone;
+
+  /// No description provided for @homeSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'To watch or play'**
+  String get homeSuggestions;
+
+  /// No description provided for @homeSuggestionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'From {source}, at random. Nothing is stored.'**
+  String homeSuggestionsHint(String source);
+
+  /// No description provided for @homeSuggestionsAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Another'**
+  String get homeSuggestionsAnother;
+
+  /// No description provided for @homeSuggestionsNoKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your TMDB or RAWG key in Settings to see suggestions.'**
+  String get homeSuggestionsNoKey;
+
+  /// No description provided for @homeSuggestionsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions could not be fetched right now.'**
+  String get homeSuggestionsUnavailable;
 }
 
 class _AppLocalizationsDelegate

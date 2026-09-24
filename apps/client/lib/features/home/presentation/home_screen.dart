@@ -12,6 +12,7 @@ import '../../shared/settings_button.dart';
 import '../../shared/widgets.dart';
 import 'home_providers.dart';
 import 'widgets/activity_grid_card.dart';
+import 'widgets/suggestion_shelf.dart';
 
 /// The hub: what the last six months look like, three figures about it, a
 /// shortcut into each form, and whatever was logged last.
@@ -68,6 +69,10 @@ class HomeScreen extends ConsumerWidget {
               SectionLabel(l10n.homeShortcuts),
               Gap.vSm,
               const _Shortcuts(),
+              Gap.vLg,
+              SectionLabel(l10n.homeSuggestions),
+              Gap.vSm,
+              const SuggestionShelf(),
               Gap.vLg,
               SectionLabel(l10n.homeNumbers),
               Gap.vSm,

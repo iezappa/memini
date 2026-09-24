@@ -40,6 +40,7 @@ class DriftGameRepository implements GameRepository {
     hoursPlayed: row.hoursPlayed,
     releaseYear: row.releaseYear,
     externalId: row.externalId,
+    coverUrl: row.coverUrl,
   );
 
   SimpleSelectStatement<$GamesTable, GameRow> _query(GameFilter filter) {
@@ -97,6 +98,7 @@ class DriftGameRepository implements GameRepository {
             hoursPlayed: Value(draft.hoursPlayed),
             releaseYear: Value(draft.releaseYear),
             externalId: Value(draft.externalId),
+            coverUrl: Value(draft.coverUrl),
           ),
         );
     return _toDomain(row);
@@ -117,6 +119,7 @@ class DriftGameRepository implements GameRepository {
         hoursPlayed: Value(entry.hoursPlayed),
         releaseYear: Value(entry.releaseYear),
         externalId: Value(entry.externalId),
+        coverUrl: Value(entry.coverUrl),
       ),
     );
   }

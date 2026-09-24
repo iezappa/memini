@@ -81,6 +81,7 @@ class GameListScreen extends ConsumerWidget {
           subtitle: platform == null ? date : '$platform · $date',
           rating: game.rating,
           icon: Icons.sports_esports_outlined,
+          posterUrl: game.coverUrl,
           pill: _StatusPill(game: game),
           onTap: () => context.push('/games/${game.id}'),
         );

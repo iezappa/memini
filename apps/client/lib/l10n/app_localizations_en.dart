@@ -20,7 +20,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String greeting(String name) {
-    return 'Hello, $name';
+    return 'Welcome, $name';
   }
 
   @override
@@ -1000,4 +1000,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeStatNone => '—';
+
+  @override
+  String get homeSuggestions => 'To watch or play';
+
+  @override
+  String homeSuggestionsHint(String source) {
+    return 'From $source, at random. Nothing is stored.';
+  }
+
+  @override
+  String get homeSuggestionsAnother => 'Another';
+
+  @override
+  String get homeSuggestionsNoKey =>
+      'Add your TMDB or RAWG key in Settings to see suggestions.';
+
+  @override
+  String get homeSuggestionsUnavailable =>
+      'Suggestions could not be fetched right now.';
 }

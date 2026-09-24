@@ -3399,6 +3399,17 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _coverUrlMeta = const VerificationMeta(
+    'coverUrl',
+  );
+  @override
+  late final GeneratedColumn<String> coverUrl = GeneratedColumn<String>(
+    'cover_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3413,6 +3424,7 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
     hoursPlayed,
     releaseYear,
     externalId,
+    coverUrl,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3504,6 +3516,12 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
         externalId.isAcceptableOrUnknown(data['external_id']!, _externalIdMeta),
       );
     }
+    if (data.containsKey('cover_url')) {
+      context.handle(
+        _coverUrlMeta,
+        coverUrl.isAcceptableOrUnknown(data['cover_url']!, _coverUrlMeta),
+      );
+    }
     return context;
   }
 
@@ -3563,6 +3581,10 @@ class $GamesTable extends Games with TableInfo<$GamesTable, GameRow> {
         DriftSqlType.string,
         data['${effectivePrefix}external_id'],
       ),
+      coverUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cover_url'],
+      ),
     );
   }
 
@@ -3592,6 +3614,14 @@ class GameRow extends DataClass implements Insertable<GameRow> {
 
   /// RAWG or IGDB id, cached from an enrichment lookup.
   final String? externalId;
+
+  /// The cover, as a whole URL on RAWG's image host.
+  ///
+  /// RAWG gives one wide still per game rather than a poster and a
+  /// backdrop, so the same address serves both: the card and the header
+  /// behind the title. The address, not the picture — nothing is copied
+  /// onto the device.
+  final String? coverUrl;
   const GameRow({
     required this.id,
     required this.title,
@@ -3605,6 +3635,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     this.hoursPlayed,
     this.releaseYear,
     this.externalId,
+    this.coverUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3637,6 +3668,9 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     if (!nullToAbsent || externalId != null) {
       map['external_id'] = Variable<String>(externalId);
     }
+    if (!nullToAbsent || coverUrl != null) {
+      map['cover_url'] = Variable<String>(coverUrl);
+    }
     return map;
   }
 
@@ -3668,6 +3702,9 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       externalId: externalId == null && nullToAbsent
           ? const Value.absent()
           : Value(externalId),
+      coverUrl: coverUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(coverUrl),
     );
   }
 
@@ -3691,6 +3728,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       hoursPlayed: serializer.fromJson<double?>(json['hoursPlayed']),
       releaseYear: serializer.fromJson<int?>(json['releaseYear']),
       externalId: serializer.fromJson<String?>(json['externalId']),
+      coverUrl: serializer.fromJson<String?>(json['coverUrl']),
     );
   }
   @override
@@ -3711,6 +3749,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       'hoursPlayed': serializer.toJson<double?>(hoursPlayed),
       'releaseYear': serializer.toJson<int?>(releaseYear),
       'externalId': serializer.toJson<String?>(externalId),
+      'coverUrl': serializer.toJson<String?>(coverUrl),
     };
   }
 
@@ -3727,6 +3766,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     Value<double?> hoursPlayed = const Value.absent(),
     Value<int?> releaseYear = const Value.absent(),
     Value<String?> externalId = const Value.absent(),
+    Value<String?> coverUrl = const Value.absent(),
   }) => GameRow(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -3740,6 +3780,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     hoursPlayed: hoursPlayed.present ? hoursPlayed.value : this.hoursPlayed,
     releaseYear: releaseYear.present ? releaseYear.value : this.releaseYear,
     externalId: externalId.present ? externalId.value : this.externalId,
+    coverUrl: coverUrl.present ? coverUrl.value : this.coverUrl,
   );
   GameRow copyWithCompanion(GamesCompanion data) {
     return GameRow(
@@ -3765,6 +3806,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
       externalId: data.externalId.present
           ? data.externalId.value
           : this.externalId,
+      coverUrl: data.coverUrl.present ? data.coverUrl.value : this.coverUrl,
     );
   }
 
@@ -3782,7 +3824,8 @@ class GameRow extends DataClass implements Insertable<GameRow> {
           ..write('platform: $platform, ')
           ..write('hoursPlayed: $hoursPlayed, ')
           ..write('releaseYear: $releaseYear, ')
-          ..write('externalId: $externalId')
+          ..write('externalId: $externalId, ')
+          ..write('coverUrl: $coverUrl')
           ..write(')'))
         .toString();
   }
@@ -3801,6 +3844,7 @@ class GameRow extends DataClass implements Insertable<GameRow> {
     hoursPlayed,
     releaseYear,
     externalId,
+    coverUrl,
   );
   @override
   bool operator ==(Object other) =>
@@ -3817,7 +3861,8 @@ class GameRow extends DataClass implements Insertable<GameRow> {
           other.platform == this.platform &&
           other.hoursPlayed == this.hoursPlayed &&
           other.releaseYear == this.releaseYear &&
-          other.externalId == this.externalId);
+          other.externalId == this.externalId &&
+          other.coverUrl == this.coverUrl);
 }
 
 class GamesCompanion extends UpdateCompanion<GameRow> {
@@ -3833,6 +3878,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   final Value<double?> hoursPlayed;
   final Value<int?> releaseYear;
   final Value<String?> externalId;
+  final Value<String?> coverUrl;
   final Value<int> rowid;
   const GamesCompanion({
     this.id = const Value.absent(),
@@ -3847,6 +3893,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     this.hoursPlayed = const Value.absent(),
     this.releaseYear = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.coverUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GamesCompanion.insert({
@@ -3862,6 +3909,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     this.hoursPlayed = const Value.absent(),
     this.releaseYear = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.coverUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
@@ -3880,6 +3928,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     Expression<double>? hoursPlayed,
     Expression<int>? releaseYear,
     Expression<String>? externalId,
+    Expression<String>? coverUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3895,6 +3944,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
       if (hoursPlayed != null) 'hours_played': hoursPlayed,
       if (releaseYear != null) 'release_year': releaseYear,
       if (externalId != null) 'external_id': externalId,
+      if (coverUrl != null) 'cover_url': coverUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3912,6 +3962,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     Value<double?>? hoursPlayed,
     Value<int?>? releaseYear,
     Value<String?>? externalId,
+    Value<String?>? coverUrl,
     Value<int>? rowid,
   }) {
     return GamesCompanion(
@@ -3927,6 +3978,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
       hoursPlayed: hoursPlayed ?? this.hoursPlayed,
       releaseYear: releaseYear ?? this.releaseYear,
       externalId: externalId ?? this.externalId,
+      coverUrl: coverUrl ?? this.coverUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3972,6 +4024,9 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
     if (externalId.present) {
       map['external_id'] = Variable<String>(externalId.value);
     }
+    if (coverUrl.present) {
+      map['cover_url'] = Variable<String>(coverUrl.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3993,6 +4048,7 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
           ..write('hoursPlayed: $hoursPlayed, ')
           ..write('releaseYear: $releaseYear, ')
           ..write('externalId: $externalId, ')
+          ..write('coverUrl: $coverUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5790,6 +5846,7 @@ typedef $$GamesTableCreateCompanionBuilder = GamesCompanion Function({
   Value<double?> hoursPlayed,
   Value<int?> releaseYear,
   Value<String?> externalId,
+  Value<String?> coverUrl,
   Value<int> rowid,
 });
 typedef $$GamesTableUpdateCompanionBuilder = GamesCompanion Function({
@@ -5805,6 +5862,7 @@ typedef $$GamesTableUpdateCompanionBuilder = GamesCompanion Function({
   Value<double?> hoursPlayed,
   Value<int?> releaseYear,
   Value<String?> externalId,
+  Value<String?> coverUrl,
   Value<int> rowid,
 });
 
@@ -5874,6 +5932,11 @@ class $$GamesTableFilterComposer extends Composer<_$AppDatabase, $GamesTable> {
 
   ColumnFilters<String> get externalId => $composableBuilder(
     column: $table.externalId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get coverUrl => $composableBuilder(
+    column: $table.coverUrl,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -5946,6 +6009,11 @@ class $$GamesTableOrderingComposer
     column: $table.externalId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get coverUrl => $composableBuilder(
+    column: $table.coverUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$GamesTableAnnotationComposer
@@ -6002,6 +6070,9 @@ class $$GamesTableAnnotationComposer
     column: $table.externalId,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get coverUrl =>
+      $composableBuilder(column: $table.coverUrl, builder: (column) => column);
 }
 
 class $$GamesTableTableManager
@@ -6044,6 +6115,7 @@ class $$GamesTableTableManager
                 Value<double?> hoursPlayed = const Value.absent(),
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<String?> coverUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GamesCompanion(
                 id: id,
@@ -6058,6 +6130,7 @@ class $$GamesTableTableManager
                 hoursPlayed: hoursPlayed,
                 releaseYear: releaseYear,
                 externalId: externalId,
+                coverUrl: coverUrl,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -6074,6 +6147,7 @@ class $$GamesTableTableManager
                 Value<double?> hoursPlayed = const Value.absent(),
                 Value<int?> releaseYear = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<String?> coverUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GamesCompanion.insert(
                 id: id,
@@ -6088,6 +6162,7 @@ class $$GamesTableTableManager
                 hoursPlayed: hoursPlayed,
                 releaseYear: releaseYear,
                 externalId: externalId,
+                coverUrl: coverUrl,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

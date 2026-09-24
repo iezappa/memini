@@ -59,6 +59,9 @@ void main() {
   testWidgets('offers a shortcut per domain, and the figures empty', (
     tester,
   ) async {
+    // The hub is a page now — grid, figures, shortcuts, suggestions and the
+    // recent list — and a ListView builds only what fits.
+    useTallWindow(tester);
     await pump(tester);
 
     // One shortcut per domain, straight to its form. The tiles that used to
@@ -104,6 +107,7 @@ void main() {
       MealDraft(title: 'Chuí', happenedOn: DateTime(2026, 9, 3), rating: 9),
     );
 
+    useTallWindow(tester);
     await pump(tester, today: DateTime(2026, 9, 20));
 
     expect(find.text('3'), findsOneWidget, reason: 'logged');
@@ -171,6 +175,20 @@ void main() {
     expect(find.text('Salas de escape'), findsOneWidget);
     expect(find.text('Lugares donde comí'), findsOneWidget);
     expect(find.text('Videojuegos'), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('asks for a key before it offers suggestions', (tester) async {
+    // With no TMDB or RAWG key there is nothing to ask for, and the shelf
+    // says what to do about it instead of sitting empty.
+    useTallWindow(tester);
+    await pump(tester);
+
+    expect(
+      find.text('Add your TMDB or RAWG key in Settings to see suggestions.'),
+      findsOneWidget,
+    );
 
     await unmount(tester);
   });

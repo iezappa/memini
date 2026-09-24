@@ -91,6 +91,10 @@ class GameDetailScreen extends ConsumerWidget {
                     value: l10n.hoursValue(_hours(value.hoursPlayed!)),
                   ),
               ],
+              // One still, used for both: RAWG has no separate poster, so
+              // the cover is what goes behind the title as well.
+              posterUrl: value.coverUrl,
+              backdropUrl: value.coverUrl,
             );
           },
         ),

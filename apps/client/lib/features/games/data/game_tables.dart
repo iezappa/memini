@@ -12,4 +12,12 @@ class Games extends Table with TrackableTable {
 
   /// RAWG or IGDB id, cached from an enrichment lookup.
   TextColumn get externalId => text().nullable()();
+
+  /// The cover, as a whole URL on RAWG's image host.
+  ///
+  /// RAWG gives one wide still per game rather than a poster and a
+  /// backdrop, so the same address serves both: the card and the header
+  /// behind the title. The address, not the picture — nothing is copied
+  /// onto the device.
+  TextColumn get coverUrl => text().nullable()();
 }

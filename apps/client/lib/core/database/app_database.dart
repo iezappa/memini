@@ -51,7 +51,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 5;
+  static const currentSchemaVersion = 6;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -189,6 +189,12 @@ class AppDatabase extends _$AppDatabase {
             from4To5: (m, schema) async {
               await m.addColumn(schema.viewings, schema.viewings.posterUrl);
               await m.addColumn(schema.viewings, schema.viewings.backdropUrl);
+            },
+            // v6 does the same for a game. One column, not two: RAWG has
+            // one wide still per game and it serves as both the cover and
+            // the header behind the title.
+            from5To6: (m, schema) async {
+              await m.addColumn(schema.games, schema.games.coverUrl);
             },
           ),
         );

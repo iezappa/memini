@@ -21,6 +21,7 @@ class Game implements Trackable {
     this.hoursPlayed,
     this.releaseYear,
     this.externalId,
+    this.coverUrl,
   });
 
   @override
@@ -53,6 +54,10 @@ class Game implements Trackable {
   /// RAWG or IGDB id, cached when the owner enriched the entry.
   final String? externalId;
 
+  /// The cover, as an address on RAWG's image host. Null for a game typed
+  /// in by hand.
+  final String? coverUrl;
+
   @override
   bool get isRated => rating != null;
 
@@ -70,6 +75,7 @@ class Game implements Trackable {
     double? hoursPlayed,
     int? releaseYear,
     String? externalId,
+    String? coverUrl,
     bool clearRating = false,
     bool clearHours = false,
     bool clearExternalId = false,
@@ -87,6 +93,9 @@ class Game implements Trackable {
       hoursPlayed: clearHours ? null : (hoursPlayed ?? this.hoursPlayed),
       releaseYear: releaseYear ?? this.releaseYear,
       externalId: clearExternalId ? null : (externalId ?? this.externalId),
+      // Cleared with the id it came from: the artwork belongs to the game
+      // that was picked, not to the row.
+      coverUrl: clearExternalId ? null : (coverUrl ?? this.coverUrl),
     );
   }
 }
@@ -104,6 +113,7 @@ class GameDraft {
     this.hoursPlayed,
     this.releaseYear,
     this.externalId,
+    this.coverUrl,
   });
 
   final String title;
@@ -116,4 +126,8 @@ class GameDraft {
   final double? hoursPlayed;
   final int? releaseYear;
   final String? externalId;
+
+  /// The cover, as an address on RAWG's image host. Null for a game typed
+  /// in by hand.
+  final String? coverUrl;
 }
