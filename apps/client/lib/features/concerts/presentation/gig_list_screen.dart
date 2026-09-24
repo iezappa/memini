@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
@@ -56,14 +55,15 @@ class GigListScreen extends ConsumerWidget {
             ),
           ),
       ],
-      cardBuilder: (context, gig) {
+      entryBuilder: (context, gig) {
         final date = DateFormat.yMMMd(locale).format(gig.happenedOn);
         final venue = gig.venue;
-        return TrackerCard(
+        return (
           title: gig.title,
           subtitle: venue == null ? date : '$venue · $date',
           rating: gig.rating,
           icon: Icons.music_note_outlined,
+          posterUrl: null,
           pill: gig.supportActs == null
               ? null
               : Text(

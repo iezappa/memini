@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
@@ -56,14 +55,15 @@ class MealListScreen extends ConsumerWidget {
             ),
           ),
       ],
-      cardBuilder: (context, meal) {
+      entryBuilder: (context, meal) {
         final date = DateFormat.yMMMd(locale).format(meal.happenedOn);
         final where = meal.location;
-        return TrackerCard(
+        return (
           title: meal.title,
           subtitle: where == null ? date : '$where · $date',
           rating: meal.rating,
           icon: Icons.restaurant_outlined,
+          posterUrl: null,
           pill: meal.dish == null ? null : _DishPill(dish: meal.dish!),
           onTap: () => showEntryDialog(
             context,

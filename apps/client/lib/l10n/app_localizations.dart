@@ -2035,6 +2035,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The last copy could not be written.'**
   String get photoFolderFailed;
+
+  /// No description provided for @viewGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as a grid'**
+  String get viewGrid;
+
+  /// No description provided for @viewList.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as a list'**
+  String get viewList;
+
+  /// No description provided for @previousPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get previousPage;
+
+  /// No description provided for @nextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get nextPage;
+
+  /// Which page of a tracked list is on screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{page} of {pages}'**
+  String pageOf(int page, int pages);
 }
 
 class _AppLocalizationsDelegate

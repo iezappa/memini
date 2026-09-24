@@ -41,6 +41,18 @@ class DriftPhotoRepository implements PhotoRepository {
   }
 
   @override
+  Future<EntryPhoto?> coverFor(String ownerId) async {
+    final row =
+        await (_db.select(_db.entryPhotos)
+              ..where((p) => p.ownerId.equals(ownerId))
+              ..orderBy([(p) => OrderingTerm.asc(p.updatedAt)])
+              ..limit(1))
+            .getSingleOrNull();
+
+    return row == null ? null : _photoOf(row);
+  }
+
+  @override
   Future<EntryPhoto> add({
     required String ownerId,
     required Uint8List bytes,

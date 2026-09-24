@@ -42,6 +42,12 @@ abstract interface class PhotoRepository {
   /// Every picture in the store, for filling a folder chosen after the fact.
   Future<List<EntryPhoto>> all();
 
+  /// The first picture of an entry, or null — what its card shows.
+  ///
+  /// Its own query rather than the first of [forOwner], because a card only
+  /// needs one and the others would arrive with their bytes attached.
+  Future<EntryPhoto?> coverFor(String ownerId);
+
   Future<EntryPhoto> add({
     required String ownerId,
     required Uint8List bytes,

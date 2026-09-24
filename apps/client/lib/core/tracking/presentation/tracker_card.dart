@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../features/shared/widgets.dart';
 import '../../theme/theme.dart';
 import '../../theme/tokens.dart';
+import 'entry_cover.dart';
 
 /// One row in any tracked list.
 ///
@@ -19,6 +20,7 @@ class TrackerCard extends StatelessWidget {
     this.icon = Icons.bookmark_outline,
     this.pill,
     this.posterUrl,
+    this.photoOwnerId,
   });
 
   final String title;
@@ -36,6 +38,10 @@ class TrackerCard extends StatelessWidget {
   /// The cover, for a domain that has artwork.
   final String? posterUrl;
 
+  /// The entry itself, so a domain with no artwork can show the photograph
+  /// the owner attached to it.
+  final String? photoOwnerId;
+
   /// The domain's own badge, shown under the subtitle when there is one.
   final Widget? pill;
   final VoidCallback onTap;
@@ -51,26 +57,19 @@ class TrackerCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (posterUrl case final poster?)
-                ClipRRect(
+              SizedBox(
+                width: 44,
+                // The shape a poster is printed in, so a row of them lines
+                // up whatever the artwork behind it does — and so every
+                // domain's rows are the same height, cover or no cover.
+                height: 66,
+                child: EntryCover(
+                  icon: icon,
                   borderRadius: Radii.field,
-                  child: SizedBox(
-                    width: 44,
-                    // The shape a poster is printed in, so a row of them
-                    // lines up whatever the artwork behind it does.
-                    height: 66,
-                    child: Image.network(
-                      poster,
-                      fit: BoxFit.cover,
-                      // A dead link falls back to the icon the card would
-                      // have had, rather than to a broken-image box.
-                      errorBuilder: (context, _, _) =>
-                          EntryIcon(icon: icon, borderRadius: Radii.field),
-                    ),
-                  ),
-                )
-              else
-                EntryIcon(icon: icon, borderRadius: Radii.field),
+                  posterUrl: posterUrl,
+                  photoOwnerId: photoOwnerId,
+                ),
+              ),
               Gap.hMd,
               Expanded(
                 child: Column(

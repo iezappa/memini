@@ -29,6 +29,16 @@ final photosProvider = FutureProvider.family<List<EntryPhoto>, String>((
   return ref.watch(photoRepositoryProvider).forOwner(ownerId);
 });
 
+/// The picture on an entry's card, or null when it has none.
+final entryCoverProvider = FutureProvider.family<EntryPhoto?, String>((
+  ref,
+  ownerId,
+) {
+  ref.watch(photoRevisionProvider);
+
+  return ref.watch(photoRepositoryProvider).coverFor(ownerId);
+});
+
 /// Picks a picture and keeps it.
 ///
 /// Overridden in tests, which have no file dialog to open.

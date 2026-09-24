@@ -511,5 +511,21 @@
   "photoFolderUnsupported": "This browser cannot write into a folder. Chrome and Edge can.",
   "photoFolderGone": "That folder is not there any more. Choose it again.",
   "photoFolderNeedsPermission": "The browser wants you to allow that folder again.",
-  "photoFolderFailed": "The last copy could not be written."
+  "photoFolderFailed": "The last copy could not be written.",
+  "viewGrid": "Show as a grid",
+  "viewList": "Show as a list",
+  "previousPage": "Previous page",
+  "nextPage": "Next page",
+  "pageOf": "{page} of {pages}",
+  "@pageOf": {
+    "description": "Which page of a tracked list is on screen.",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "pages": {
+        "type": "int"
+      }
+    }
+  }
 }

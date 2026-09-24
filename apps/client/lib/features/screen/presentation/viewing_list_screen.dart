@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
@@ -61,10 +60,10 @@ class ViewingListScreen extends ConsumerWidget {
           ),
         ),
       ],
-      cardBuilder: (context, viewing) {
+      entryBuilder: (context, viewing) {
         final date = DateFormat.yMMMd(locale).format(viewing.happenedOn);
         final year = viewing.releaseYear;
-        return TrackerCard(
+        return (
           title: viewing.title,
           subtitle: year == null ? date : '$year · $date',
           rating: viewing.rating,

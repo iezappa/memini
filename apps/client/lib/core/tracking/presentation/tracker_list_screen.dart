@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../features/shared/settings_button.dart';
 import '../../../features/shared/widgets.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../theme/theme.dart';
 import '../../theme/tokens.dart';
 import '../domain/trackable.dart';
 import '../domain/tracking_filter.dart';
+import 'tracker_card.dart';
+import 'tracker_tile.dart';
+import 'tracking_view.dart';
 
 /// Labels a list needs, gathered in one place so the screen itself stays
 /// free of localization and every domain fills the same blanks.
@@ -37,12 +42,26 @@ class TrackerListLabels {
   final String Function(TrackingSort sort) sortLabel;
 }
 
+/// What a domain says about one entry, without saying how to draw it.
+///
+/// The screen draws it as a row or as a tile depending on what the owner
+/// picked, and a domain that returned a widget could not be drawn twice.
+typedef TrackerEntryView = ({
+  String title,
+  String subtitle,
+  double? rating,
+  IconData icon,
+  String? posterUrl,
+  Widget? pill,
+  VoidCallback onTap,
+});
+
 /// The list screen every tracked domain gets.
 ///
 /// Search, ordering, the empty states and the count header behave identically
 /// in all five, so they live here. A domain supplies its own rows through
-/// [cardBuilder] and its own filters through [filterChips].
-class TrackerListScreen<T extends Trackable> extends StatefulWidget {
+/// [entryBuilder] and its own filters through [filterChips].
+class TrackerListScreen<T extends Trackable> extends ConsumerStatefulWidget {
   const TrackerListScreen({
     super.key,
     required this.labels,
@@ -53,7 +72,7 @@ class TrackerListScreen<T extends Trackable> extends StatefulWidget {
     required this.onSortChanged,
     required this.onClearFilters,
     required this.onAdd,
-    required this.cardBuilder,
+    required this.entryBuilder,
     this.filterChips = const [],
   });
 
@@ -69,22 +88,34 @@ class TrackerListScreen<T extends Trackable> extends StatefulWidget {
   final VoidCallback onClearFilters;
   final VoidCallback onAdd;
 
-  final Widget Function(BuildContext context, T entry) cardBuilder;
+  final TrackerEntryView Function(BuildContext context, T entry) entryBuilder;
 
   /// The domain's own filter controls, shown before the sort menu.
   final List<Widget> filterChips;
 
   @override
-  State<TrackerListScreen<T>> createState() => _TrackerListScreenState<T>();
+  ConsumerState<TrackerListScreen<T>> createState() =>
+      _TrackerListScreenState<T>();
 }
 
 class _TrackerListScreenState<T extends Trackable>
-    extends State<TrackerListScreen<T>> {
+    extends ConsumerState<TrackerListScreen<T>> {
   final _searchController = TextEditingController();
+  final _scrollController = ScrollController();
+  int _page = 0;
+
+  @override
+  void didUpdateWidget(TrackerListScreen<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Narrowing the list while standing on page four would otherwise show
+    // an empty page and no way to tell why.
+    if (!identical(oldWidget.filter, widget.filter)) _page = 0;
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -93,10 +124,59 @@ class _TrackerListScreenState<T extends Trackable>
     widget.onClearFilters();
   }
 
+  Widget _row(BuildContext context, T entry) {
+    final view = widget.entryBuilder(context, entry);
+
+    return TrackerCard(
+      title: view.title,
+      subtitle: view.subtitle,
+      rating: view.rating,
+      icon: view.icon,
+      posterUrl: view.posterUrl,
+      photoOwnerId: entry.id,
+      pill: view.pill,
+      onTap: view.onTap,
+    );
+  }
+
+  Widget _tile(BuildContext context, T entry) {
+    final view = widget.entryBuilder(context, entry);
+
+    return TrackerTile(
+      title: view.title,
+      subtitle: view.subtitle,
+      rating: view.rating,
+      icon: view.icon,
+      posterUrl: view.posterUrl,
+      photoOwnerId: entry.id,
+      onTap: view.onTap,
+    );
+  }
+
+  void _goTo(int page) {
+    setState(() => _page = page);
+    // A page turn puts the reader at the top of the new page, the way
+    // turning a page does. Without this they land wherever they were
+    // scrolled to, halfway into entries they have not seen.
+    if (_scrollController.hasClients) _scrollController.jumpTo(0);
+  }
+
   @override
   Widget build(BuildContext context) {
     final labels = widget.labels;
     final entries = widget.entries;
+    final view = ref.watch(trackerViewProvider);
+
+    final pages = entries == null
+        ? 1
+        : (entries.length / kEntriesPerPage).ceil().clamp(1, 1 << 30);
+    // Clamped on the way out rather than on the way in: entries can vanish
+    // under the reader — another tab, a delete — and the page they are on
+    // has to stay a page that exists.
+    final page = _page.clamp(0, pages - 1);
+    final shown = entries == null
+        ? const []
+        : entries.skip(page * kEntriesPerPage).take(kEntriesPerPage).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -145,6 +225,11 @@ class _TrackerListScreenState<T extends Trackable>
                       label: labels.sortLabel,
                       onSelected: widget.onSortChanged,
                     ),
+                    Gap.hSm,
+                    TrackerViewToggle(
+                      view: view,
+                      onSelected: ref.read(trackerViewProvider.notifier).set,
+                    ),
                     if (!widget.filter.isEmpty) ...[
                       Gap.hSm,
                       ActionChip(
@@ -174,28 +259,123 @@ class _TrackerListScreenState<T extends Trackable>
                                 child: Text(labels.clearFilters),
                               ),
                       )
-                    : ListView.separated(
-                        padding: const EdgeInsets.only(bottom: 96),
-                        itemCount: entries.length + 1,
-                        separatorBuilder: (_, _) => Gap.vSm,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: Gap.xs),
-                              child: SectionLabel(labels.count(entries.length)),
-                            );
-                          }
-                          return widget.cardBuilder(
-                            context,
-                            entries[index - 1],
-                          );
-                        },
+                    : CustomScrollView(
+                        controller: _scrollController,
+                        slivers: [
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: Gap.sm),
+                              child: SectionLabel(
+                                labels.count(entries.length),
+                              ),
+                            ),
+                          ),
+                          if (view == TrackerView.grid)
+                            SliverGrid.builder(
+                              // By width, not by a column count: the same
+                              // list is read on a phone and on a wide
+                              // window, and a fixed three columns is wrong
+                              // on both.
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 210,
+                                    mainAxisSpacing: Gap.sm,
+                                    crossAxisSpacing: Gap.sm,
+                                    childAspectRatio: 0.62,
+                                  ),
+                              itemCount: shown.length,
+                              itemBuilder: (context, index) =>
+                                  _tile(context, shown[index] as T),
+                            )
+                          else
+                            SliverList.separated(
+                              itemCount: shown.length,
+                              separatorBuilder: (_, _) => Gap.vSm,
+                              itemBuilder: (context, index) =>
+                                  _row(context, shown[index] as T),
+                            ),
+                          SliverToBoxAdapter(
+                            child: _Pager(
+                              page: page,
+                              pages: pages,
+                              onGoTo: _goTo,
+                            ),
+                          ),
+                        ],
                       ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The pager under a list, shown only when there is more than one page.
+class _Pager extends StatelessWidget {
+  const _Pager({required this.page, required this.pages, required this.onGoTo});
+
+  final int page;
+  final int pages;
+  final ValueChanged<int> onGoTo;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    // Clear of the floating action button, which sits over the last row.
+    if (pages <= 1) return const SizedBox(height: 96);
+
+    return Padding(
+      padding: const EdgeInsets.only(top: Gap.md, bottom: 96),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            tooltip: l10n.previousPage,
+            onPressed: page == 0 ? null : () => onGoTo(page - 1),
+          ),
+          Text(
+            l10n.pageOf(page + 1, pages),
+            style: context.text.bodyMedium?.copyWith(
+              color: context.semantics.muted,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            tooltip: l10n.nextPage,
+            onPressed: page == pages - 1 ? null : () => onGoTo(page + 1),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The list-or-grid switch, in the filter row where the ordering is.
+class TrackerViewToggle extends StatelessWidget {
+  const TrackerViewToggle({
+    super.key,
+    required this.view,
+    required this.onSelected,
+  });
+
+  final TrackerView view;
+  final ValueChanged<TrackerView> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final grid = view == TrackerView.grid;
+
+    return IconButton(
+      // One button rather than two: there are two shapes, so the button
+      // shows the one it would switch to and says so.
+      icon: Icon(grid ? Icons.view_list_outlined : Icons.grid_view_outlined),
+      tooltip: grid ? l10n.viewList : l10n.viewGrid,
+      onPressed: () =>
+          onSelected(grid ? TrackerView.list : TrackerView.grid),
     );
   }
 }

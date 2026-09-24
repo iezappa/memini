@@ -440,5 +440,10 @@
   "photoFolderUnsupported": "Este navegador no puede escribir en una carpeta. Chrome y Edge sí.",
   "photoFolderGone": "Esa carpeta ya no está. Elegila de nuevo.",
   "photoFolderNeedsPermission": "El navegador quiere que le vuelvas a dar permiso a esa carpeta.",
-  "photoFolderFailed": "No se pudo escribir la última copia."
+  "photoFolderFailed": "No se pudo escribir la última copia.",
+  "viewGrid": "Ver en grilla",
+  "viewList": "Ver en lista",
+  "previousPage": "Página anterior",
+  "nextPage": "Página siguiente",
+  "pageOf": "{page} de {pages}"
 }

@@ -1106,4 +1106,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get photoFolderFailed => 'No se pudo escribir la última copia.';
+
+  @override
+  String get viewGrid => 'Ver en grilla';
+
+  @override
+  String get viewList => 'Ver en lista';
+
+  @override
+  String get previousPage => 'Página anterior';
+
+  @override
+  String get nextPage => 'Página siguiente';
+
+  @override
+  String pageOf(int page, int pages) {
+    return '$page de $pages';
+  }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/providers.dart';
-import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
@@ -70,14 +69,17 @@ class RoomListScreen extends ConsumerWidget {
             ),
           ),
       ],
-      cardBuilder: (context, room) {
+      entryBuilder: (context, room) {
         final date = DateFormat.yMMMd(locale).format(room.happenedOn);
         final franchise = franchiseNames[room.franchiseId];
-        return TrackerCard(
+        return (
           title: room.title,
           subtitle: franchise == null ? date : '$franchise · $date',
           rating: room.rating,
           icon: Icons.meeting_room_outlined,
+          // No service has a picture of an escape room, so the cover is
+          // whatever photograph the owner took of the team.
+          posterUrl: null,
           pill: OutcomePill(
             escaped: room.escaped,
             timeLeftMinutes: room.timeLeftMinutes,

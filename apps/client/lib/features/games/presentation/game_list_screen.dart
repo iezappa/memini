@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/tracking/presentation/tracker_card.dart';
 import '../../../core/tracking/presentation/tracker_list_screen.dart';
 import '../../../core/tracking/presentation/tracking_labels.dart';
 import '../../../l10n/app_localizations.dart';
@@ -75,10 +74,10 @@ class GameListScreen extends ConsumerWidget {
             ),
           ),
       ],
-      cardBuilder: (context, game) {
+      entryBuilder: (context, game) {
         final date = DateFormat.yMMMd(locale).format(game.happenedOn);
         final platform = game.platform;
-        return TrackerCard(
+        return (
           title: game.title,
           subtitle: platform == null ? date : '$platform · $date',
           rating: game.rating,
