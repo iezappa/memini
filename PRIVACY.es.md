@@ -29,6 +29,7 @@ La app funciona completa sin conexión. Solo se conecta en estos casos:
   - bandas y artistas: [MusicBrainz](https://musicbrainz.org/) (sin clave; la solicitud identifica a la app por su nombre).
 
   Esos servicios reciben el texto buscado, tu clave cuando corresponde y lo que lleva cualquier solicitud web (como tu dirección IP), y lo tratan según sus propias políticas de privacidad. **Nada más de lo que registraste — puntuaciones, reseñas, fechas, lugares ni ningún otro registro — se envía nunca.** Si no usas las búsquedas, no se hace ninguna solicitud.
+- **Portadas, cuando un registro tiene imagen.** Una película o serie completada desde TMDB guarda la *dirección* de su póster y de su fondo, nunca la imagen, así que se pide a la máquina de imágenes de TMDB (`image.tmdb.org`) cada vez que esa tarjeta o esa página están en pantalla. Esa solicitud no lleva ninguna clave ni ninguno de tus datos: solo lo que lleva cualquier solicitud web, como tu dirección IP. Un registro que escribiste a mano no tiene imagen y no pide nada.
 - **Consulta de actualizaciones.** La app pregunta a GitHub (`api.github.com`) si hay una versión nueva, como máximo una vez cada seis horas; la versión web lee `version.json` del mismo sitio desde el que se cargó. Esa consulta no lleva ninguno de tus datos.
 
 ## Tus derechos y cómo borrar tus datos

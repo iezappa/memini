@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memini/core/database/app_database.dart';
+import 'package:memini/core/time/clock.dart';
 import 'package:memini/features/dining/data/drift_meal_repository.dart';
 import 'package:memini/features/dining/domain/meal.dart';
 import 'package:memini/features/games/data/drift_game_repository.dart';
@@ -40,34 +41,50 @@ void main() {
   Future<void> pump(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
+    DateTime? today,
   }) async {
     await tester.pumpWidget(
-      await harness(const HomeScreen(), database: db, locale: locale),
+      await harness(
+        const HomeScreen(),
+        database: db,
+        locale: locale,
+        overrides: [
+          if (today != null) clockProvider.overrideWithValue(() => today),
+        ],
+      ),
     );
     await settle(tester);
   }
 
-  testWidgets('shows a tile per domain, all at zero on a fresh install', (
+  testWidgets('offers a shortcut per domain, and the figures empty', (
     tester,
   ) async {
     await pump(tester);
 
-    // Scoped to the grid: every domain is also a shortcut chip further
-    // down, so its name is on the hub twice.
-    Finder tile(String name) =>
-        find.descendant(of: find.byType(GridView), matching: find.text(name));
+    // One shortcut per domain, straight to its form. The tiles that used to
+    // print a count per domain are gone: with a tab per section they were a
+    // second copy of the navigation.
+    Finder shortcut(String name) => find.widgetWithText(ActionChip, name);
 
-    expect(tile('Escape rooms'), findsOneWidget);
-    expect(tile('Places I ate'), findsOneWidget);
-    expect(tile('Bands I saw'), findsOneWidget);
-    expect(tile('Films and series'), findsOneWidget);
-    expect(tile('Games'), findsOneWidget);
-    expect(find.text('0'), findsNWidgets(5));
+    expect(shortcut('Escape rooms'), findsOneWidget);
+    expect(shortcut('Places I ate'), findsOneWidget);
+    expect(shortcut('Bands I saw'), findsOneWidget);
+    expect(shortcut('Films and series'), findsOneWidget);
+    expect(shortcut('Games'), findsOneWidget);
+
+    // And the figures that replaced them, all empty on a fresh install.
+    expect(find.text('Logged'), findsOneWidget);
+    expect(find.text('Average score'), findsOneWidget);
+    expect(find.text('This month'), findsOneWidget);
+    expect(find.text('0'), findsNWidgets(2), reason: 'logged and this month');
+    expect(find.text('—'), findsOneWidget, reason: 'no scores is not zero');
 
     await unmount(tester);
   });
 
-  testWidgets('counts each domain separately', (tester) async {
+  testWidgets('prints the collection as three figures', (tester) async {
+    // What the per-domain tiles used to say is the navigation's job now.
+    // These are the things it cannot say.
     await DriftRoomRepository(db).create(
       RoomDraft(
         title: 'The Vault',
@@ -77,18 +94,21 @@ void main() {
     );
     final meals = DriftMealRepository(db);
     await meals.create(
-      MealDraft(title: 'Don Julio', happenedOn: DateTime(2026, 1, 2)),
+      MealDraft(
+        title: 'Don Julio',
+        happenedOn: DateTime(2026, 1, 2),
+        rating: 8,
+      ),
     );
     await meals.create(
-      MealDraft(title: 'Chuí', happenedOn: DateTime(2026, 1, 3)),
+      MealDraft(title: 'Chuí', happenedOn: DateTime(2026, 9, 3), rating: 9),
     );
 
-    await pump(tester);
+    await pump(tester, today: DateTime(2026, 9, 20));
 
-    // One room, two meals, and the three untouched domains still at zero.
-    expect(find.text('1'), findsOneWidget);
-    expect(find.text('2'), findsOneWidget);
-    expect(find.text('0'), findsNWidgets(3));
+    expect(find.text('3'), findsOneWidget, reason: 'logged');
+    expect(find.text('8.5'), findsOneWidget, reason: 'of the two that scored');
+    expect(find.text('1'), findsOneWidget, reason: 'the one in September');
 
     await unmount(tester);
   });
@@ -148,10 +168,9 @@ void main() {
     useTallWindow(tester);
     await pump(tester, locale: const Locale('es'));
 
-    // Twice each: the tile and the shortcut under it.
-    expect(find.text('Salas de escape'), findsNWidgets(2));
-    expect(find.text('Lugares donde comí'), findsNWidgets(2));
-    expect(find.text('Videojuegos'), findsNWidgets(2));
+    expect(find.text('Salas de escape'), findsOneWidget);
+    expect(find.text('Lugares donde comí'), findsOneWidget);
+    expect(find.text('Videojuegos'), findsOneWidget);
 
     await unmount(tester);
   });

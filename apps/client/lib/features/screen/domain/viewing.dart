@@ -22,6 +22,8 @@ class Viewing implements Trackable {
     this.cast,
     this.season,
     this.externalId,
+    this.posterUrl,
+    this.backdropUrl,
   });
 
   @override
@@ -59,6 +61,13 @@ class Viewing implements Trackable {
   /// TMDB id, cached when the owner enriched the entry.
   final String? externalId;
 
+  /// The cover and the wide still, as addresses on TMDB's image host.
+  ///
+  /// Null for anything typed in by hand, and for everything written down
+  /// before the lookup started reading them.
+  final String? posterUrl;
+  final String? backdropUrl;
+
   @override
   bool get isRated => rating != null;
 
@@ -74,6 +83,8 @@ class Viewing implements Trackable {
     String? cast,
     int? season,
     String? externalId,
+    String? posterUrl,
+    String? backdropUrl,
     bool clearRating = false,
     bool clearSeason = false,
     bool clearExternalId = false,
@@ -92,6 +103,11 @@ class Viewing implements Trackable {
       cast: cast ?? this.cast,
       season: clearSeason ? null : (season ?? this.season),
       externalId: clearExternalId ? null : (externalId ?? this.externalId),
+      // Cleared with the id they came from: artwork outlives the entry it
+      // describes otherwise, and a film swapped for another would keep the
+      // first one's poster.
+      posterUrl: clearExternalId ? null : (posterUrl ?? this.posterUrl),
+      backdropUrl: clearExternalId ? null : (backdropUrl ?? this.backdropUrl),
     );
   }
 }
@@ -110,6 +126,8 @@ class ViewingDraft {
     this.cast,
     this.season,
     this.externalId,
+    this.posterUrl,
+    this.backdropUrl,
   });
 
   final String title;
@@ -123,4 +141,6 @@ class ViewingDraft {
   final String? cast;
   final int? season;
   final String? externalId;
+  final String? posterUrl;
+  final String? backdropUrl;
 }

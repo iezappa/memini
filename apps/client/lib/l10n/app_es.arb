@@ -396,5 +396,10 @@
       }
     }
   },
-  "homeShortcuts": "Anotar algo"
+  "homeShortcuts": "Anotar algo",
+  "homeNumbers": "En números",
+  "homeStatEntries": "Anotado",
+  "homeStatRating": "Puntaje promedio",
+  "homeStatThisMonth": "Este mes",
+  "homeStatNone": "—"
 }

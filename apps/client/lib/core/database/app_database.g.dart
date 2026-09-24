@@ -2522,6 +2522,28 @@ class $ViewingsTable extends Viewings
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _posterUrlMeta = const VerificationMeta(
+    'posterUrl',
+  );
+  @override
+  late final GeneratedColumn<String> posterUrl = GeneratedColumn<String>(
+    'poster_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _backdropUrlMeta = const VerificationMeta(
+    'backdropUrl',
+  );
+  @override
+  late final GeneratedColumn<String> backdropUrl = GeneratedColumn<String>(
+    'backdrop_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2537,6 +2559,8 @@ class $ViewingsTable extends Viewings
     cast,
     season,
     externalId,
+    posterUrl,
+    backdropUrl,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2631,6 +2655,21 @@ class $ViewingsTable extends Viewings
         externalId.isAcceptableOrUnknown(data['external_id']!, _externalIdMeta),
       );
     }
+    if (data.containsKey('poster_url')) {
+      context.handle(
+        _posterUrlMeta,
+        posterUrl.isAcceptableOrUnknown(data['poster_url']!, _posterUrlMeta),
+      );
+    }
+    if (data.containsKey('backdrop_url')) {
+      context.handle(
+        _backdropUrlMeta,
+        backdropUrl.isAcceptableOrUnknown(
+          data['backdrop_url']!,
+          _backdropUrlMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2694,6 +2733,14 @@ class $ViewingsTable extends Viewings
         DriftSqlType.string,
         data['${effectivePrefix}external_id'],
       ),
+      posterUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}poster_url'],
+      ),
+      backdropUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}backdrop_url'],
+      ),
     );
   }
 
@@ -2727,6 +2774,16 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
 
   /// TMDB id, cached from an enrichment lookup.
   final String? externalId;
+
+  /// The cover and the wide still, as whole URLs on TMDB's image host.
+  ///
+  /// The address, not the picture: this app copies nobody's artwork onto the
+  /// device. It is a link that loads when a card or a page is on screen and
+  /// leaves nothing behind, which is the same bargain the lookup itself
+  /// makes — and it is why removing an entry needs no cleanup, unlike the
+  /// photos this app used to keep and dropped in v3.
+  final String? posterUrl;
+  final String? backdropUrl;
   const ViewingRow({
     required this.id,
     required this.title,
@@ -2741,6 +2798,8 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     this.cast,
     this.season,
     this.externalId,
+    this.posterUrl,
+    this.backdropUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2776,6 +2835,12 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     if (!nullToAbsent || externalId != null) {
       map['external_id'] = Variable<String>(externalId);
     }
+    if (!nullToAbsent || posterUrl != null) {
+      map['poster_url'] = Variable<String>(posterUrl);
+    }
+    if (!nullToAbsent || backdropUrl != null) {
+      map['backdrop_url'] = Variable<String>(backdropUrl);
+    }
     return map;
   }
 
@@ -2808,6 +2873,12 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       externalId: externalId == null && nullToAbsent
           ? const Value.absent()
           : Value(externalId),
+      posterUrl: posterUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(posterUrl),
+      backdropUrl: backdropUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(backdropUrl),
     );
   }
 
@@ -2832,6 +2903,8 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       cast: serializer.fromJson<String?>(json['cast']),
       season: serializer.fromJson<int?>(json['season']),
       externalId: serializer.fromJson<String?>(json['externalId']),
+      posterUrl: serializer.fromJson<String?>(json['posterUrl']),
+      backdropUrl: serializer.fromJson<String?>(json['backdropUrl']),
     );
   }
   @override
@@ -2853,6 +2926,8 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       'cast': serializer.toJson<String?>(cast),
       'season': serializer.toJson<int?>(season),
       'externalId': serializer.toJson<String?>(externalId),
+      'posterUrl': serializer.toJson<String?>(posterUrl),
+      'backdropUrl': serializer.toJson<String?>(backdropUrl),
     };
   }
 
@@ -2870,6 +2945,8 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     Value<String?> cast = const Value.absent(),
     Value<int?> season = const Value.absent(),
     Value<String?> externalId = const Value.absent(),
+    Value<String?> posterUrl = const Value.absent(),
+    Value<String?> backdropUrl = const Value.absent(),
   }) => ViewingRow(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -2884,6 +2961,8 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     cast: cast.present ? cast.value : this.cast,
     season: season.present ? season.value : this.season,
     externalId: externalId.present ? externalId.value : this.externalId,
+    posterUrl: posterUrl.present ? posterUrl.value : this.posterUrl,
+    backdropUrl: backdropUrl.present ? backdropUrl.value : this.backdropUrl,
   );
   ViewingRow copyWithCompanion(ViewingsCompanion data) {
     return ViewingRow(
@@ -2908,6 +2987,10 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
       externalId: data.externalId.present
           ? data.externalId.value
           : this.externalId,
+      posterUrl: data.posterUrl.present ? data.posterUrl.value : this.posterUrl,
+      backdropUrl: data.backdropUrl.present
+          ? data.backdropUrl.value
+          : this.backdropUrl,
     );
   }
 
@@ -2926,7 +3009,9 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
           ..write('director: $director, ')
           ..write('cast: $cast, ')
           ..write('season: $season, ')
-          ..write('externalId: $externalId')
+          ..write('externalId: $externalId, ')
+          ..write('posterUrl: $posterUrl, ')
+          ..write('backdropUrl: $backdropUrl')
           ..write(')'))
         .toString();
   }
@@ -2946,6 +3031,8 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
     cast,
     season,
     externalId,
+    posterUrl,
+    backdropUrl,
   );
   @override
   bool operator ==(Object other) =>
@@ -2963,7 +3050,9 @@ class ViewingRow extends DataClass implements Insertable<ViewingRow> {
           other.director == this.director &&
           other.cast == this.cast &&
           other.season == this.season &&
-          other.externalId == this.externalId);
+          other.externalId == this.externalId &&
+          other.posterUrl == this.posterUrl &&
+          other.backdropUrl == this.backdropUrl);
 }
 
 class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
@@ -2980,6 +3069,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
   final Value<String?> cast;
   final Value<int?> season;
   final Value<String?> externalId;
+  final Value<String?> posterUrl;
+  final Value<String?> backdropUrl;
   final Value<int> rowid;
   const ViewingsCompanion({
     this.id = const Value.absent(),
@@ -2995,6 +3086,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     this.cast = const Value.absent(),
     this.season = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.posterUrl = const Value.absent(),
+    this.backdropUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ViewingsCompanion.insert({
@@ -3011,6 +3104,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     this.cast = const Value.absent(),
     this.season = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.posterUrl = const Value.absent(),
+    this.backdropUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
@@ -3030,6 +3125,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     Expression<String>? cast,
     Expression<int>? season,
     Expression<String>? externalId,
+    Expression<String>? posterUrl,
+    Expression<String>? backdropUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3046,6 +3143,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
       if (cast != null) 'cast': cast,
       if (season != null) 'season': season,
       if (externalId != null) 'external_id': externalId,
+      if (posterUrl != null) 'poster_url': posterUrl,
+      if (backdropUrl != null) 'backdrop_url': backdropUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3064,6 +3163,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     Value<String?>? cast,
     Value<int?>? season,
     Value<String?>? externalId,
+    Value<String?>? posterUrl,
+    Value<String?>? backdropUrl,
     Value<int>? rowid,
   }) {
     return ViewingsCompanion(
@@ -3080,6 +3181,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
       cast: cast ?? this.cast,
       season: season ?? this.season,
       externalId: externalId ?? this.externalId,
+      posterUrl: posterUrl ?? this.posterUrl,
+      backdropUrl: backdropUrl ?? this.backdropUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3128,6 +3231,12 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
     if (externalId.present) {
       map['external_id'] = Variable<String>(externalId.value);
     }
+    if (posterUrl.present) {
+      map['poster_url'] = Variable<String>(posterUrl.value);
+    }
+    if (backdropUrl.present) {
+      map['backdrop_url'] = Variable<String>(backdropUrl.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3150,6 +3259,8 @@ class ViewingsCompanion extends UpdateCompanion<ViewingRow> {
           ..write('cast: $cast, ')
           ..write('season: $season, ')
           ..write('externalId: $externalId, ')
+          ..write('posterUrl: $posterUrl, ')
+          ..write('backdropUrl: $backdropUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5284,6 +5395,8 @@ typedef $$ViewingsTableCreateCompanionBuilder = ViewingsCompanion Function({
   Value<String?> cast,
   Value<int?> season,
   Value<String?> externalId,
+  Value<String?> posterUrl,
+  Value<String?> backdropUrl,
   Value<int> rowid,
 });
 typedef $$ViewingsTableUpdateCompanionBuilder = ViewingsCompanion Function({
@@ -5300,6 +5413,8 @@ typedef $$ViewingsTableUpdateCompanionBuilder = ViewingsCompanion Function({
   Value<String?> cast,
   Value<int?> season,
   Value<String?> externalId,
+  Value<String?> posterUrl,
+  Value<String?> backdropUrl,
   Value<int> rowid,
 });
 
@@ -5377,6 +5492,16 @@ class $$ViewingsTableFilterComposer
     column: $table.externalId,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<String> get posterUrl => $composableBuilder(
+    column: $table.posterUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backdropUrl => $composableBuilder(
+    column: $table.backdropUrl,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$ViewingsTableOrderingComposer
@@ -5452,6 +5577,16 @@ class $$ViewingsTableOrderingComposer
     column: $table.externalId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get posterUrl => $composableBuilder(
+    column: $table.posterUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get backdropUrl => $composableBuilder(
+    column: $table.backdropUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ViewingsTableAnnotationComposer
@@ -5509,6 +5644,14 @@ class $$ViewingsTableAnnotationComposer
     column: $table.externalId,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get posterUrl =>
+      $composableBuilder(column: $table.posterUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get backdropUrl => $composableBuilder(
+    column: $table.backdropUrl,
+    builder: (column) => column,
+  );
 }
 
 class $$ViewingsTableTableManager
@@ -5555,6 +5698,8 @@ class $$ViewingsTableTableManager
                 Value<String?> cast = const Value.absent(),
                 Value<int?> season = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<String?> posterUrl = const Value.absent(),
+                Value<String?> backdropUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ViewingsCompanion(
                 id: id,
@@ -5570,6 +5715,8 @@ class $$ViewingsTableTableManager
                 cast: cast,
                 season: season,
                 externalId: externalId,
+                posterUrl: posterUrl,
+                backdropUrl: backdropUrl,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -5587,6 +5734,8 @@ class $$ViewingsTableTableManager
                 Value<String?> cast = const Value.absent(),
                 Value<int?> season = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<String?> posterUrl = const Value.absent(),
+                Value<String?> backdropUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ViewingsCompanion.insert(
                 id: id,
@@ -5602,6 +5751,8 @@ class $$ViewingsTableTableManager
                 cast: cast,
                 season: season,
                 externalId: externalId,
+                posterUrl: posterUrl,
+                backdropUrl: backdropUrl,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

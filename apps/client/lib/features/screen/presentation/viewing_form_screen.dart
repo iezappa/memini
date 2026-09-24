@@ -39,6 +39,8 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
   late ViewingKind _kind;
   double? _rating;
   String? _externalId;
+  String? _posterUrl;
+  String? _backdropUrl;
   bool _saving = false;
 
   @override
@@ -60,6 +62,8 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
     _kind = viewing?.kind ?? ViewingKind.film;
     _rating = viewing?.rating;
     _externalId = viewing?.externalId;
+    _posterUrl = viewing?.posterUrl;
+    _backdropUrl = viewing?.backdropUrl;
   }
 
   @override
@@ -125,6 +129,11 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
     setState(() {
       _title.text = picked.title;
       _externalId = picked.externalId;
+      // Taken together with the id, and overwritten rather than filled in
+      // only when empty: the artwork belongs to the title that was picked,
+      // so keeping the previous one would put the wrong face on the card.
+      _posterUrl = picked.posterUrl;
+      _backdropUrl = picked.backdropUrl;
     });
   }
 
@@ -153,6 +162,8 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
             cast: _trimmedOrNull(_cast),
             season: season,
             externalId: _externalId,
+            posterUrl: _posterUrl,
+            backdropUrl: _backdropUrl,
           ),
         );
       } else {
@@ -170,6 +181,8 @@ class _ViewingFormScreenState extends ConsumerState<ViewingFormScreen> {
             cast: _trimmedOrNull(_cast),
             season: season,
             externalId: _externalId,
+            posterUrl: _posterUrl,
+            backdropUrl: _backdropUrl,
           ),
         );
       }

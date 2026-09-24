@@ -20,6 +20,26 @@ class TmdbSource implements EnrichmentSource {
 
   static const _host = 'api.themoviedb.org';
 
+  /// Where the artwork is served from, and at what size.
+  ///
+  /// TMDB returns a path and expects the caller to build the URL, which is
+  /// how the poster went missing: the search response had it all along —
+  /// the fixture in this repo's own test carries a `poster_path` — and the
+  /// parser simply never read it.
+  ///
+  /// `w500` for the cover and `w1280` for the still: enough for a phone at
+  /// three times the density and for a blurred backdrop behind a page,
+  /// without pulling the original down a mobile connection.
+  static const _images = 'https://image.tmdb.org/t/p';
+  static const _posterSize = 'w500';
+  static const _backdropSize = 'w1280';
+
+  /// Null for a title with no artwork, which TMDB reports as a null path.
+  static String? imageUrl(Object? path, String size) {
+    if (path is! String || path.trim().isEmpty) return null;
+    return '$_images/$size$path';
+  }
+
   @override
   String get attribution => 'TMDB';
 
@@ -94,6 +114,8 @@ class TmdbSource implements EnrichmentSource {
               ? null
               : overview,
           releaseYear: _yearOf(date),
+          posterUrl: imageUrl(raw['poster_path'], _posterSize),
+          backdropUrl: imageUrl(raw['backdrop_path'], _backdropSize),
         ),
       );
     }

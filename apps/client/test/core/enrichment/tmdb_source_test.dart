@@ -23,6 +23,46 @@ void main() {
       expect(results.single.releaseYear, 2017);
     });
 
+    test('builds the artwork URLs the search already handed it', () {
+      // The bug this covers: the response carried `poster_path` all along —
+      // this file's own fixture above has had one since it was written — and
+      // the parser dropped it, so no entry ever had a cover.
+      final results = TmdbSource.parseSearch('''
+        {"results": [{
+          "id": 335984,
+          "media_type": "movie",
+          "title": "Blade Runner 2049",
+          "poster_path": "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
+          "backdrop_path": "/ilRyazdMLwzhbWR5tXVMUyCoJgP.jpg"
+        }]}
+      ''');
+
+      expect(
+        results.single.posterUrl,
+        'https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg',
+      );
+      expect(
+        results.single.backdropUrl,
+        'https://image.tmdb.org/t/p/w1280/ilRyazdMLwzhbWR5tXVMUyCoJgP.jpg',
+      );
+    });
+
+    test('leaves the artwork null for a title that has none', () {
+      // TMDB reports a missing image as a null path, not as an absent key.
+      final results = TmdbSource.parseSearch('''
+        {"results": [{
+          "id": 1,
+          "media_type": "movie",
+          "title": "Something obscure",
+          "poster_path": null,
+          "backdrop_path": ""
+        }]}
+      ''');
+
+      expect(results.single.posterUrl, isNull);
+      expect(results.single.backdropUrl, isNull);
+    });
+
     test('a series carries "name" and "first_air_date", not "title"', () {
       final results = TmdbSource.parseSearch('''
         {"results": [{

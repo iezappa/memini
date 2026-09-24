@@ -13,12 +13,14 @@ import '../../shared/widgets.dart';
 import 'home_providers.dart';
 import 'widgets/activity_grid_card.dart';
 
-/// The hub: what the last six months look like, a way into each domain, and
-/// whatever was logged last.
+/// The hub: what the last six months look like, three figures about it, a
+/// shortcut into each form, and whatever was logged last.
 ///
-/// The five domains have their own tabs now, so the tiles here are not the
-/// only way in any more — they are the count, and the shortcuts under them
-/// go straight to the form rather than to the list.
+/// The five domain tiles are gone. With a tab per section, a tile that said
+/// a number and the name of the tab underneath was a second copy of the
+/// navigation taking up half the page. What replaces them is what the
+/// navigation cannot tell you: how much is in there, how you score things,
+/// and whether you have been out this month.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -26,7 +28,6 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final name = ref.watch(displayNameProvider);
-    final counts = ref.watch(domainCountsProvider);
     final recent = ref.watch(recentEntriesProvider);
 
     return Scaffold(
@@ -68,25 +69,9 @@ class HomeScreen extends ConsumerWidget {
               Gap.vSm,
               const _Shortcuts(),
               Gap.vLg,
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  // Two tiles fit a phone, three anything wider; the fifth
-                  // tile simply wraps rather than getting a row of its own.
-                  final columns = constraints.maxWidth >= 560 ? 3 : 2;
-                  return GridView.count(
-                    crossAxisCount: columns,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: Gap.sm,
-                    crossAxisSpacing: Gap.sm,
-                    childAspectRatio: 1.55,
-                    children: [
-                      for (final domain in TrackedDomain.values)
-                        _DomainTile(domain: domain, count: counts[domain] ?? 0),
-                    ],
-                  );
-                },
-              ),
+              SectionLabel(l10n.homeNumbers),
+              Gap.vSm,
+              const _Numbers(),
               Gap.vLg,
               SectionLabel(l10n.homeRecent),
               Gap.vSm,
@@ -102,42 +87,6 @@ class HomeScreen extends ConsumerWidget {
                 )
               else
                 for (final item in recent) _RecentRow(item: item),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DomainTile extends StatelessWidget {
-  const _DomainTile({required this.domain, required this.count});
-
-  final TrackedDomain domain;
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => context.push(domain.route),
-        child: Padding(
-          padding: const EdgeInsets.all(Gap.md - 2),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(domain.icon, size: 22, color: context.semantics.muted),
-              Text('$count', style: context.text.headlineMedium),
-              Text(
-                domain.label(l10n),
-                style: context.text.bodySmall,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
             ],
           ),
         ),
@@ -189,6 +138,61 @@ class _Shortcuts extends StatelessWidget {
             label: Text(domain.label(l10n)),
             onPressed: () => context.push('${domain.route}/new'),
           ),
+      ],
+    );
+  }
+}
+
+/// Three figures about the whole collection.
+///
+/// Laid out as a row that wraps, not a grid: they are three short facts, and
+/// a grid would give each of them a box the size of a card.
+class _Numbers extends ConsumerWidget {
+  const _Numbers();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final numbers = ref.watch(homeNumbersProvider);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    return Wrap(
+      spacing: Gap.lg,
+      runSpacing: Gap.md,
+      children: [
+        _Number(label: l10n.homeStatEntries, value: '${numbers.entries}'),
+        _Number(
+          label: l10n.homeStatRating,
+          // One decimal: the difference between 7.8 and 7.9 is the whole
+          // point of keeping a score, and 7.83 is not a thing anyone means.
+          value: numbers.rating == null
+              ? l10n.homeStatNone
+              : NumberFormat('0.0', locale).format(numbers.rating),
+        ),
+        _Number(label: l10n.homeStatThisMonth, value: '${numbers.thisMonth}'),
+      ],
+    );
+  }
+}
+
+class _Number extends StatelessWidget {
+  const _Number({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(value, style: context.text.headlineMedium),
+        Text(
+          label,
+          style: context.text.bodySmall?.copyWith(
+            color: context.semantics.muted,
+          ),
+        ),
       ],
     );
   }

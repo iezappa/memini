@@ -88,6 +88,16 @@ abstract final class Radii {
   static const pill = BorderRadius.all(Radius.circular(999));
 }
 
-/// Widest the content column ever gets. Beyond this, reading a review turns
-/// into scanning a billboard.
-const double kContentMaxWidth = 900;
+/// Widest the content column ever gets.
+///
+/// Raised from 900: at that cap a desktop window showed a ribbon of app
+/// down the middle with empty page either side, and the pages that are
+/// grids and lists rather than prose — every section of this app — looked
+/// squeezed into a phone that had been left on a monitor.
+///
+/// Prose still gets a measure of its own: [kProseMaxWidth] is what a review
+/// is read at, so a paragraph does not run the full width of a 4K screen.
+const double kContentMaxWidth = 1240;
+
+/// Widest a paragraph is set. Beyond this the eye loses the line it is on.
+const double kProseMaxWidth = 720;

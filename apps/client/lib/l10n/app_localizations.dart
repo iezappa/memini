@@ -1813,6 +1813,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log something'**
   String get homeShortcuts;
+
+  /// No description provided for @homeNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'In numbers'**
+  String get homeNumbers;
+
+  /// No description provided for @homeStatEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged'**
+  String get homeStatEntries;
+
+  /// No description provided for @homeStatRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Average score'**
+  String get homeStatRating;
+
+  /// No description provided for @homeStatThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get homeStatThisMonth;
+
+  /// No description provided for @homeStatNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get homeStatNone;
 }
 
 class _AppLocalizationsDelegate

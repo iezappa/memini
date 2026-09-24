@@ -459,5 +459,10 @@
       }
     }
   },
-  "homeShortcuts": "Log something"
+  "homeShortcuts": "Log something",
+  "homeNumbers": "In numbers",
+  "homeStatEntries": "Logged",
+  "homeStatRating": "Average score",
+  "homeStatThisMonth": "This month",
+  "homeStatNone": "—"
 }

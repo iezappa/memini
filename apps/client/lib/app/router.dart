@@ -162,26 +162,20 @@ class _HomeShell extends StatelessWidget {
         bottomNavigationBar: NavigationBar(
           selectedIndex: shell.currentIndex,
           onDestinationSelected: shell.goBranch,
-          // Seven destinations share a phone's width, and a label broken
-          // mid-word reads worse than a clipped one. Past Material's five
-          // only the open tab is named; the rest keep their icon.
-          labelBehavior: destinations.length > 5
-              ? NavigationDestinationLabelBehavior.onlyShowSelected
-              : null,
+          // Icons alone. Seven labels do not fit a phone's width without
+          // being clipped to two syllables each, and clipped labels are
+          // worse than none: the icon says which section it is, and the
+          // screen it opens is titled.
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           destinations: [
             for (final (icon, selected, label) in destinations)
-              // Per destination: the bar's own Material resets any text
-              // style set around it. One line, clipped rather than broken
-              // mid-word — "Estadísticas" does not fit a phone otherwise.
-              DefaultTextStyle.merge(
-                maxLines: 1,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-                child: NavigationDestination(
-                  icon: Icon(icon),
-                  selectedIcon: Icon(selected),
-                  label: label,
-                ),
+              // The label is still given: with the text hidden it is what
+              // the tooltip and the screen reader read out.
+              NavigationDestination(
+                icon: Icon(icon),
+                selectedIcon: Icon(selected),
+                label: label,
+                tooltip: label,
               ),
           ],
         ),

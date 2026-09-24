@@ -99,6 +99,8 @@ class ViewingDetailScreen extends ConsumerWidget {
                 if (value.cast != null)
                   (label: l10n.fieldCast, value: value.cast!),
               ],
+              posterUrl: value.posterUrl,
+              backdropUrl: value.backdropUrl,
             );
           },
         ),

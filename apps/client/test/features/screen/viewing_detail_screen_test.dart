@@ -4,6 +4,7 @@ import 'package:memini/core/database/app_database.dart';
 import 'package:memini/features/screen/data/drift_viewing_repository.dart';
 import 'package:memini/features/screen/domain/viewing.dart';
 import 'package:memini/features/screen/domain/viewing_repository.dart';
+import 'package:memini/core/tracking/presentation/tracker_detail.dart';
 import 'package:memini/features/screen/presentation/viewing_detail_screen.dart';
 
 import '../../support/harness.dart';
@@ -107,5 +108,65 @@ void main() {
     expect(await entries.list(const ViewingFilter()), hasLength(1));
 
     await unmount(tester);
+  });
+
+  group('the artwork', () {
+    testWidgets('opens on the still, blurred, with the cover on it', (
+      tester,
+    ) async {
+      final entry = await entries.create(
+        ViewingDraft(
+          title: 'Blade Runner 2049',
+          happenedOn: DateTime(2026, 2, 9),
+          kind: ViewingKind.film,
+          posterUrl: 'https://image.tmdb.org/t/p/w500/poster.jpg',
+          backdropUrl: 'https://image.tmdb.org/t/p/w1280/backdrop.jpg',
+        ),
+      );
+
+      await pumpDetail(tester, entry);
+
+      expect(find.byType(ArtHeader), findsOneWidget);
+      final header = tester.widget<ArtHeader>(find.byType(ArtHeader));
+      expect(header.backdropUrl, contains('backdrop.jpg'));
+      expect(header.posterUrl, contains('poster.jpg'));
+      // Blurred: text over an unblurred still is unreadable half the time.
+      expect(find.byType(ImageFiltered), findsOneWidget);
+
+      await unmount(tester);
+    });
+
+    testWidgets('falls back to the cover when there is no still', (
+      tester,
+    ) async {
+      final entry = await entries.create(
+        ViewingDraft(
+          title: 'Something obscure',
+          happenedOn: DateTime(2026, 2, 9),
+          kind: ViewingKind.film,
+          posterUrl: 'https://image.tmdb.org/t/p/w500/poster.jpg',
+        ),
+      );
+
+      await pumpDetail(tester, entry);
+
+      final header = tester.widget<ArtHeader>(find.byType(ArtHeader));
+      expect(header.backdropUrl, contains('poster.jpg'));
+
+      await unmount(tester);
+    });
+
+    testWidgets('stays a plain title block for an entry typed by hand', (
+      tester,
+    ) async {
+      // Four of the five domains never have artwork, and a film written
+      // down without a lookup does not either.
+      await pumpDetail(tester, await log());
+
+      expect(find.byType(ArtHeader), findsNothing);
+      expect(find.text('Severance'), findsWidgets);
+
+      await unmount(tester);
+    });
   });
 }

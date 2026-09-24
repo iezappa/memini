@@ -985,4 +985,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeShortcuts => 'Anotar algo';
+
+  @override
+  String get homeNumbers => 'En números';
+
+  @override
+  String get homeStatEntries => 'Anotado';
+
+  @override
+  String get homeStatRating => 'Puntaje promedio';
+
+  @override
+  String get homeStatThisMonth => 'Este mes';
+
+  @override
+  String get homeStatNone => '—';
 }

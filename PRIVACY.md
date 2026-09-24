@@ -29,6 +29,7 @@ The app works fully offline. It only goes online in these cases:
   - bands and artists: [MusicBrainz](https://musicbrainz.org/) (no key; the request identifies the app by name).
 
   Those services receive the search text, your key where one applies, and what any web request carries (such as your IP address), and handle it under their own privacy policies. **Nothing else you logged — scores, reviews, dates, places or any other entry — is ever sent.** If you never use lookups, no request is made.
+- **Artwork, when an entry has a cover.** A film or series filled in from TMDB keeps the *address* of its poster and its backdrop, never the picture itself, so the image is fetched from TMDB's image host (`image.tmdb.org`) each time that card or page is on screen. That request carries no key and none of your data — only what any web request carries, such as your IP address. An entry you typed in by hand has no artwork and fetches nothing.
 - **Update check.** The app asks GitHub (`api.github.com`) whether a newer release exists, at most once every six hours; the web version reads `version.json` from the site it was loaded from. That request carries none of your data.
 
 ## Your rights and how to delete your data

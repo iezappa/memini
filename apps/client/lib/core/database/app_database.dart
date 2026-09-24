@@ -51,7 +51,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 4;
+  static const currentSchemaVersion = 5;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -180,6 +180,15 @@ class AppDatabase extends _$AppDatabase {
               }
 
               await customStatement('DROP TABLE franchise_ids');
+            },
+            // v5 gives a film or series somewhere to keep the artwork the
+            // lookup found. Two nullable columns, added rather than
+            // rebuilt: nothing already stored changes, and an entry written
+            // before this — or one typed in by hand — simply has no
+            // picture.
+            from4To5: (m, schema) async {
+              await m.addColumn(schema.viewings, schema.viewings.posterUrl);
+              await m.addColumn(schema.viewings, schema.viewings.backdropUrl);
             },
           ),
         );

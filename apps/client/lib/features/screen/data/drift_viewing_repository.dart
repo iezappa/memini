@@ -41,6 +41,8 @@ class DriftViewingRepository implements ViewingRepository {
     cast: row.cast,
     season: row.season,
     externalId: row.externalId,
+    posterUrl: row.posterUrl,
+    backdropUrl: row.backdropUrl,
   );
 
   SimpleSelectStatement<$ViewingsTable, ViewingRow> _query(
@@ -95,6 +97,8 @@ class DriftViewingRepository implements ViewingRepository {
             cast: Value(draft.cast),
             season: Value(draft.season),
             externalId: Value(draft.externalId),
+            posterUrl: Value(draft.posterUrl),
+            backdropUrl: Value(draft.backdropUrl),
           ),
         );
     return _toDomain(row);
@@ -116,6 +120,8 @@ class DriftViewingRepository implements ViewingRepository {
         cast: Value(entry.cast),
         season: Value(entry.season),
         externalId: Value(entry.externalId),
+        posterUrl: Value(entry.posterUrl),
+        backdropUrl: Value(entry.backdropUrl),
       ),
     );
   }

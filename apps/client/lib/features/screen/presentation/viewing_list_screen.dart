@@ -67,6 +67,7 @@ class ViewingListScreen extends ConsumerWidget {
           subtitle: year == null ? date : '$year · $date',
           rating: viewing.rating,
           icon: Icons.movie_outlined,
+          posterUrl: viewing.posterUrl,
           pill: _KindPill(viewing: viewing),
           onTap: () => context.push('/viewings/${viewing.id}'),
         );

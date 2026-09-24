@@ -14,6 +14,8 @@ class EnrichmentSuggestion {
     this.cast,
     this.platforms,
     this.origin,
+    this.posterUrl,
+    this.backdropUrl,
   });
 
   /// The source's own id, cached so a later lookup can skip the search.
@@ -29,6 +31,17 @@ class EnrichmentSuggestion {
 
   /// Platforms the game runs on, comma separated.
   final String? platforms;
+
+  /// The cover, as a whole URL ready to load.
+  ///
+  /// A URL rather than the source's own path, because every source spells
+  /// that differently — TMDB hands back `/abc.jpg` and a separate base and
+  /// size, RAWG a full address — and nothing downstream should have to know
+  /// which source it came from to show a picture.
+  final String? posterUrl;
+
+  /// The wide still behind the title, where the source has one.
+  final String? backdropUrl;
 
   /// Where an act is from — the only extra a music lookup reliably knows.
   final String? origin;

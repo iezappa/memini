@@ -103,3 +103,31 @@ Iterable<Trackable> _everything(Ref ref) => [
   ...?ref.watch(allViewingsProvider).valueOrNull,
   ...?ref.watch(allGamesProvider).valueOrNull,
 ];
+
+/// The three figures the hub prints instead of a count per domain.
+///
+/// The counts per domain moved out: with a tab per section, five tiles that
+/// each said a number and the name of the tab under it were a second copy of
+/// the navigation. These are things the navigation cannot tell you.
+typedef HomeNumbers = ({int entries, double? rating, int thisMonth});
+
+final homeNumbersProvider = Provider<HomeNumbers>((ref) {
+  final all = _everything(ref).toList();
+  final today = ref.watch(clockProvider)();
+
+  final rated = [for (final entry in all) ?entry.rating];
+
+  return (
+    entries: all.length,
+    // Null rather than zero when nothing is rated: an average of no scores
+    // is not a score of zero.
+    rating: rated.isEmpty ? null : rated.reduce((a, b) => a + b) / rated.length,
+    thisMonth: all
+        .where(
+          (entry) =>
+              entry.happenedOn.year == today.year &&
+              entry.happenedOn.month == today.month,
+        )
+        .length,
+  );
+});

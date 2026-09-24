@@ -985,4 +985,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeShortcuts => 'Log something';
+
+  @override
+  String get homeNumbers => 'In numbers';
+
+  @override
+  String get homeStatEntries => 'Logged';
+
+  @override
+  String get homeStatRating => 'Average score';
+
+  @override
+  String get homeStatThisMonth => 'This month';
+
+  @override
+  String get homeStatNone => '—';
 }

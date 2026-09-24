@@ -18,6 +18,7 @@ class TrackerCard extends StatelessWidget {
     this.rating,
     this.icon = Icons.bookmark_outline,
     this.pill,
+    this.posterUrl,
   });
 
   final String title;
@@ -27,7 +28,13 @@ class TrackerCard extends StatelessWidget {
   final double? rating;
 
   /// The domain's icon, shown on a tile before the title.
+  ///
+  /// Replaced by [posterUrl] where there is one: a cover says which film
+  /// this is from across the room, and the icon only ever said "film".
   final IconData icon;
+
+  /// The cover, for a domain that has artwork.
+  final String? posterUrl;
 
   /// The domain's own badge, shown under the subtitle when there is one.
   final Widget? pill;
@@ -44,7 +51,26 @@ class TrackerCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              EntryIcon(icon: icon, borderRadius: Radii.field),
+              if (posterUrl case final poster?)
+                ClipRRect(
+                  borderRadius: Radii.field,
+                  child: SizedBox(
+                    width: 44,
+                    // The shape a poster is printed in, so a row of them
+                    // lines up whatever the artwork behind it does.
+                    height: 66,
+                    child: Image.network(
+                      poster,
+                      fit: BoxFit.cover,
+                      // A dead link falls back to the icon the card would
+                      // have had, rather than to a broken-image box.
+                      errorBuilder: (context, _, _) =>
+                          EntryIcon(icon: icon, borderRadius: Radii.field),
+                    ),
+                  ),
+                )
+              else
+                EntryIcon(icon: icon, borderRadius: Radii.field),
               Gap.hMd,
               Expanded(
                 child: Column(
