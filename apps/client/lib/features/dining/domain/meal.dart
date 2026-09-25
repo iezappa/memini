@@ -16,7 +16,7 @@ class Meal implements Trackable {
     this.dish,
     this.price,
     this.company,
-    this.location,
+    this.mapsUrl,
   });
 
   @override
@@ -47,9 +47,8 @@ class Meal implements Trackable {
   /// Who came along.
   final String? company;
 
-  /// Neighbourhood, city or address — free text, since no free places API
-  /// covers this well enough to structure it.
-  final String? location;
+  /// A link to the place on a map, as the owner pasted it.
+  final String? mapsUrl;
 
   @override
   bool get isRated => rating != null;
@@ -63,7 +62,7 @@ class Meal implements Trackable {
     String? dish,
     double? price,
     String? company,
-    String? location,
+    String? mapsUrl,
     bool clearRating = false,
     bool clearPrice = false,
   }) {
@@ -78,7 +77,7 @@ class Meal implements Trackable {
       dish: dish ?? this.dish,
       price: clearPrice ? null : (price ?? this.price),
       company: company ?? this.company,
-      location: location ?? this.location,
+      mapsUrl: mapsUrl ?? this.mapsUrl,
     );
   }
 }
@@ -94,7 +93,7 @@ class MealDraft {
     this.dish,
     this.price,
     this.company,
-    this.location,
+    this.mapsUrl,
   });
 
   final String title;
@@ -105,5 +104,6 @@ class MealDraft {
   final String? dish;
   final double? price;
   final String? company;
-  final String? location;
+  /// A link to the place on a map, as pasted.
+  final String? mapsUrl;
 }

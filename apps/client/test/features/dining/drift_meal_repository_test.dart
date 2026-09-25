@@ -21,7 +21,7 @@ void main() {
     String title = 'Place',
     double? rating,
     DateTime? happenedOn,
-    String? location,
+    String? mapsUrl,
     String? description,
     String? review,
   }) {
@@ -30,7 +30,7 @@ void main() {
         title: title,
         happenedOn: happenedOn ?? DateTime(2026, 1, 1),
         rating: rating,
-        location: location,
+        mapsUrl: mapsUrl,
         description: description,
         review: review,
       ),
@@ -51,7 +51,7 @@ void main() {
         dish: 'Bife de chorizo',
         price: 42000,
         company: 'Sofi',
-        location: 'Palermo',
+        mapsUrl: 'https://maps.app.goo.gl/donjulio',
       ),
     );
 
@@ -64,7 +64,7 @@ void main() {
     expect(reloaded.dish, 'Bife de chorizo');
     expect(reloaded.price, 42000);
     expect(reloaded.company, 'Sofi');
-    expect(reloaded.location, 'Palermo');
+    expect(reloaded.mapsUrl, 'https://maps.app.goo.gl/donjulio');
     expect(
       reloaded.happenedOn,
       DateTime(2026, 3, 14),
@@ -99,22 +99,6 @@ void main() {
     ]);
   });
 
-  test('filters by location as a substring, ignoring case', () async {
-    await add(title: 'Don Julio', location: 'Palermo Soho');
-    await add(title: 'El Preferido', location: 'palermo');
-    await add(title: 'Chuí', location: 'Villa Crespo');
-
-    final result = await titles(const MealFilter(location: 'PALERMO'));
-
-    expect(result, hasLength(2));
-    expect(result, isNot(contains('Chuí')));
-  });
-
-  test('a meal with no location is not matched by a location filter', () async {
-    await add(title: 'Nowhere');
-
-    expect(await titles(const MealFilter(location: 'Palermo')), isEmpty);
-  });
 
   test('updates a meal and can clear its price', () async {
     final created = await add(title: 'Old');

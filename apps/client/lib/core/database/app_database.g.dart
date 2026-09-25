@@ -1061,12 +1061,12 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _locationMeta = const VerificationMeta(
-    'location',
+  static const VerificationMeta _mapsUrlMeta = const VerificationMeta(
+    'mapsUrl',
   );
   @override
-  late final GeneratedColumn<String> location = GeneratedColumn<String>(
-    'location',
+  late final GeneratedColumn<String> mapsUrl = GeneratedColumn<String>(
+    'maps_url',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -1084,7 +1084,7 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
     dish,
     price,
     company,
-    location,
+    mapsUrl,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1164,10 +1164,10 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
         company.isAcceptableOrUnknown(data['company']!, _companyMeta),
       );
     }
-    if (data.containsKey('location')) {
+    if (data.containsKey('maps_url')) {
       context.handle(
-        _locationMeta,
-        location.isAcceptableOrUnknown(data['location']!, _locationMeta),
+        _mapsUrlMeta,
+        mapsUrl.isAcceptableOrUnknown(data['maps_url']!, _mapsUrlMeta),
       );
     }
     return context;
@@ -1219,9 +1219,9 @@ class $MealsTable extends Meals with TableInfo<$MealsTable, MealRow> {
         DriftSqlType.string,
         data['${effectivePrefix}company'],
       ),
-      location: attachedDatabase.typeMapping.read(
+      mapsUrl: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}location'],
+        data['${effectivePrefix}maps_url'],
       ),
     );
   }
@@ -1245,7 +1245,18 @@ class MealRow extends DataClass implements Insertable<MealRow> {
   final String? dish;
   final double? price;
   final String? company;
-  final String? location;
+
+  /// A link to the place on a map, as the owner pasted it.
+  ///
+  /// The link rather than coordinates, because a link is what a phone gives
+  /// you when you share a pin and it is what opens the place again in
+  /// whatever map app the owner actually uses. The coordinates are read back
+  /// out of it when it has any — see `parseMapLink`.
+  ///
+  /// This replaced a free-text neighbourhood in schema v9. A neighbourhood
+  /// was something you typed and then could not do anything with; a link
+  /// draws the map.
+  final String? mapsUrl;
   const MealRow({
     required this.id,
     required this.title,
@@ -1257,7 +1268,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     this.dish,
     this.price,
     this.company,
-    this.location,
+    this.mapsUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1284,8 +1295,8 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     if (!nullToAbsent || company != null) {
       map['company'] = Variable<String>(company);
     }
-    if (!nullToAbsent || location != null) {
-      map['location'] = Variable<String>(location);
+    if (!nullToAbsent || mapsUrl != null) {
+      map['maps_url'] = Variable<String>(mapsUrl);
     }
     return map;
   }
@@ -1312,9 +1323,9 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       company: company == null && nullToAbsent
           ? const Value.absent()
           : Value(company),
-      location: location == null && nullToAbsent
+      mapsUrl: mapsUrl == null && nullToAbsent
           ? const Value.absent()
-          : Value(location),
+          : Value(mapsUrl),
     );
   }
 
@@ -1334,7 +1345,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       dish: serializer.fromJson<String?>(json['dish']),
       price: serializer.fromJson<double?>(json['price']),
       company: serializer.fromJson<String?>(json['company']),
-      location: serializer.fromJson<String?>(json['location']),
+      mapsUrl: serializer.fromJson<String?>(json['mapsUrl']),
     );
   }
   @override
@@ -1351,7 +1362,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       'dish': serializer.toJson<String?>(dish),
       'price': serializer.toJson<double?>(price),
       'company': serializer.toJson<String?>(company),
-      'location': serializer.toJson<String?>(location),
+      'mapsUrl': serializer.toJson<String?>(mapsUrl),
     };
   }
 
@@ -1366,7 +1377,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     Value<String?> dish = const Value.absent(),
     Value<double?> price = const Value.absent(),
     Value<String?> company = const Value.absent(),
-    Value<String?> location = const Value.absent(),
+    Value<String?> mapsUrl = const Value.absent(),
   }) => MealRow(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -1378,7 +1389,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     dish: dish.present ? dish.value : this.dish,
     price: price.present ? price.value : this.price,
     company: company.present ? company.value : this.company,
-    location: location.present ? location.value : this.location,
+    mapsUrl: mapsUrl.present ? mapsUrl.value : this.mapsUrl,
   );
   MealRow copyWithCompanion(MealsCompanion data) {
     return MealRow(
@@ -1396,7 +1407,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
       dish: data.dish.present ? data.dish.value : this.dish,
       price: data.price.present ? data.price.value : this.price,
       company: data.company.present ? data.company.value : this.company,
-      location: data.location.present ? data.location.value : this.location,
+      mapsUrl: data.mapsUrl.present ? data.mapsUrl.value : this.mapsUrl,
     );
   }
 
@@ -1413,7 +1424,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
           ..write('dish: $dish, ')
           ..write('price: $price, ')
           ..write('company: $company, ')
-          ..write('location: $location')
+          ..write('mapsUrl: $mapsUrl')
           ..write(')'))
         .toString();
   }
@@ -1430,7 +1441,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
     dish,
     price,
     company,
-    location,
+    mapsUrl,
   );
   @override
   bool operator ==(Object other) =>
@@ -1446,7 +1457,7 @@ class MealRow extends DataClass implements Insertable<MealRow> {
           other.dish == this.dish &&
           other.price == this.price &&
           other.company == this.company &&
-          other.location == this.location);
+          other.mapsUrl == this.mapsUrl);
 }
 
 class MealsCompanion extends UpdateCompanion<MealRow> {
@@ -1460,7 +1471,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
   final Value<String?> dish;
   final Value<double?> price;
   final Value<String?> company;
-  final Value<String?> location;
+  final Value<String?> mapsUrl;
   final Value<int> rowid;
   const MealsCompanion({
     this.id = const Value.absent(),
@@ -1473,7 +1484,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     this.dish = const Value.absent(),
     this.price = const Value.absent(),
     this.company = const Value.absent(),
-    this.location = const Value.absent(),
+    this.mapsUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MealsCompanion.insert({
@@ -1487,7 +1498,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     this.dish = const Value.absent(),
     this.price = const Value.absent(),
     this.company = const Value.absent(),
-    this.location = const Value.absent(),
+    this.mapsUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
@@ -1503,7 +1514,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     Expression<String>? dish,
     Expression<double>? price,
     Expression<String>? company,
-    Expression<String>? location,
+    Expression<String>? mapsUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1517,7 +1528,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
       if (dish != null) 'dish': dish,
       if (price != null) 'price': price,
       if (company != null) 'company': company,
-      if (location != null) 'location': location,
+      if (mapsUrl != null) 'maps_url': mapsUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1533,7 +1544,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     Value<String?>? dish,
     Value<double?>? price,
     Value<String?>? company,
-    Value<String?>? location,
+    Value<String?>? mapsUrl,
     Value<int>? rowid,
   }) {
     return MealsCompanion(
@@ -1547,7 +1558,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
       dish: dish ?? this.dish,
       price: price ?? this.price,
       company: company ?? this.company,
-      location: location ?? this.location,
+      mapsUrl: mapsUrl ?? this.mapsUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1585,8 +1596,8 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
     if (company.present) {
       map['company'] = Variable<String>(company.value);
     }
-    if (location.present) {
-      map['location'] = Variable<String>(location.value);
+    if (mapsUrl.present) {
+      map['maps_url'] = Variable<String>(mapsUrl.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1607,7 +1618,7 @@ class MealsCompanion extends UpdateCompanion<MealRow> {
           ..write('dish: $dish, ')
           ..write('price: $price, ')
           ..write('company: $company, ')
-          ..write('location: $location, ')
+          ..write('mapsUrl: $mapsUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5802,7 +5813,7 @@ typedef $$MealsTableCreateCompanionBuilder = MealsCompanion Function({
   Value<String?> dish,
   Value<double?> price,
   Value<String?> company,
-  Value<String?> location,
+  Value<String?> mapsUrl,
   Value<int> rowid,
 });
 typedef $$MealsTableUpdateCompanionBuilder = MealsCompanion Function({
@@ -5816,7 +5827,7 @@ typedef $$MealsTableUpdateCompanionBuilder = MealsCompanion Function({
   Value<String?> dish,
   Value<double?> price,
   Value<String?> company,
-  Value<String?> location,
+  Value<String?> mapsUrl,
   Value<int> rowid,
 });
 
@@ -5878,8 +5889,8 @@ class $$MealsTableFilterComposer extends Composer<_$AppDatabase, $MealsTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get location => $composableBuilder(
-    column: $table.location,
+  ColumnFilters<String> get mapsUrl => $composableBuilder(
+    column: $table.mapsUrl,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -5943,8 +5954,8 @@ class $$MealsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get location => $composableBuilder(
-    column: $table.location,
+  ColumnOrderings<String> get mapsUrl => $composableBuilder(
+    column: $table.mapsUrl,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -5992,8 +6003,8 @@ class $$MealsTableAnnotationComposer
   GeneratedColumn<String> get company =>
       $composableBuilder(column: $table.company, builder: (column) => column);
 
-  GeneratedColumn<String> get location =>
-      $composableBuilder(column: $table.location, builder: (column) => column);
+  GeneratedColumn<String> get mapsUrl =>
+      $composableBuilder(column: $table.mapsUrl, builder: (column) => column);
 }
 
 class $$MealsTableTableManager
@@ -6034,7 +6045,7 @@ class $$MealsTableTableManager
                 Value<String?> dish = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<String?> company = const Value.absent(),
-                Value<String?> location = const Value.absent(),
+                Value<String?> mapsUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MealsCompanion(
                 id: id,
@@ -6047,7 +6058,7 @@ class $$MealsTableTableManager
                 dish: dish,
                 price: price,
                 company: company,
-                location: location,
+                mapsUrl: mapsUrl,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -6062,7 +6073,7 @@ class $$MealsTableTableManager
                 Value<String?> dish = const Value.absent(),
                 Value<double?> price = const Value.absent(),
                 Value<String?> company = const Value.absent(),
-                Value<String?> location = const Value.absent(),
+                Value<String?> mapsUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MealsCompanion.insert(
                 id: id,
@@ -6075,7 +6086,7 @@ class $$MealsTableTableManager
                 dish: dish,
                 price: price,
                 company: company,
-                location: location,
+                mapsUrl: mapsUrl,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

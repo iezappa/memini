@@ -21,10 +21,6 @@ final mealFilterProvider = NotifierProvider<MealFilterController, MealFilter>(
 class MealFilterController extends TrackingFilterController<MealFilter> {
   @override
   MealFilter get pristine => const MealFilter();
-
-  void setLocation(String? value) => state = value == null || value.isEmpty
-      ? state.copyWith(clearLocation: true)
-      : state.copyWith(location: value);
 }
 
 final mealsProvider = StreamProvider<List<Meal>>((ref) {
@@ -42,15 +38,4 @@ final mealProvider = FutureProvider.family<Meal?, String>((ref, id) {
   // without the detail screen having to invalidate itself.
   ref.watch(allMealsProvider);
   return ref.watch(mealRepositoryProvider).findById(id);
-});
-
-/// The distinct places already logged, for the location filter.
-final mealLocationsProvider = Provider<List<String>>((ref) {
-  final meals = ref.watch(allMealsProvider).valueOrNull ?? const [];
-  final seen = <String>{
-    for (final meal in meals)
-      if (meal.location != null && meal.location!.trim().isNotEmpty)
-        meal.location!.trim(),
-  };
-  return seen.toList()..sort();
 });

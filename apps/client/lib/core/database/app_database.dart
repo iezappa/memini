@@ -65,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 8;
+  static const currentSchemaVersion = 9;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -225,6 +225,39 @@ class AppDatabase extends _$AppDatabase {
             from7To8: (m, schema) async {
               await m.createTable(schema.wishes);
               await m.create(schema.wishByKind);
+            },
+            // v9 turns a meal's neighbourhood into a link to the place on a
+            // map. A rebuild rather than an added column, because the old
+            // field goes: a neighbourhood was something you typed and could
+            // then do nothing with.
+            //
+            // Nothing written is thrown away. A neighbourhood that was
+            // already a link becomes the link; anything else is a note
+            // about the place, so it is appended to the meal's description
+            // — the field it would have been written in had this always
+            // been a link.
+            from8To9: (m, schema) async {
+              await m.alterTable(
+                TableMigration(
+                  schema.meals,
+                  columnTransformer: {
+                    schema.meals.mapsUrl: const CustomExpression<String>(
+                      "CASE WHEN location LIKE 'http%' OR location LIKE 'geo:%'"
+                      ' THEN location END',
+                    ),
+                    schema.meals.description: const CustomExpression<String>(
+                      "CASE"
+                      " WHEN location IS NULL OR trim(location) = ''"
+                      "  OR location LIKE 'http%' OR location LIKE 'geo:%'"
+                      '  THEN description'
+                      " WHEN description IS NULL OR trim(description) = ''"
+                      '  THEN location'
+                      " ELSE description || char(10) || location END",
+                    ),
+                  },
+                  newColumns: [schema.meals.mapsUrl],
+                ),
+              );
             },
           ),
         );

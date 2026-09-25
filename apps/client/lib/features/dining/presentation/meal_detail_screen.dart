@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/tracking/presentation/tracker_detail.dart';
 import '../../../core/photos/presentation/photo_strip.dart';
+import '../../../core/maps/presentation/map_section.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../shared/entry_dialog.dart';
@@ -78,7 +79,6 @@ class MealDetailScreen extends ConsumerWidget {
               title: value.title,
               happenedOn: value.happenedOn,
               rating: value.rating,
-              contextLine: value.location,
               description: value.description,
               review: value.review,
               facts: [
@@ -90,6 +90,7 @@ class MealDetailScreen extends ConsumerWidget {
                   (label: l10n.fieldCompany, value: value.company!),
               ],
               extra: [
+                MapSection(mapsUrl: value.mapsUrl),
                 Gap.vXl,
                 SectionLabel(l10n.photosLabel),
                 Gap.vSm,

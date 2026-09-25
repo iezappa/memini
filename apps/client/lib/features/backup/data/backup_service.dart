@@ -75,7 +75,7 @@ class BackupService {
             dish: row.dish,
             price: row.price,
             company: row.company,
-            location: row.location,
+            mapsUrl: row.mapsUrl,
           ),
       ],
       gigs: [
@@ -274,7 +274,7 @@ class BackupService {
               dish: Value(m.dish),
               price: Value(m.price),
               company: Value(m.company),
-              location: Value(m.location),
+              mapsUrl: Value(m.mapsUrl),
             ),
         ]);
         batch.insertAll(_db.gigs, [

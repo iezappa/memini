@@ -860,24 +860,6 @@ abstract class AppLocalizations {
   /// **'With'**
   String get fieldCompany;
 
-  /// No description provided for @fieldLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Neighbourhood or city'**
-  String get fieldLocation;
-
-  /// No description provided for @filterLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Location'**
-  String get filterLocation;
-
-  /// No description provided for @filterAllLocations.
-  ///
-  /// In en, this message translates to:
-  /// **'Anywhere'**
-  String get filterAllLocations;
-
   /// No description provided for @gigCount.
   ///
   /// In en, this message translates to:
@@ -2233,6 +2215,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved with today\'s date and no score. Open it to say what you thought.'**
   String get wishMovedBody;
+
+  /// No description provided for @fieldMapsUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Link to the place on a map'**
+  String get fieldMapsUrl;
+
+  /// No description provided for @fieldMapsUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the link from any map app. If it carries coordinates you get a map here; a shortened link still opens, it just cannot be drawn.'**
+  String get fieldMapsUrlHint;
+
+  /// No description provided for @mapLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Where it is'**
+  String get mapLabel;
+
+  /// No description provided for @mapOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in maps'**
+  String get mapOpen;
+
+  /// No description provided for @mapNoCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one.'**
+  String get mapNoCoordinates;
 }
 
 class _AppLocalizationsDelegate

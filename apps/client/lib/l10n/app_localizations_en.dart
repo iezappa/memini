@@ -432,15 +432,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldCompany => 'With';
 
   @override
-  String get fieldLocation => 'Neighbourhood or city';
-
-  @override
-  String get filterLocation => 'Location';
-
-  @override
-  String get filterAllLocations => 'Anywhere';
-
-  @override
   String gigCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1223,4 +1214,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get wishMovedBody =>
       'Saved with today\'s date and no score. Open it to say what you thought.';
+
+  @override
+  String get fieldMapsUrl => 'Link to the place on a map';
+
+  @override
+  String get fieldMapsUrlHint =>
+      'Paste the link from any map app. If it carries coordinates you get a map here; a shortened link still opens, it just cannot be drawn.';
+
+  @override
+  String get mapLabel => 'Where it is';
+
+  @override
+  String get mapOpen => 'Open in maps';
+
+  @override
+  String get mapNoCoordinates =>
+      'This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one.';
 }

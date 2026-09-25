@@ -27,7 +27,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
   late final TextEditingController _dish;
   late final TextEditingController _price;
   late final TextEditingController _company;
-  late final TextEditingController _location;
+  late final TextEditingController _mapsUrl;
   late final TextEditingController _description;
   late final TextEditingController _review;
 
@@ -44,7 +44,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
     _dish = TextEditingController(text: meal?.dish ?? '');
     _price = TextEditingController(text: meal?.price?.toString() ?? '');
     _company = TextEditingController(text: meal?.company ?? '');
-    _location = TextEditingController(text: meal?.location ?? '');
+    _mapsUrl = TextEditingController(text: meal?.mapsUrl ?? '');
     _description = TextEditingController(text: meal?.description ?? '');
     _review = TextEditingController(text: meal?.review ?? '');
 
@@ -59,7 +59,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
       _dish,
       _price,
       _company,
-      _location,
+      _mapsUrl,
       _description,
       _review,
     ]) {
@@ -96,7 +96,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
             dish: _trimmedOrNull(_dish),
             price: price,
             company: _trimmedOrNull(_company),
-            location: _trimmedOrNull(_location),
+            mapsUrl: _trimmedOrNull(_mapsUrl),
           ),
         );
       } else {
@@ -111,7 +111,7 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
             dish: _trimmedOrNull(_dish),
             price: price,
             company: _trimmedOrNull(_company),
-            location: _trimmedOrNull(_location),
+            mapsUrl: _trimmedOrNull(_mapsUrl),
           ),
         );
       }
@@ -143,9 +143,18 @@ class _MealFormScreenState extends ConsumerState<MealFormScreen> {
         ),
         Gap.vMd,
         TextFormField(
-          controller: _location,
-          textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(labelText: l10n.fieldLocation),
+          controller: _mapsUrl,
+          keyboardType: TextInputType.url,
+          decoration: InputDecoration(
+            labelText: l10n.fieldMapsUrl,
+            helperText: l10n.fieldMapsUrlHint,
+            helperMaxLines: 3,
+            prefixIcon: const Icon(Icons.map_outlined, size: 20),
+          ),
+          // Not required, and not rejected either: a link the app cannot
+          // read coordinates out of still opens in the owner's map app,
+          // which is most of what the field is for. The page below says
+          // whether it could draw a preview from it.
         ),
         Gap.vMd,
         DateField(

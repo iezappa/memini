@@ -39,7 +39,7 @@ class DriftMealRepository implements MealRepository {
     dish: row.dish,
     price: row.price,
     company: row.company,
-    location: row.location,
+    mapsUrl: row.mapsUrl,
   );
 
   SimpleSelectStatement<$MealsTable, MealRow> _query(MealFilter filter) {
@@ -47,12 +47,6 @@ class DriftMealRepository implements MealRepository {
 
     final shared = trackingPredicate(_columns, filter);
     if (shared != null) query.where((_) => shared);
-
-    final location = filter.location?.trim();
-    if (location != null && location.isNotEmpty) {
-      final pattern = '%${location.toLowerCase()}%';
-      query.where((m) => m.location.lower().like(pattern));
-    }
 
     final ordering = trackingOrdering(_columns, filter.sort);
     query.orderBy([for (final term in ordering) (_) => term]);
@@ -91,7 +85,7 @@ class DriftMealRepository implements MealRepository {
             dish: Value(draft.dish),
             price: Value(draft.price),
             company: Value(draft.company),
-            location: Value(draft.location),
+            mapsUrl: Value(draft.mapsUrl),
           ),
         );
     return _toDomain(row);
@@ -110,7 +104,7 @@ class DriftMealRepository implements MealRepository {
         dish: Value(entry.dish),
         price: Value(entry.price),
         company: Value(entry.company),
-        location: Value(entry.location),
+        mapsUrl: Value(entry.mapsUrl),
       ),
     );
   }

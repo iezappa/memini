@@ -124,7 +124,7 @@ class BackupDocument {
           'dish': m.dish,
           'price': m.price,
           'company': m.company,
-          'location': m.location,
+          'mapsUrl': m.mapsUrl,
         },
     ],
     'gigs': [
@@ -403,7 +403,10 @@ class BackupDocument {
       dish: json['dish'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       company: json['company'] as String?,
-      location: json['location'] as String?,
+      // Named `location` in files written before schema v9, where it held
+      // a neighbourhood rather than a link. Read under both names: an old
+      // backup keeps whatever was typed, and a link in it draws a map.
+      mapsUrl: (json['mapsUrl'] ?? json['location']) as String?,
     );
   }
 

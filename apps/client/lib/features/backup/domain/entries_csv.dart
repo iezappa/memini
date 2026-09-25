@@ -55,7 +55,7 @@ String mealsToCsv(List<Meal> meals) {
     ..writeln(
       _row([
         'place',
-        'location',
+        'mapsUrl',
         'happened_on',
         'dish',
         'price',
@@ -70,7 +70,7 @@ String mealsToCsv(List<Meal> meals) {
     buffer.writeln(
       _row([
         meal.title,
-        meal.location ?? '',
+        meal.mapsUrl ?? '',
         _dateOnly(meal.happenedOn),
         meal.dish ?? '',
         meal.price?.toString() ?? '',

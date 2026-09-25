@@ -159,7 +159,7 @@ void main() {
           happenedOn: DateTime(2026, 3, 1),
           dish: 'Bife de chorizo',
           price: 42000,
-          location: 'Palermo',
+          mapsUrl: 'https://www.openstreetmap.org/#map=19/-34.5883/-58.4262',
           rating: 9.5,
         ),
       );
@@ -239,7 +239,10 @@ void main() {
       expect(meal.title, 'Don Julio');
       expect(meal.dish, 'Bife de chorizo');
       expect(meal.price, 42000);
-      expect(meal.location, 'Palermo');
+      expect(
+        meal.mapsUrl,
+        'https://www.openstreetmap.org/#map=19/-34.5883/-58.4262',
+      );
       expect(meal.rating, 9.5);
 
       final gig = (await DriftGigRepository(db).list(const GigFilter())).single;

@@ -18,7 +18,6 @@ class MealListScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final filter = ref.watch(mealFilterProvider);
     final controller = ref.read(mealFilterProvider.notifier);
-    final locations = ref.watch(mealLocationsProvider);
     final locale = Localizations.localeOf(context).toLanguageTag();
 
     return TrackerListScreen(
@@ -40,24 +39,11 @@ class MealListScreen extends ConsumerWidget {
       onSortChanged: controller.setSort,
       onClearFilters: controller.clear,
       onAdd: () => showEntryDialog(context, const MealFormScreen()),
-      filterChips: [
-        if (locations.isNotEmpty)
-          PopupMenuButton<String?>(
-            onSelected: controller.setLocation,
-            itemBuilder: (context) => [
-              PopupMenuItem(value: null, child: Text(l10n.filterAllLocations)),
-              for (final location in locations)
-                PopupMenuItem(value: location, child: Text(location)),
-            ],
-            child: ChipShell(
-              label: filter.location ?? l10n.filterLocation,
-              selected: filter.location != null,
-            ),
-          ),
-      ],
       entryBuilder: (context, meal) {
         final date = DateFormat.yMMMd(locale).format(meal.happenedOn);
-        final where = meal.location;
+        // The dish, where there is one: a meal's title is the place, so
+        // the line under it should say what was eaten there.
+        final where = meal.dish;
         return (
           title: meal.title,
           photoOwnerId: meal.id,

@@ -169,9 +169,6 @@
   "fieldDish": "Dish",
   "fieldPrice": "Price",
   "fieldCompany": "With",
-  "fieldLocation": "Neighbourhood or city",
-  "filterLocation": "Location",
-  "filterAllLocations": "Anywhere",
   "gigCount": "{count, plural, =0{No gigs} =1{1 gig} other{{count} gigs}}",
   "@gigCount": {
     "placeholders": {
@@ -579,5 +576,10 @@
   "wishMovedToGames": "Moved to Games.",
   "wishMovedToConcerts": "Moved to Concerts.",
   "wishMovedOpen": "Open",
-  "wishMovedBody": "Saved with today's date and no score. Open it to say what you thought."
+  "wishMovedBody": "Saved with today's date and no score. Open it to say what you thought.",
+  "fieldMapsUrl": "Link to the place on a map",
+  "fieldMapsUrlHint": "Paste the link from any map app. If it carries coordinates you get a map here; a shortened link still opens, it just cannot be drawn.",
+  "mapLabel": "Where it is",
+  "mapOpen": "Open in maps",
+  "mapNoCoordinates": "This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one."
 }

@@ -141,9 +141,6 @@
   "fieldDish": "Plato",
   "fieldPrice": "Precio",
   "fieldCompany": "Con",
-  "fieldLocation": "Barrio o ciudad",
-  "filterLocation": "Ubicación",
-  "filterAllLocations": "En cualquier lado",
   "gigCount": "{count, plural, =0{Sin recitales} =1{1 recital} other{{count} recitales}}",
   "@gigCount": {
     "placeholders": {
@@ -473,5 +470,10 @@
   "wishMovedToGames": "Pasó a Juegos.",
   "wishMovedToConcerts": "Pasó a Recitales.",
   "wishMovedOpen": "Abrir",
-  "wishMovedBody": "Guardado con la fecha de hoy y sin puntuación. Abrilo para decir qué te pareció."
+  "wishMovedBody": "Guardado con la fecha de hoy y sin puntuación. Abrilo para decir qué te pareció.",
+  "fieldMapsUrl": "Link al lugar en un mapa",
+  "fieldMapsUrlHint": "Pegá el link de cualquier app de mapas. Si trae coordenadas, acá se dibuja el mapa; un link acortado igual abre, solo que no se puede dibujar.",
+  "mapLabel": "Dónde queda",
+  "mapOpen": "Abrir en el mapa",
+  "mapNoCoordinates": "Este link no trae la posición adentro, así que no hay nada que dibujar. Un link copiado del mapa en una computadora suele traerla."
 }

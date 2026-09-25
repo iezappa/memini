@@ -51,13 +51,17 @@ void main() {
     await fillField(tester, 'Place', 'Don Julio');
     await fillField(tester, 'Dish', 'Ojo de bife');
     await fillField(tester, 'With', 'Ana');
-    await fillField(tester, 'Neighbourhood or city', 'Palermo');
+    await fillField(
+      tester,
+      'Link to the place on a map',
+      'https://maps.app.goo.gl/donjulio',
+    );
     await tapSave(tester);
 
     final saved = (await meals.list(const MealFilter())).single;
     expect(saved.dish, 'Ojo de bife');
     expect(saved.company, 'Ana');
-    expect(saved.location, 'Palermo');
+    expect(saved.mapsUrl, 'https://maps.app.goo.gl/donjulio');
 
     await unmount(tester);
   });

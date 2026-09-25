@@ -10,6 +10,8 @@ import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
 import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
+import 'generated/schema_v8.dart' as v8;
+import 'generated/schema_v9.dart' as v9;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -192,6 +194,92 @@ void main() {
         ]);
       },
     );
+  });
+
+  group('v9 turns a neighbourhood into a link to the place', () {
+    /// One meal per case, so a failure names which one went wrong.
+    Future<void> upgrade({
+      required String? location,
+      required String? description,
+      required void Function(v9.MealsData meal) expectMeal,
+    }) {
+      return verifier.testWithDataIntegrity(
+        oldVersion: 8,
+        newVersion: 9,
+        createOld: v8.DatabaseAtV8.new,
+        createNew: v9.DatabaseAtV9.new,
+        openTestedDatabase: AppDatabase.forTesting,
+        createItems: (batch, oldDb) {
+          batch.insertAll(oldDb.meals, [
+            v8.MealsData(
+              id: newUuid(),
+              title: 'Don Julio',
+              description: description,
+              happenedOn: 1773446400,
+              updatedAt: 1773446400,
+              location: location,
+            ),
+          ]);
+        },
+        validateItems: (newDb) async =>
+            expectMeal((await newDb.select(newDb.meals).get()).single),
+      );
+    }
+
+    test('a neighbourhood becomes a note, because it is one', () async {
+      await upgrade(
+        location: 'Palermo',
+        description: 'Parrilla',
+        expectMeal: (meal) {
+          expect(meal.mapsUrl, isNull);
+          expect(meal.description, 'Parrilla\nPalermo');
+        },
+      );
+    });
+
+    test('with nothing else written, it is the whole note', () async {
+      await upgrade(
+        location: 'Palermo',
+        description: null,
+        expectMeal: (meal) {
+          expect(meal.description, 'Palermo');
+          expect(meal.mapsUrl, isNull);
+        },
+      );
+    });
+
+    test('a link becomes the link, and is not written down twice', () async {
+      await upgrade(
+        location: 'https://maps.app.goo.gl/x',
+        description: 'Parrilla',
+        expectMeal: (meal) {
+          expect(meal.mapsUrl, 'https://maps.app.goo.gl/x');
+          expect(meal.description, 'Parrilla');
+        },
+      );
+    });
+
+    test('a geo: URI is a link too', () async {
+      await upgrade(
+        location: 'geo:-34.5883,-58.4262',
+        description: null,
+        expectMeal: (meal) {
+          expect(meal.mapsUrl, 'geo:-34.5883,-58.4262');
+          expect(meal.description, isNull);
+        },
+      );
+    });
+
+    test('a meal that never said where leaves both empty', () async {
+      await upgrade(
+        location: null,
+        description: 'Parrilla',
+        expectMeal: (meal) {
+          expect(meal.mapsUrl, isNull);
+          expect(meal.description, 'Parrilla');
+        },
+      );
+    });
   });
 
   group('v4 gives every record a UUID and an updatedAt', () {

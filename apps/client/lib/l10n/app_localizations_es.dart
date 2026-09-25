@@ -433,15 +433,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fieldCompany => 'Con';
 
   @override
-  String get fieldLocation => 'Barrio o ciudad';
-
-  @override
-  String get filterLocation => 'Ubicación';
-
-  @override
-  String get filterAllLocations => 'En cualquier lado';
-
-  @override
   String gigCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1223,4 +1214,21 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get wishMovedBody =>
       'Guardado con la fecha de hoy y sin puntuación. Abrilo para decir qué te pareció.';
+
+  @override
+  String get fieldMapsUrl => 'Link al lugar en un mapa';
+
+  @override
+  String get fieldMapsUrlHint =>
+      'Pegá el link de cualquier app de mapas. Si trae coordenadas, acá se dibuja el mapa; un link acortado igual abre, solo que no se puede dibujar.';
+
+  @override
+  String get mapLabel => 'Dónde queda';
+
+  @override
+  String get mapOpen => 'Abrir en el mapa';
+
+  @override
+  String get mapNoCoordinates =>
+      'Este link no trae la posición adentro, así que no hay nada que dibujar. Un link copiado del mapa en una computadora suele traerla.';
 }
