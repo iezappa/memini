@@ -60,6 +60,7 @@ class GigListScreen extends ConsumerWidget {
         final venue = gig.venue;
         return (
           title: gig.title,
+          photoOwnerId: gig.id,
           subtitle: venue == null ? date : '$venue · $date',
           rating: gig.rating,
           icon: Icons.music_note_outlined,

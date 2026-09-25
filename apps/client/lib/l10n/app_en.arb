@@ -126,7 +126,7 @@
   "tutorialNext": "Next",
   "tutorialAgain": "Show the tutorial again",
   "tutorial1Title": "Everything you did, in one place",
-  "tutorial1Body": "Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one.",
+  "tutorial1Body": "Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one. What you have not got to yet goes on the watchlist.",
   "tutorial2Title": "Score them like a critic",
   "tutorial2Body": "Give each entry a score out of 10 and write the review you would have wanted to read beforehand.",
   "tutorial3Title": "Yours alone",
@@ -527,5 +527,57 @@
         "type": "int"
       }
     }
-  }
+  },
+  "navWatchlist": "Watchlist",
+  "watchlistTitle": "Watchlist",
+  "watchlistSearchHint": "Search the watchlist",
+  "watchlistCount": "{count, plural, =0{Nothing on the list} =1{1 thing to come} other{{count} things to come}}",
+  "@watchlistCount": {
+    "description": "How many things are waiting.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "watchlistAdd": "Add to watchlist",
+  "watchlistEmptyTitle": "Nothing waiting yet",
+  "watchlistEmptyBody": "The film everyone is talking about, the game waiting for a sale, the band whose tour has not been announced. Put it here before you forget it.",
+  "watchlistEmptyFiltered": "Nothing on the list matches that.",
+  "watchlistSortNewest": "Added last",
+  "watchlistSortOldest": "Added first",
+  "wishKindScreen": "Film or series",
+  "wishKindGame": "Game",
+  "wishKindMusic": "Band",
+  "wishKindAll": "Everything",
+  "wishNote": "Why it is here",
+  "wishNoteHint": "Who recommended it, where it is streaming, that it is waiting for a sale.",
+  "wishAdded": "Added {date}",
+  "@wishAdded": {
+    "description": "The day a wish was put on the list.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "wishSave": "Save to the watchlist",
+  "wishDelete": "Remove from the watchlist",
+  "wishDeleteConfirm": "Take “{title}” off the watchlist?",
+  "@wishDeleteConfirm": {
+    "description": "Confirms taking one thing off the list.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "wishDone": "I have seen it",
+  "wishDoneGame": "I have played it",
+  "wishDoneMusic": "I have seen them",
+  "wishMovedToScreen": "Moved to Films and series.",
+  "wishMovedToGames": "Moved to Games.",
+  "wishMovedToConcerts": "Moved to Concerts.",
+  "wishMovedOpen": "Open",
+  "wishMovedBody": "Saved with today's date and no score. Open it to say what you thought."
 }

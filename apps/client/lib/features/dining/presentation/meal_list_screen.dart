@@ -60,6 +60,7 @@ class MealListScreen extends ConsumerWidget {
         final where = meal.location;
         return (
           title: meal.title,
+          photoOwnerId: meal.id,
           subtitle: where == null ? date : '$where · $date',
           rating: meal.rating,
           icon: Icons.restaurant_outlined,

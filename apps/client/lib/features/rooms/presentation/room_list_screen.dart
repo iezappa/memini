@@ -74,6 +74,7 @@ class RoomListScreen extends ConsumerWidget {
         final franchise = franchiseNames[room.franchiseId];
         return (
           title: room.title,
+          photoOwnerId: room.id,
           subtitle: franchise == null ? date : '$franchise · $date',
           rating: room.rating,
           icon: Icons.meeting_room_outlined,

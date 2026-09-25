@@ -311,7 +311,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tutorial1Body =>
-      'Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one.';
+      'Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one. What you have not got to yet goes on the watchlist.';
 
   @override
   String get tutorial2Title => 'Score them like a critic';
@@ -1123,4 +1123,104 @@ class AppLocalizationsEn extends AppLocalizations {
   String pageOf(int page, int pages) {
     return '$page of $pages';
   }
+
+  @override
+  String get navWatchlist => 'Watchlist';
+
+  @override
+  String get watchlistTitle => 'Watchlist';
+
+  @override
+  String get watchlistSearchHint => 'Search the watchlist';
+
+  @override
+  String watchlistCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count things to come',
+      one: '1 thing to come',
+      zero: 'Nothing on the list',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get watchlistAdd => 'Add to watchlist';
+
+  @override
+  String get watchlistEmptyTitle => 'Nothing waiting yet';
+
+  @override
+  String get watchlistEmptyBody =>
+      'The film everyone is talking about, the game waiting for a sale, the band whose tour has not been announced. Put it here before you forget it.';
+
+  @override
+  String get watchlistEmptyFiltered => 'Nothing on the list matches that.';
+
+  @override
+  String get watchlistSortNewest => 'Added last';
+
+  @override
+  String get watchlistSortOldest => 'Added first';
+
+  @override
+  String get wishKindScreen => 'Film or series';
+
+  @override
+  String get wishKindGame => 'Game';
+
+  @override
+  String get wishKindMusic => 'Band';
+
+  @override
+  String get wishKindAll => 'Everything';
+
+  @override
+  String get wishNote => 'Why it is here';
+
+  @override
+  String get wishNoteHint =>
+      'Who recommended it, where it is streaming, that it is waiting for a sale.';
+
+  @override
+  String wishAdded(String date) {
+    return 'Added $date';
+  }
+
+  @override
+  String get wishSave => 'Save to the watchlist';
+
+  @override
+  String get wishDelete => 'Remove from the watchlist';
+
+  @override
+  String wishDeleteConfirm(String title) {
+    return 'Take “$title” off the watchlist?';
+  }
+
+  @override
+  String get wishDone => 'I have seen it';
+
+  @override
+  String get wishDoneGame => 'I have played it';
+
+  @override
+  String get wishDoneMusic => 'I have seen them';
+
+  @override
+  String get wishMovedToScreen => 'Moved to Films and series.';
+
+  @override
+  String get wishMovedToGames => 'Moved to Games.';
+
+  @override
+  String get wishMovedToConcerts => 'Moved to Concerts.';
+
+  @override
+  String get wishMovedOpen => 'Open';
+
+  @override
+  String get wishMovedBody =>
+      'Saved with today\'s date and no score. Open it to say what you thought.';
 }

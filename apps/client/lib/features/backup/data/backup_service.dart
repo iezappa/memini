@@ -9,6 +9,7 @@ import '../../franchises/domain/franchise.dart';
 import '../../games/domain/game.dart';
 import '../../rooms/domain/room.dart';
 import '../../screen/domain/viewing.dart';
+import '../../watchlist/domain/wish.dart';
 import '../domain/backup_document.dart';
 import '../domain/entries_csv.dart';
 
@@ -34,6 +35,7 @@ class BackupService {
     final gigRows = await _db.select(_db.gigs).get();
     final viewingRows = await _db.select(_db.viewings).get();
     final gameRows = await _db.select(_db.games).get();
+    final wishRows = await _db.select(_db.wishes).get();
 
     return BackupDocument.of(
       franchises: [
@@ -132,6 +134,21 @@ class BackupService {
             coverUrl: row.coverUrl,
           ),
       ],
+      wishes: [
+        for (final row in wishRows)
+          Wish(
+            id: row.id,
+            kind: row.kind,
+            title: row.title,
+            addedOn: row.addedOn,
+            updatedAt: row.updatedAt,
+            note: row.note,
+            description: row.description,
+            releaseYear: row.releaseYear,
+            externalId: row.externalId,
+            posterUrl: row.posterUrl,
+          ),
+      ],
     );
   }
 
@@ -174,6 +191,7 @@ class BackupService {
       _db.gigs,
       _db.viewings,
       _db.games,
+      _db.wishes,
     ]) {
       final row = await _db
           .customSelect(
@@ -198,6 +216,7 @@ class BackupService {
     await _db.delete(_db.gigs).go();
     await _db.delete(_db.viewings).go();
     await _db.delete(_db.games).go();
+    await _db.delete(_db.wishes).go();
   }
 
   /// Decodes and validates [contents] without touching the database, so a
@@ -312,6 +331,21 @@ class BackupService {
               releaseYear: Value(g.releaseYear),
               externalId: Value(g.externalId),
               coverUrl: Value(g.coverUrl),
+            ),
+        ]);
+        batch.insertAll(_db.wishes, [
+          for (final w in document.wishes)
+            WishesCompanion.insert(
+              id: Value(w.id),
+              kind: w.kind,
+              title: w.title,
+              addedOn: w.addedOn,
+              updatedAt: w.updatedAt ?? _now(),
+              note: Value(w.note),
+              description: Value(w.description),
+              releaseYear: Value(w.releaseYear),
+              externalId: Value(w.externalId),
+              posterUrl: Value(w.posterUrl),
             ),
         ]);
       });

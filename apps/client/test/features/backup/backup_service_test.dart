@@ -14,6 +14,8 @@ import 'package:memini/features/games/domain/game_repository.dart';
 import 'package:memini/features/screen/data/drift_viewing_repository.dart';
 import 'package:memini/features/screen/domain/viewing.dart';
 import 'package:memini/features/screen/domain/viewing_repository.dart';
+import 'package:memini/features/watchlist/data/drift_wish_repository.dart';
+import 'package:memini/features/watchlist/domain/wish.dart';
 import 'package:memini/features/backup/domain/backup_document.dart';
 import 'package:memini/features/franchises/data/drift_franchise_repository.dart';
 import 'package:memini/features/franchises/domain/franchise.dart';
@@ -191,6 +193,15 @@ void main() {
           coverUrl: 'https://media.rawg.io/outer-wilds.jpg',
         ),
       );
+      await DriftWishRepository(db).create(
+        WishDraft(
+          kind: WishKind.game,
+          title: 'Silksong',
+          addedOn: DateTime(2026, 3, 5),
+          note: 'Waiting for a sale',
+          releaseYear: 2025,
+        ),
+      );
     }
 
     test('export carries every domain, not just rooms', () async {
@@ -204,6 +215,9 @@ void main() {
       expect(document.gigs, hasLength(1));
       expect(document.viewings, hasLength(1));
       expect(document.games, hasLength(1));
+      expect(document.wishes, hasLength(1));
+      // The watchlist is not in the count: nothing on it has happened, and
+      // this figure is what the owner has done.
       expect(document.entryCount, 5);
     });
 
@@ -255,6 +269,13 @@ void main() {
       expect(game.hoursPlayed, 27.5);
       expect(game.platform, 'PC');
       expect(game.coverUrl, 'https://media.rawg.io/outer-wilds.jpg');
+
+      final wish = (await DriftWishRepository(db).list(const WishFilter()))
+          .single;
+      expect(wish.title, 'Silksong');
+      expect(wish.kind, WishKind.game);
+      expect(wish.note, 'Waiting for a sale');
+      expect(wish.addedOn, DateTime(2026, 3, 5));
     });
 
     test(

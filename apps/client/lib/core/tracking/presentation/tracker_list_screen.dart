@@ -6,7 +6,6 @@ import '../../../features/shared/widgets.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../theme/theme.dart';
 import '../../theme/tokens.dart';
-import '../domain/trackable.dart';
 import '../domain/tracking_filter.dart';
 import 'tracker_card.dart';
 import 'tracker_tile.dart';
@@ -25,6 +24,7 @@ class TrackerListLabels {
     required this.emptyFiltered,
     required this.clearFilters,
     required this.sortLabel,
+    this.sorts = TrackingSort.values,
   });
 
   final String title;
@@ -40,6 +40,10 @@ class TrackerListLabels {
   final String emptyFiltered;
   final String clearFilters;
   final String Function(TrackingSort sort) sortLabel;
+
+  /// Which orderings this domain offers. All five by default; the watchlist
+  /// offers three, because a wish has no score to sort by.
+  final List<TrackingSort> sorts;
 }
 
 /// What a domain says about one entry, without saying how to draw it.
@@ -52,6 +56,10 @@ typedef TrackerEntryView = ({
   double? rating,
   IconData icon,
   String? posterUrl,
+
+  /// The entry's own id, so a domain with no artwork can fall back on the
+  /// photograph its owner attached.
+  String? photoOwnerId,
   Widget? pill,
   VoidCallback onTap,
 });
@@ -61,7 +69,7 @@ typedef TrackerEntryView = ({
 /// Search, ordering, the empty states and the count header behave identically
 /// in all five, so they live here. A domain supplies its own rows through
 /// [entryBuilder] and its own filters through [filterChips].
-class TrackerListScreen<T extends Trackable> extends ConsumerStatefulWidget {
+class TrackerListScreen<T> extends ConsumerStatefulWidget {
   const TrackerListScreen({
     super.key,
     required this.labels,
@@ -98,7 +106,7 @@ class TrackerListScreen<T extends Trackable> extends ConsumerStatefulWidget {
       _TrackerListScreenState<T>();
 }
 
-class _TrackerListScreenState<T extends Trackable>
+class _TrackerListScreenState<T>
     extends ConsumerState<TrackerListScreen<T>> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
@@ -133,7 +141,7 @@ class _TrackerListScreenState<T extends Trackable>
       rating: view.rating,
       icon: view.icon,
       posterUrl: view.posterUrl,
-      photoOwnerId: entry.id,
+      photoOwnerId: view.photoOwnerId,
       pill: view.pill,
       onTap: view.onTap,
     );
@@ -148,7 +156,7 @@ class _TrackerListScreenState<T extends Trackable>
       rating: view.rating,
       icon: view.icon,
       posterUrl: view.posterUrl,
-      photoOwnerId: entry.id,
+      photoOwnerId: view.photoOwnerId,
       onTap: view.onTap,
     );
   }
@@ -215,29 +223,48 @@ class _TrackerListScreenState<T extends Trackable>
               ),
               Gap.vSm,
               SizedBox(
-                height: 40,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
+                // Tall enough for the switch to keep a 48px tap target,
+                // which the accessibility tests hold every screen to.
+                height: 48,
+                child: Row(
                   children: [
-                    for (final chip in widget.filterChips) ...[chip, Gap.hSm],
-                    TrackerSortMenu(
-                      sort: widget.filter.sort,
-                      label: labels.sortLabel,
-                      onSelected: widget.onSortChanged,
+                    // The filters scroll; the switch does not. It lived in
+                    // the scrolling row and went off the right edge as soon
+                    // as a domain had a filter or two — a control you have
+                    // to go looking for is one you have lost.
+                    Expanded(
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          for (final chip in widget.filterChips) ...[
+                            Center(child: chip),
+                            Gap.hSm,
+                          ],
+                          Center(
+                            child: TrackerSortMenu(
+                              sort: widget.filter.sort,
+                              label: labels.sortLabel,
+                              sorts: labels.sorts,
+                              onSelected: widget.onSortChanged,
+                            ),
+                          ),
+                          if (!widget.filter.isEmpty) ...[
+                            Gap.hSm,
+                            Center(
+                              child: ActionChip(
+                                avatar: const Icon(Icons.close, size: 15),
+                                label: Text(labels.clearFilters),
+                                onPressed: _clear,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                    Gap.hSm,
                     TrackerViewToggle(
                       view: view,
                       onSelected: ref.read(trackerViewProvider.notifier).set,
                     ),
-                    if (!widget.filter.isEmpty) ...[
-                      Gap.hSm,
-                      ActionChip(
-                        avatar: const Icon(Icons.close, size: 15),
-                        label: Text(labels.clearFilters),
-                        onPressed: _clear,
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -387,10 +414,12 @@ class TrackerSortMenu extends StatelessWidget {
     required this.sort,
     required this.label,
     required this.onSelected,
+    this.sorts = TrackingSort.values,
   });
 
   final TrackingSort sort;
   final String Function(TrackingSort sort) label;
+  final List<TrackingSort> sorts;
   final ValueChanged<TrackingSort> onSelected;
 
   @override
@@ -398,7 +427,7 @@ class TrackerSortMenu extends StatelessWidget {
     return PopupMenuButton<TrackingSort>(
       onSelected: onSelected,
       itemBuilder: (context) => [
-        for (final value in TrackingSort.values)
+        for (final value in sorts)
           PopupMenuItem(value: value, child: Text(label(value))),
       ],
       child: ChipShell(label: label(sort), icon: Icons.sort),

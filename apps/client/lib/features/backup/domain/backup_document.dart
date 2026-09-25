@@ -8,6 +8,7 @@ import '../../franchises/domain/franchise.dart';
 import '../../games/domain/game.dart';
 import '../../rooms/domain/room.dart';
 import '../../screen/domain/viewing.dart';
+import '../../watchlist/domain/wish.dart';
 
 /// Raised when an imported file is not a Memini backup this build understands.
 class BackupFormatException implements Exception {
@@ -33,6 +34,7 @@ class BackupDocument {
     required this.gigs,
     required this.viewings,
     required this.games,
+    this.wishes = const [],
   });
 
   /// Bumped whenever the shape changes in a way older builds cannot read.
@@ -54,6 +56,10 @@ class BackupDocument {
   final List<Viewing> viewings;
   final List<Game> games;
 
+  /// The watchlist. Defaulted rather than required, because every file
+  /// written before the watchlist existed simply has none.
+  final List<Wish> wishes;
+
   factory BackupDocument.of({
     required List<Franchise> franchises,
     required List<Room> rooms,
@@ -61,6 +67,7 @@ class BackupDocument {
     List<Gig> gigs = const [],
     List<Viewing> viewings = const [],
     List<Game> games = const [],
+    List<Wish> wishes = const [],
     DateTime? exportedAt,
   }) {
     return BackupDocument(
@@ -72,11 +79,16 @@ class BackupDocument {
       gigs: gigs,
       viewings: viewings,
       games: games,
+      wishes: wishes,
     );
   }
 
   /// Every tracked entry the document holds, whatever the domain. Useful for
   /// a caller that just wants to know whether a restore would lose anything.
+  ///
+  /// The watchlist is not in it: nothing on that list has happened, and a
+  /// count of what the owner has done should not be inflated by what they
+  /// mean to do. [wishes] is counted on its own where it matters.
   int get entryCount =>
       rooms.length +
       meals.length +
@@ -146,6 +158,21 @@ class BackupDocument {
           'backdropUrl': v.backdropUrl,
         },
     ],
+    'wishes': [
+      for (final w in wishes)
+        {
+          'id': w.id,
+          'kind': w.kind.name,
+          'title': w.title,
+          'note': w.note,
+          'description': w.description,
+          'releaseYear': w.releaseYear,
+          'externalId': w.externalId,
+          'posterUrl': w.posterUrl,
+          'addedOn': _dateOnly(w.addedOn),
+          'updatedAt': _instant(w.updatedAt),
+        },
+    ],
     'games': [
       for (final g in games)
         {
@@ -212,6 +239,7 @@ class BackupDocument {
     final gigIds = reader.scope('invalid-gig');
     final viewingIds = reader.scope('invalid-viewing');
     final gameIds = reader.scope('invalid-game');
+    final wishIds = reader.scope('invalid-wish');
 
     return BackupDocument(
       version: version,
@@ -231,6 +259,38 @@ class BackupDocument {
       games: [
         for (final json in _listOf(raw['games'])) _game(json, gameIds, reader),
       ],
+      wishes: [
+        for (final json in _listOf(raw['wishes'])) _wish(json, wishIds, reader),
+      ],
+    );
+  }
+
+  /// A wish, which shares none of [_common]: it has no day it happened, no
+  /// score and no review, which is the whole point of it being its own list.
+  static Wish _wish(
+    Map<String, dynamic> json,
+    _IdScope ids,
+    _IdReader reader,
+  ) {
+    const reason = 'invalid-wish';
+    final title = json['title'];
+    final addedOn = DateTime.tryParse(json['addedOn'] as String? ?? '');
+
+    if (title is! String || title.trim().isEmpty || addedOn == null) {
+      throw const BackupFormatException(reason);
+    }
+
+    return Wish(
+      id: ids.declare(json['id']),
+      kind: _enumByName(json['kind'], WishKind.values, reason),
+      title: title,
+      addedOn: DateTime(addedOn.year, addedOn.month, addedOn.day),
+      updatedAt: reader.updatedAt(json['updatedAt'], reason),
+      note: json['note'] as String?,
+      description: json['description'] as String?,
+      releaseYear: json['releaseYear'] as int?,
+      externalId: json['externalId'] as String?,
+      posterUrl: json['posterUrl'] as String?,
     );
   }
 

@@ -12,13 +12,24 @@ import '../../features/screen/domain/viewing.dart';
 import '../ids/uuid.dart';
 import 'app_database.steps.dart';
 import 'legacy_photos.dart';
+import '../../features/watchlist/data/wish_tables.dart';
+import '../../features/watchlist/domain/wish.dart';
 import '../photos/data/photo_tables.dart';
 import 'storage_durability.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [Franchises, Rooms, Meals, Gigs, Viewings, Games, EntryPhotos],
+  tables: [
+    Franchises,
+    Rooms,
+    Meals,
+    Gigs,
+    Viewings,
+    Games,
+    EntryPhotos,
+    Wishes,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase({void Function(StorageDurability)? onStorageChosen})
@@ -54,7 +65,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 7;
+  static const currentSchemaVersion = 8;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -207,6 +218,13 @@ class AppDatabase extends _$AppDatabase {
               // createTable creates the table and nothing else, so the
               // index the table declares has to be asked for by name.
               await m.create(schema.photoByOwner);
+            },
+            // v8 adds the watchlist: things meant for later, which have
+            // none of what a tracked entry has. A new table, so nothing
+            // already stored is touched.
+            from7To8: (m, schema) async {
+              await m.createTable(schema.wishes);
+              await m.create(schema.wishByKind);
             },
           ),
         );

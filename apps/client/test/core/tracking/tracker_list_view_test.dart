@@ -91,6 +91,33 @@ void main() {
     await unmount(tester);
   });
 
+  testWidgets('the toggle stays on screen on a phone, filters and all', (
+    tester,
+  ) async {
+    // Rooms carries three filter controls, which is what used to push the
+    // switch off the right edge of the scrolling row.
+    await addRooms(2);
+    tester.view.physicalSize = const Size(400, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      await harness(const RoomListScreen(), database: db),
+    );
+    await settle(tester);
+
+    final toggle = find.byTooltip('Show as a grid');
+    expect(tester.getRect(toggle).right, lessThanOrEqualTo(400));
+
+    // Tapping is the real proof: a widget in the tree but under something
+    // else, or outside the window, cannot be hit.
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TrackerTile), findsNWidgets(2));
+    await unmount(tester);
+  });
+
   testWidgets('the shape chosen is remembered', (tester) async {
     await addRooms(1);
 

@@ -312,7 +312,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tutorial1Body =>
-      'Registrá salas de escape, comidas, recitales, películas, series y juegos: la fecha y los datos que importan en cada caso.';
+      'Registrá salas de escape, comidas, recitales, películas, series y juegos: la fecha y los datos que importan en cada caso. Lo que todavía no hiciste va a pendientes.';
 
   @override
   String get tutorial2Title => 'Puntuálas como un crítico';
@@ -1123,4 +1123,104 @@ class AppLocalizationsEs extends AppLocalizations {
   String pageOf(int page, int pages) {
     return '$page de $pages';
   }
+
+  @override
+  String get navWatchlist => 'Pendientes';
+
+  @override
+  String get watchlistTitle => 'Pendientes';
+
+  @override
+  String get watchlistSearchHint => 'Buscar en pendientes';
+
+  @override
+  String watchlistCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cosas pendientes',
+      one: '1 cosa pendiente',
+      zero: 'Nada en la lista',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get watchlistAdd => 'Agregar a pendientes';
+
+  @override
+  String get watchlistEmptyTitle => 'Todavía no hay nada esperando';
+
+  @override
+  String get watchlistEmptyBody =>
+      'La película de la que todos hablan, el juego esperando una oferta, la banda que todavía no anunció gira. Ponelo acá antes de olvidarte.';
+
+  @override
+  String get watchlistEmptyFiltered => 'Nada de la lista coincide con eso.';
+
+  @override
+  String get watchlistSortNewest => 'Agregado último';
+
+  @override
+  String get watchlistSortOldest => 'Agregado primero';
+
+  @override
+  String get wishKindScreen => 'Película o serie';
+
+  @override
+  String get wishKindGame => 'Juego';
+
+  @override
+  String get wishKindMusic => 'Banda';
+
+  @override
+  String get wishKindAll => 'Todo';
+
+  @override
+  String get wishNote => 'Por qué está acá';
+
+  @override
+  String get wishNoteHint =>
+      'Quién te lo recomendó, dónde se ve, que estás esperando una oferta.';
+
+  @override
+  String wishAdded(String date) {
+    return 'Agregado el $date';
+  }
+
+  @override
+  String get wishSave => 'Guardar en pendientes';
+
+  @override
+  String get wishDelete => 'Sacar de pendientes';
+
+  @override
+  String wishDeleteConfirm(String title) {
+    return '¿Sacar “$title” de pendientes?';
+  }
+
+  @override
+  String get wishDone => 'Ya la vi';
+
+  @override
+  String get wishDoneGame => 'Ya lo jugué';
+
+  @override
+  String get wishDoneMusic => 'Ya los vi';
+
+  @override
+  String get wishMovedToScreen => 'Pasó a Películas y series.';
+
+  @override
+  String get wishMovedToGames => 'Pasó a Juegos.';
+
+  @override
+  String get wishMovedToConcerts => 'Pasó a Recitales.';
+
+  @override
+  String get wishMovedOpen => 'Abrir';
+
+  @override
+  String get wishMovedBody =>
+      'Guardado con la fecha de hoy y sin puntuación. Abrilo para decir qué te pareció.';
 }

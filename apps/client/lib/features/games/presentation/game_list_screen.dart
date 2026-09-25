@@ -79,6 +79,7 @@ class GameListScreen extends ConsumerWidget {
         final platform = game.platform;
         return (
           title: game.title,
+          photoOwnerId: game.id,
           subtitle: platform == null ? date : '$platform · $date',
           rating: game.rating,
           icon: Icons.sports_esports_outlined,

@@ -647,7 +647,7 @@ abstract class AppLocalizations {
   /// No description provided for @tutorial1Body.
   ///
   /// In en, this message translates to:
-  /// **'Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one.'**
+  /// **'Log escape rooms, meals, concerts, films, series and games: the date and the details that matter for each one. What you have not got to yet goes on the watchlist.'**
   String get tutorial1Body;
 
   /// No description provided for @tutorial2Title.
@@ -2065,6 +2065,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{page} of {pages}'**
   String pageOf(int page, int pages);
+
+  /// No description provided for @navWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get navWatchlist;
+
+  /// No description provided for @watchlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get watchlistTitle;
+
+  /// No description provided for @watchlistSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the watchlist'**
+  String get watchlistSearchHint;
+
+  /// How many things are waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing on the list} =1{1 thing to come} other{{count} things to come}}'**
+  String watchlistCount(int count);
+
+  /// No description provided for @watchlistAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to watchlist'**
+  String get watchlistAdd;
+
+  /// No description provided for @watchlistEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing waiting yet'**
+  String get watchlistEmptyTitle;
+
+  /// No description provided for @watchlistEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The film everyone is talking about, the game waiting for a sale, the band whose tour has not been announced. Put it here before you forget it.'**
+  String get watchlistEmptyBody;
+
+  /// No description provided for @watchlistEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on the list matches that.'**
+  String get watchlistEmptyFiltered;
+
+  /// No description provided for @watchlistSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Added last'**
+  String get watchlistSortNewest;
+
+  /// No description provided for @watchlistSortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Added first'**
+  String get watchlistSortOldest;
+
+  /// No description provided for @wishKindScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Film or series'**
+  String get wishKindScreen;
+
+  /// No description provided for @wishKindGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Game'**
+  String get wishKindGame;
+
+  /// No description provided for @wishKindMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'Band'**
+  String get wishKindMusic;
+
+  /// No description provided for @wishKindAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything'**
+  String get wishKindAll;
+
+  /// No description provided for @wishNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it is here'**
+  String get wishNote;
+
+  /// No description provided for @wishNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Who recommended it, where it is streaming, that it is waiting for a sale.'**
+  String get wishNoteHint;
+
+  /// The day a wish was put on the list.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {date}'**
+  String wishAdded(String date);
+
+  /// No description provided for @wishSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to the watchlist'**
+  String get wishSave;
+
+  /// No description provided for @wishDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from the watchlist'**
+  String get wishDelete;
+
+  /// Confirms taking one thing off the list.
+  ///
+  /// In en, this message translates to:
+  /// **'Take “{title}” off the watchlist?'**
+  String wishDeleteConfirm(String title);
+
+  /// No description provided for @wishDone.
+  ///
+  /// In en, this message translates to:
+  /// **'I have seen it'**
+  String get wishDone;
+
+  /// No description provided for @wishDoneGame.
+  ///
+  /// In en, this message translates to:
+  /// **'I have played it'**
+  String get wishDoneGame;
+
+  /// No description provided for @wishDoneMusic.
+  ///
+  /// In en, this message translates to:
+  /// **'I have seen them'**
+  String get wishDoneMusic;
+
+  /// No description provided for @wishMovedToScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to Films and series.'**
+  String get wishMovedToScreen;
+
+  /// No description provided for @wishMovedToGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to Games.'**
+  String get wishMovedToGames;
+
+  /// No description provided for @wishMovedToConcerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to Concerts.'**
+  String get wishMovedToConcerts;
+
+  /// No description provided for @wishMovedOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get wishMovedOpen;
+
+  /// No description provided for @wishMovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved with today\'s date and no score. Open it to say what you thought.'**
+  String get wishMovedBody;
 }
 
 class _AppLocalizationsDelegate

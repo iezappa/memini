@@ -65,6 +65,7 @@ class ViewingListScreen extends ConsumerWidget {
         final year = viewing.releaseYear;
         return (
           title: viewing.title,
+          photoOwnerId: viewing.id,
           subtitle: year == null ? date : '$year · $date',
           rating: viewing.rating,
           icon: Icons.movie_outlined,

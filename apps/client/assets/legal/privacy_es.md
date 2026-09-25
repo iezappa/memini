@@ -2,13 +2,13 @@
 
 [English](PRIVACY.md) · **Español**
 
-Última actualización: 2026-09-24
+Última actualización: 2026-09-25
 
 Memini es una app gratuita desarrollada por Zeke Zappa Developments (iezappa). Esta política explica, en lenguaje simple, qué pasa con tus datos.
 
 ## Qué datos guarda la app
 
-- Todo lo que registras en la app (salas de escape, comidas, conciertos, películas y series, juegos, puntuaciones, reseñas y las fotos que agregás) se guarda **solo en tu dispositivo**.
+- Todo lo que registras en la app (salas de escape, comidas, conciertos, películas y series, juegos, puntuaciones, reseñas, las fotos que agregás y tu lista de pendientes) se guarda **solo en tu dispositivo**.
 - **No se guarda en ningún servidor**: ni en los del desarrollador ni en el servidor que entrega la versión web.
 - El desarrollador **no puede ver, recuperar ni borrar** tus datos.
 - No hay cuentas, ni analítica, ni publicidad.

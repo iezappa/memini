@@ -28,6 +28,9 @@ import '../features/rooms/presentation/room_form_screen.dart';
 import '../core/tracking/presentation/tracking_labels.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/stats/presentation/stats_screen.dart';
+import '../features/watchlist/presentation/watchlist_screen.dart';
+import '../features/watchlist/presentation/wish_detail_screen.dart';
+import '../features/watchlist/presentation/wish_form_screen.dart';
 import '../l10n/app_localizations.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -79,6 +82,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             list: () => const GameListScreen(),
             form: () => const GameFormScreen(),
             detail: (id) => GameDetailScreen(gameId: id),
+          ),
+          // Between the five sections and the figures, which is where it
+          // belongs: it is a list of entries like they are, but of the ones
+          // that have not happened yet.
+          _domainBranch(
+            segment: 'watchlist',
+            list: () => const WatchlistScreen(),
+            form: () => const WishFormScreen(),
+            detail: (id) => WishDetailScreen(wishId: id),
           ),
           StatefulShellBranch(
             routes: [
@@ -147,12 +159,14 @@ class _HomeShell extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final wide = MediaQuery.sizeOf(context).width >= 720;
 
-    // Home, the five sections, and the figures — in the order the domains
-    // are declared in, so the bar reads the same as everything else.
+    // Home, the five sections, the watchlist and the figures — in the order
+    // the domains are declared in, so the bar reads the same as everything
+    // else.
     final destinations = [
       (Icons.home_outlined, Icons.home, l10n.navHome),
       for (final domain in TrackedDomain.values)
         (domain.icon, domain.icon, domain.label(l10n)),
+      (Icons.bookmark_border, Icons.bookmark, l10n.navWatchlist),
       (Icons.insights_outlined, Icons.insights, l10n.navStats),
     ];
 

@@ -4427,6 +4427,633 @@ class EntryPhotosCompanion extends UpdateCompanion<EntryPhotoRow> {
   }
 }
 
+class $WishesTable extends Wishes with TableInfo<$WishesTable, WishRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WishesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newUuid,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<WishKind, int> kind =
+      GeneratedColumn<int>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: true,
+      ).withConverter<WishKind>($WishesTable.$converterkind);
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _releaseYearMeta = const VerificationMeta(
+    'releaseYear',
+  );
+  @override
+  late final GeneratedColumn<int> releaseYear = GeneratedColumn<int>(
+    'release_year',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _externalIdMeta = const VerificationMeta(
+    'externalId',
+  );
+  @override
+  late final GeneratedColumn<String> externalId = GeneratedColumn<String>(
+    'external_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _posterUrlMeta = const VerificationMeta(
+    'posterUrl',
+  );
+  @override
+  late final GeneratedColumn<String> posterUrl = GeneratedColumn<String>(
+    'poster_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _addedOnMeta = const VerificationMeta(
+    'addedOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> addedOn = GeneratedColumn<DateTime>(
+    'added_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    kind,
+    title,
+    note,
+    description,
+    releaseYear,
+    externalId,
+    posterUrl,
+    addedOn,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'wishes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<WishRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('release_year')) {
+      context.handle(
+        _releaseYearMeta,
+        releaseYear.isAcceptableOrUnknown(
+          data['release_year']!,
+          _releaseYearMeta,
+        ),
+      );
+    }
+    if (data.containsKey('external_id')) {
+      context.handle(
+        _externalIdMeta,
+        externalId.isAcceptableOrUnknown(data['external_id']!, _externalIdMeta),
+      );
+    }
+    if (data.containsKey('poster_url')) {
+      context.handle(
+        _posterUrlMeta,
+        posterUrl.isAcceptableOrUnknown(data['poster_url']!, _posterUrlMeta),
+      );
+    }
+    if (data.containsKey('added_on')) {
+      context.handle(
+        _addedOnMeta,
+        addedOn.isAcceptableOrUnknown(data['added_on']!, _addedOnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addedOnMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WishRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WishRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      kind: $WishesTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      releaseYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}release_year'],
+      ),
+      externalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}external_id'],
+      ),
+      posterUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}poster_url'],
+      ),
+      addedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}added_on'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $WishesTable createAlias(String alias) {
+    return $WishesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<WishKind, int, int> $converterkind =
+      const EnumIndexConverter<WishKind>(WishKind.values);
+}
+
+class WishRow extends DataClass implements Insertable<WishRow> {
+  final String id;
+  final WishKind kind;
+  final String title;
+
+  /// The owner's own reason for adding it.
+  final String? note;
+
+  /// The synopsis a lookup found.
+  final String? description;
+  final int? releaseYear;
+
+  /// The source's id and cover, carried into the entry made from this wish.
+  final String? externalId;
+  final String? posterUrl;
+  final DateTime addedOn;
+  final DateTime updatedAt;
+  const WishRow({
+    required this.id,
+    required this.kind,
+    required this.title,
+    this.note,
+    this.description,
+    this.releaseYear,
+    this.externalId,
+    this.posterUrl,
+    required this.addedOn,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    {
+      map['kind'] = Variable<int>($WishesTable.$converterkind.toSql(kind));
+    }
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || releaseYear != null) {
+      map['release_year'] = Variable<int>(releaseYear);
+    }
+    if (!nullToAbsent || externalId != null) {
+      map['external_id'] = Variable<String>(externalId);
+    }
+    if (!nullToAbsent || posterUrl != null) {
+      map['poster_url'] = Variable<String>(posterUrl);
+    }
+    map['added_on'] = Variable<DateTime>(addedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  WishesCompanion toCompanion(bool nullToAbsent) {
+    return WishesCompanion(
+      id: Value(id),
+      kind: Value(kind),
+      title: Value(title),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      releaseYear: releaseYear == null && nullToAbsent
+          ? const Value.absent()
+          : Value(releaseYear),
+      externalId: externalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(externalId),
+      posterUrl: posterUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(posterUrl),
+      addedOn: Value(addedOn),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory WishRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WishRow(
+      id: serializer.fromJson<String>(json['id']),
+      kind: $WishesTable.$converterkind.fromJson(
+        serializer.fromJson<int>(json['kind']),
+      ),
+      title: serializer.fromJson<String>(json['title']),
+      note: serializer.fromJson<String?>(json['note']),
+      description: serializer.fromJson<String?>(json['description']),
+      releaseYear: serializer.fromJson<int?>(json['releaseYear']),
+      externalId: serializer.fromJson<String?>(json['externalId']),
+      posterUrl: serializer.fromJson<String?>(json['posterUrl']),
+      addedOn: serializer.fromJson<DateTime>(json['addedOn']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'kind': serializer.toJson<int>($WishesTable.$converterkind.toJson(kind)),
+      'title': serializer.toJson<String>(title),
+      'note': serializer.toJson<String?>(note),
+      'description': serializer.toJson<String?>(description),
+      'releaseYear': serializer.toJson<int?>(releaseYear),
+      'externalId': serializer.toJson<String?>(externalId),
+      'posterUrl': serializer.toJson<String?>(posterUrl),
+      'addedOn': serializer.toJson<DateTime>(addedOn),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  WishRow copyWith({
+    String? id,
+    WishKind? kind,
+    String? title,
+    Value<String?> note = const Value.absent(),
+    Value<String?> description = const Value.absent(),
+    Value<int?> releaseYear = const Value.absent(),
+    Value<String?> externalId = const Value.absent(),
+    Value<String?> posterUrl = const Value.absent(),
+    DateTime? addedOn,
+    DateTime? updatedAt,
+  }) => WishRow(
+    id: id ?? this.id,
+    kind: kind ?? this.kind,
+    title: title ?? this.title,
+    note: note.present ? note.value : this.note,
+    description: description.present ? description.value : this.description,
+    releaseYear: releaseYear.present ? releaseYear.value : this.releaseYear,
+    externalId: externalId.present ? externalId.value : this.externalId,
+    posterUrl: posterUrl.present ? posterUrl.value : this.posterUrl,
+    addedOn: addedOn ?? this.addedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  WishRow copyWithCompanion(WishesCompanion data) {
+    return WishRow(
+      id: data.id.present ? data.id.value : this.id,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      title: data.title.present ? data.title.value : this.title,
+      note: data.note.present ? data.note.value : this.note,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      releaseYear: data.releaseYear.present
+          ? data.releaseYear.value
+          : this.releaseYear,
+      externalId: data.externalId.present
+          ? data.externalId.value
+          : this.externalId,
+      posterUrl: data.posterUrl.present ? data.posterUrl.value : this.posterUrl,
+      addedOn: data.addedOn.present ? data.addedOn.value : this.addedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WishRow(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('title: $title, ')
+          ..write('note: $note, ')
+          ..write('description: $description, ')
+          ..write('releaseYear: $releaseYear, ')
+          ..write('externalId: $externalId, ')
+          ..write('posterUrl: $posterUrl, ')
+          ..write('addedOn: $addedOn, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    kind,
+    title,
+    note,
+    description,
+    releaseYear,
+    externalId,
+    posterUrl,
+    addedOn,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WishRow &&
+          other.id == this.id &&
+          other.kind == this.kind &&
+          other.title == this.title &&
+          other.note == this.note &&
+          other.description == this.description &&
+          other.releaseYear == this.releaseYear &&
+          other.externalId == this.externalId &&
+          other.posterUrl == this.posterUrl &&
+          other.addedOn == this.addedOn &&
+          other.updatedAt == this.updatedAt);
+}
+
+class WishesCompanion extends UpdateCompanion<WishRow> {
+  final Value<String> id;
+  final Value<WishKind> kind;
+  final Value<String> title;
+  final Value<String?> note;
+  final Value<String?> description;
+  final Value<int?> releaseYear;
+  final Value<String?> externalId;
+  final Value<String?> posterUrl;
+  final Value<DateTime> addedOn;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const WishesCompanion({
+    this.id = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.title = const Value.absent(),
+    this.note = const Value.absent(),
+    this.description = const Value.absent(),
+    this.releaseYear = const Value.absent(),
+    this.externalId = const Value.absent(),
+    this.posterUrl = const Value.absent(),
+    this.addedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WishesCompanion.insert({
+    this.id = const Value.absent(),
+    required WishKind kind,
+    required String title,
+    this.note = const Value.absent(),
+    this.description = const Value.absent(),
+    this.releaseYear = const Value.absent(),
+    this.externalId = const Value.absent(),
+    this.posterUrl = const Value.absent(),
+    required DateTime addedOn,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : kind = Value(kind),
+       title = Value(title),
+       addedOn = Value(addedOn),
+       updatedAt = Value(updatedAt);
+  static Insertable<WishRow> custom({
+    Expression<String>? id,
+    Expression<int>? kind,
+    Expression<String>? title,
+    Expression<String>? note,
+    Expression<String>? description,
+    Expression<int>? releaseYear,
+    Expression<String>? externalId,
+    Expression<String>? posterUrl,
+    Expression<DateTime>? addedOn,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (kind != null) 'kind': kind,
+      if (title != null) 'title': title,
+      if (note != null) 'note': note,
+      if (description != null) 'description': description,
+      if (releaseYear != null) 'release_year': releaseYear,
+      if (externalId != null) 'external_id': externalId,
+      if (posterUrl != null) 'poster_url': posterUrl,
+      if (addedOn != null) 'added_on': addedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WishesCompanion copyWith({
+    Value<String>? id,
+    Value<WishKind>? kind,
+    Value<String>? title,
+    Value<String?>? note,
+    Value<String?>? description,
+    Value<int?>? releaseYear,
+    Value<String?>? externalId,
+    Value<String?>? posterUrl,
+    Value<DateTime>? addedOn,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return WishesCompanion(
+      id: id ?? this.id,
+      kind: kind ?? this.kind,
+      title: title ?? this.title,
+      note: note ?? this.note,
+      description: description ?? this.description,
+      releaseYear: releaseYear ?? this.releaseYear,
+      externalId: externalId ?? this.externalId,
+      posterUrl: posterUrl ?? this.posterUrl,
+      addedOn: addedOn ?? this.addedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<int>(
+        $WishesTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (releaseYear.present) {
+      map['release_year'] = Variable<int>(releaseYear.value);
+    }
+    if (externalId.present) {
+      map['external_id'] = Variable<String>(externalId.value);
+    }
+    if (posterUrl.present) {
+      map['poster_url'] = Variable<String>(posterUrl.value);
+    }
+    if (addedOn.present) {
+      map['added_on'] = Variable<DateTime>(addedOn.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WishesCompanion(')
+          ..write('id: $id, ')
+          ..write('kind: $kind, ')
+          ..write('title: $title, ')
+          ..write('note: $note, ')
+          ..write('description: $description, ')
+          ..write('releaseYear: $releaseYear, ')
+          ..write('externalId: $externalId, ')
+          ..write('posterUrl: $posterUrl, ')
+          ..write('addedOn: $addedOn, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4437,9 +5064,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ViewingsTable viewings = $ViewingsTable(this);
   late final $GamesTable games = $GamesTable(this);
   late final $EntryPhotosTable entryPhotos = $EntryPhotosTable(this);
+  late final $WishesTable wishes = $WishesTable(this);
   late final Index photoByOwner = Index(
     'photo_by_owner',
     'CREATE INDEX IF NOT EXISTS photo_by_owner ON entry_photos (owner_id)',
+  );
+  late final Index wishByKind = Index(
+    'wish_by_kind',
+    'CREATE INDEX IF NOT EXISTS wish_by_kind ON wishes (kind)',
   );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -4453,7 +5085,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     viewings,
     games,
     entryPhotos,
+    wishes,
     photoByOwner,
+    wishByKind,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -6766,6 +7400,300 @@ typedef $$EntryPhotosTableProcessedTableManager =
       EntryPhotoRow,
       PrefetchHooks Function()
     >;
+typedef $$WishesTableCreateCompanionBuilder = WishesCompanion Function({
+  Value<String> id,
+  required WishKind kind,
+  required String title,
+  Value<String?> note,
+  Value<String?> description,
+  Value<int?> releaseYear,
+  Value<String?> externalId,
+  Value<String?> posterUrl,
+  required DateTime addedOn,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$WishesTableUpdateCompanionBuilder = WishesCompanion Function({
+  Value<String> id,
+  Value<WishKind> kind,
+  Value<String> title,
+  Value<String?> note,
+  Value<String?> description,
+  Value<int?> releaseYear,
+  Value<String?> externalId,
+  Value<String?> posterUrl,
+  Value<DateTime> addedOn,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$WishesTableFilterComposer
+    extends Composer<_$AppDatabase, $WishesTable> {
+  $$WishesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<WishKind, WishKind, int> get kind =>
+      $composableBuilder(
+        column: $table.kind,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get releaseYear => $composableBuilder(
+    column: $table.releaseYear,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get posterUrl => $composableBuilder(
+    column: $table.posterUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get addedOn => $composableBuilder(
+    column: $table.addedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$WishesTableOrderingComposer
+    extends Composer<_$AppDatabase, $WishesTable> {
+  $$WishesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get releaseYear => $composableBuilder(
+    column: $table.releaseYear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get posterUrl => $composableBuilder(
+    column: $table.posterUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get addedOn => $composableBuilder(
+    column: $table.addedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$WishesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WishesTable> {
+  $$WishesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<WishKind, int> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get releaseYear => $composableBuilder(
+    column: $table.releaseYear,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get posterUrl =>
+      $composableBuilder(column: $table.posterUrl, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get addedOn =>
+      $composableBuilder(column: $table.addedOn, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$WishesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WishesTable,
+          WishRow,
+          $$WishesTableFilterComposer,
+          $$WishesTableOrderingComposer,
+          $$WishesTableAnnotationComposer,
+          $$WishesTableCreateCompanionBuilder,
+          $$WishesTableUpdateCompanionBuilder,
+          (WishRow, BaseReferences<_$AppDatabase, $WishesTable, WishRow>),
+          WishRow,
+          PrefetchHooks Function()
+        > {
+  $$WishesTableTableManager(_$AppDatabase db, $WishesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WishesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$WishesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$WishesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<WishKind> kind = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<int?> releaseYear = const Value.absent(),
+                Value<String?> externalId = const Value.absent(),
+                Value<String?> posterUrl = const Value.absent(),
+                Value<DateTime> addedOn = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WishesCompanion(
+                id: id,
+                kind: kind,
+                title: title,
+                note: note,
+                description: description,
+                releaseYear: releaseYear,
+                externalId: externalId,
+                posterUrl: posterUrl,
+                addedOn: addedOn,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required WishKind kind,
+                required String title,
+                Value<String?> note = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<int?> releaseYear = const Value.absent(),
+                Value<String?> externalId = const Value.absent(),
+                Value<String?> posterUrl = const Value.absent(),
+                required DateTime addedOn,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => WishesCompanion.insert(
+                id: id,
+                kind: kind,
+                title: title,
+                note: note,
+                description: description,
+                releaseYear: releaseYear,
+                externalId: externalId,
+                posterUrl: posterUrl,
+                addedOn: addedOn,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$WishesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WishesTable,
+      WishRow,
+      $$WishesTableFilterComposer,
+      $$WishesTableOrderingComposer,
+      $$WishesTableAnnotationComposer,
+      $$WishesTableCreateCompanionBuilder,
+      $$WishesTableUpdateCompanionBuilder,
+      (WishRow, BaseReferences<_$AppDatabase, $WishesTable, WishRow>),
+      WishRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6783,4 +7711,6 @@ class $AppDatabaseManager {
       $$GamesTableTableManager(_db, _db.games);
   $$EntryPhotosTableTableManager get entryPhotos =>
       $$EntryPhotosTableTableManager(_db, _db.entryPhotos);
+  $$WishesTableTableManager get wishes =>
+      $$WishesTableTableManager(_db, _db.wishes);
 }
