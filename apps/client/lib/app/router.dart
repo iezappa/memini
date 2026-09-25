@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../core/theme/theme.dart';
+import 'nav_rail.dart';
 import '../features/backup/presentation/backup_notice.dart';
 import '../features/backup/presentation/backup_reminder_banner.dart';
 import '../features/backup/presentation/storage_warning_banner.dart';
@@ -199,20 +199,11 @@ class _HomeShell extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          NavigationRail(
+          NavRail(
+            destinations: destinations,
             selectedIndex: shell.currentIndex,
-            onDestinationSelected: shell.goBranch,
-            labelType: NavigationRailLabelType.all,
-            destinations: [
-              for (final (icon, selected, label) in destinations)
-                NavigationRailDestination(
-                  icon: Icon(icon),
-                  selectedIcon: Icon(selected),
-                  label: Text(label),
-                ),
-            ],
+            onSelected: shell.goBranch,
           ),
-          VerticalDivider(width: 1, color: context.semantics.hairline),
           Expanded(child: _WithNotices(child: shell)),
         ],
       ),

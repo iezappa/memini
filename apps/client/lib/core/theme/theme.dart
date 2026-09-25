@@ -387,24 +387,6 @@ abstract final class MeminiTheme {
           text.labelSmall?.copyWith(color: semantics.muted),
         ),
       ),
-      // The rail is the same bar turned on its side, so it is themed here
-      // rather than at the one call site: it used to take the page's own
-      // background, which left no edge between the navigation and the
-      // content beyond a hairline.
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: Colors.transparent,
-        indicatorColor: scheme.primary.withValues(alpha: 0.18),
-        indicatorShape: const RoundedRectangleBorder(
-          borderRadius: Radii.pill,
-        ),
-        selectedLabelTextStyle: text.labelSmall?.copyWith(
-          color: scheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelTextStyle: text.labelSmall?.copyWith(
-          color: semantics.muted,
-        ),
-      ),
     );
   }
 }

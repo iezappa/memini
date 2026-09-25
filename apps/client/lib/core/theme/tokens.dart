@@ -24,7 +24,11 @@ abstract final class MeminiColors {
   // Outcome. Muted on purpose: a failed room is a memory, not an error.
   static const escaped = Color(0xFF7FA88A);
   static const escapedDeep = Color(0xFF3F6B50);
-  static const failed = Color(0xFFB4756B);
+  /// Lightened from B4756B when the accent wash went behind the app: at
+  /// 15px on the tinted page it measured 4.44 against the 4.5 the contrast
+  /// tests hold every screen to. 4.71 on the lightest page any accent makes,
+  /// 6.59 where the page is still plain.
+  static const failed = Color(0xFFC48A80);
   static const failedDeep = Color(0xFF8C4A3F);
 
   static const textOnInk = Color(0xFFF4EFE7);
