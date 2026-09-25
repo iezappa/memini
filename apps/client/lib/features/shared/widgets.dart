@@ -10,7 +10,9 @@ class ContentColumn extends StatelessWidget {
   const ContentColumn({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.symmetric(horizontal: Gap.md),
+    // Wider than it was: with the column filling the window there is no
+    // page left either side to stand in for a margin, so it carries its own.
+    this.padding = const EdgeInsets.symmetric(horizontal: Gap.lg),
   });
 
   final Widget child;

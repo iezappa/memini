@@ -28,7 +28,11 @@ abstract final class MeminiColors {
   static const failedDeep = Color(0xFF8C4A3F);
 
   static const textOnInk = Color(0xFFF4EFE7);
-  static const mutedOnInk = Color(0xFF9C9186);
+  /// Lightened from 9C9186 when the accent wash went behind the app: a
+  /// tinted page is a lighter page, and an 11px label on it measured 4.40
+  /// against the 4.5 the contrast tests hold every screen to. 5.04 now, and
+  /// 7.05 where the page is still plain.
+  static const mutedOnInk = Color(0xFFA79C90);
   static const textOnPaper = Color(0xFF191512);
   static const mutedOnPaper = Color(0xFF6E655B);
 }
@@ -104,14 +108,15 @@ abstract final class Radii {
 
 /// Widest the content column ever gets.
 ///
-/// Raised from 900: at that cap a desktop window showed a ribbon of app
-/// down the middle with empty page either side, and the pages that are
-/// grids and lists rather than prose — every section of this app — looked
-/// squeezed into a phone that had been left on a monitor.
+/// Raised twice, from 900 to 1240 to this. At 1240 a wide window still put a
+/// ribbon of app down the middle with a hand's width of empty page on each
+/// side of it, which on a screen that is mostly grids and lists reads as an
+/// app that did not notice the monitor it was opened on. At 1600 it fills a
+/// laptop, and a very wide monitor gets a margin rather than a desert.
 ///
 /// Prose still gets a measure of its own: [kProseMaxWidth] is what a review
 /// is read at, so a paragraph does not run the full width of a 4K screen.
-const double kContentMaxWidth = 1240;
+const double kContentMaxWidth = 1600;
 
 /// Widest a paragraph is set. Beyond this the eye loses the line it is on.
 const double kProseMaxWidth = 720;

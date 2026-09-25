@@ -11,7 +11,9 @@ import 'package:memini/app/providers.dart';
 import 'package:memini/core/database/app_database.dart';
 import 'package:memini/features/backup/presentation/backup_files.dart';
 import 'package:memini/features/security/data/pin_service.dart';
+import 'package:memini/core/theme/accent_backdrop.dart';
 import 'package:memini/core/theme/theme.dart';
+import 'package:memini/core/theme/tokens.dart';
 import 'package:memini/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +26,7 @@ Future<Widget> harness(
   List<Override> overrides = const [],
   Map<String, Object> prefs = const {},
   ThemeMode themeMode = ThemeMode.light,
+  AppAccent accent = AppAccent.brass,
 }) async {
   SharedPreferences.setMockInitialValues(prefs);
 
@@ -36,12 +39,17 @@ Future<Widget> harness(
       ...overrides,
     ],
     child: MaterialApp(
-      theme: MeminiTheme.light(),
-      darkTheme: MeminiTheme.dark(),
+      theme: MeminiTheme.light(accent),
+      darkTheme: MeminiTheme.dark(accent),
       themeMode: themeMode,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      // The same wrapper the app puts under everything. Scaffolds are
+      // transparent now, so without it a test would pump a screen onto
+      // nothing — and the contrast checks would be measuring against it.
+      builder: (context, child) =>
+          AccentBackdrop(child: child ?? const SizedBox.shrink()),
       home: child,
     ),
   );

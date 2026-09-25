@@ -996,11 +996,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeSuggestions => 'Para ver o jugar';
 
   @override
-  String homeSuggestionsHint(String source) {
-    return 'De $source, al azar. No se guarda nada.';
-  }
-
-  @override
   String get homeSuggestionsAnother => 'Otra';
 
   @override

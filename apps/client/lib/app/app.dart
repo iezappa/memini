@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/theme/accent_backdrop.dart';
 import '../core/theme/theme.dart';
 import '../features/backup/presentation/database_gate.dart';
 import '../features/security/presentation/lock_screen.dart';
@@ -57,7 +58,9 @@ class MeminiApp extends ConsumerWidget {
   }
 
   /// The database gate goes over everything: there is no point greeting, or
-  /// unlocking, an app whose store would not open.
-  static Widget _gated(BuildContext context, Widget? child) =>
-      DatabaseGate(child: child ?? const SizedBox.shrink());
+  /// unlocking, an app whose store would not open. The backdrop goes under
+  /// everything, for the same reason it is not painted per screen.
+  static Widget _gated(BuildContext context, Widget? child) => AccentBackdrop(
+    child: DatabaseGate(child: child ?? const SizedBox.shrink()),
+  );
 }

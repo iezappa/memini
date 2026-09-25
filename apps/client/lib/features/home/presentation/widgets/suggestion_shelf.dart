@@ -96,36 +96,38 @@ class _Shelf extends ConsumerWidget {
       data: (picks) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.homeSuggestionsHint(
-                    ref
-                        .watch(recommendationSourcesProvider)
-                        .where((source) => source.isConfigured)
-                        .map((source) => source.attribution)
-                        .join(' · '),
-                  ),
-                  style: context.text.bodySmall?.copyWith(
-                    color: context.semantics.muted,
-                  ),
-                ),
-              ),
-              TextButton.icon(
-                icon: const Icon(Icons.casino_outlined, size: 18),
-                label: Text(l10n.homeSuggestionsAnother),
-                onPressed: () => ref
-                    .read(suggestionRollProvider.notifier)
-                    .update((roll) => roll + 1),
-              ),
-            ],
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              icon: const Icon(Icons.casino_outlined, size: 18),
+              label: Text(l10n.homeSuggestionsAnother),
+              onPressed: () => ref
+                  .read(suggestionRollProvider.notifier)
+                  .update((roll) => roll + 1),
+            ),
           ),
           Gap.vSm,
           Wrap(
             spacing: Gap.md,
             runSpacing: Gap.md,
             children: [for (final pick in picks) _Card(pick: pick)],
+          ),
+          Gap.vSm,
+          // The sentence that used to be here explained that a suggestion
+          // is random and is not saved, which the owner can see for
+          // themselves. The names stay: TMDB and RAWG both require the
+          // credit to be visible wherever their data is, and this shelf is
+          // their data.
+          Text(
+            ref
+                .watch(recommendationSourcesProvider)
+                .where((source) => source.isConfigured)
+                .map((source) => source.attribution)
+                .join(' · '),
+            style: context.text.bodySmall?.copyWith(
+              color: context.semantics.muted,
+              fontSize: 11,
+            ),
           ),
         ],
       ),

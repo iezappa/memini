@@ -1832,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'To watch or play'**
   String get homeSuggestions;
 
-  /// No description provided for @homeSuggestionsHint.
-  ///
-  /// In en, this message translates to:
-  /// **'From {source}, at random. Nothing is stored.'**
-  String homeSuggestionsHint(String source);
-
   /// No description provided for @homeSuggestionsAnother.
   ///
   /// In en, this message translates to:

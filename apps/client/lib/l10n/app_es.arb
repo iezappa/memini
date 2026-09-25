@@ -400,14 +400,6 @@
   "homeStatThisMonth": "Este mes",
   "homeStatNone": "—",
   "homeSuggestions": "Para ver o jugar",
-  "homeSuggestionsHint": "De {source}, al azar. No se guarda nada.",
-  "@homeSuggestionsHint": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      }
-    }
-  },
   "homeSuggestionsAnother": "Otra",
   "homeSuggestionsNoKey": "Cargá tu clave de TMDB o de RAWG en Ajustes para ver sugerencias.",
   "homeSuggestionsUnavailable": "No se pudieron traer sugerencias ahora.",

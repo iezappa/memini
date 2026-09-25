@@ -10,6 +10,7 @@ class MeminiSemantics extends ThemeExtension<MeminiSemantics> {
     required this.failed,
     required this.muted,
     required this.hairline,
+    required this.page,
   });
 
   final Color escaped;
@@ -17,18 +18,28 @@ class MeminiSemantics extends ThemeExtension<MeminiSemantics> {
   final Color muted;
   final Color hairline;
 
+  /// What the page is, under everything.
+  ///
+  /// It used to be the scaffold's own colour. The scaffold is transparent
+  /// now so that one accent-tinted wash can run behind the whole app rather
+  /// than being covered by each screen in turn, and this is the colour that
+  /// wash fades into. See [AccentBackdrop].
+  final Color page;
+
   @override
   MeminiSemantics copyWith({
     Color? escaped,
     Color? failed,
     Color? muted,
     Color? hairline,
+    Color? page,
   }) {
     return MeminiSemantics(
       escaped: escaped ?? this.escaped,
       failed: failed ?? this.failed,
       muted: muted ?? this.muted,
       hairline: hairline ?? this.hairline,
+      page: page ?? this.page,
     );
   }
 
@@ -40,6 +51,7 @@ class MeminiSemantics extends ThemeExtension<MeminiSemantics> {
       failed: Color.lerp(failed, other.failed, t)!,
       muted: Color.lerp(muted, other.muted, t)!,
       hairline: Color.lerp(hairline, other.hairline, t)!,
+      page: Color.lerp(page, other.page, t)!,
     );
   }
 }
@@ -86,12 +98,12 @@ abstract final class MeminiTheme {
       outlineVariant: MeminiColors.paperBorder,
       error: MeminiColors.failedDeep,
     ),
-    background: MeminiColors.paper,
     semantics: const MeminiSemantics(
       escaped: MeminiColors.escapedDeep,
       failed: MeminiColors.failedDeep,
       muted: MeminiColors.mutedOnPaper,
       hairline: MeminiColors.paperBorder,
+      page: MeminiColors.paper,
     ),
   );
 
@@ -108,19 +120,18 @@ abstract final class MeminiTheme {
       outlineVariant: MeminiColors.inkBorder,
       error: MeminiColors.failed,
     ),
-    background: MeminiColors.ink,
     semantics: const MeminiSemantics(
       escaped: MeminiColors.escaped,
       failed: MeminiColors.failed,
       muted: MeminiColors.mutedOnInk,
       hairline: MeminiColors.inkBorder,
+      page: MeminiColors.ink,
     ),
   );
 
   static ThemeData _build({
     required Brightness brightness,
     required ColorScheme scheme,
-    required Color background,
     required MeminiSemantics semantics,
   }) {
     final base = ThemeData(brightness: brightness, colorScheme: scheme);
@@ -198,11 +209,14 @@ abstract final class MeminiTheme {
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor: background,
+      // Transparent, all of it: the page itself is painted once by
+      // [AccentBackdrop], and a screen, a bar or a rail that brought its own
+      // opaque colour would cut a rectangle out of the wash behind it.
+      scaffoldBackgroundColor: Colors.transparent,
       textTheme: text,
       extensions: [semantics],
       appBarTheme: AppBarTheme(
-        backgroundColor: background,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -359,7 +373,7 @@ abstract final class MeminiTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: background,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         indicatorColor: scheme.primary.withValues(alpha: 0.18),
         indicatorShape: const RoundedRectangleBorder(
@@ -378,7 +392,7 @@ abstract final class MeminiTheme {
       // background, which left no edge between the navigation and the
       // content beyond a hairline.
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: background,
+        backgroundColor: Colors.transparent,
         indicatorColor: scheme.primary.withValues(alpha: 0.18),
         indicatorShape: const RoundedRectangleBorder(
           borderRadius: Radii.pill,

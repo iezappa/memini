@@ -996,11 +996,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeSuggestions => 'To watch or play';
 
   @override
-  String homeSuggestionsHint(String source) {
-    return 'From $source, at random. Nothing is stored.';
-  }
-
-  @override
   String get homeSuggestionsAnother => 'Another';
 
   @override

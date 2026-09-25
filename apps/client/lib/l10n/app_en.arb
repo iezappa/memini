@@ -463,14 +463,6 @@
   "homeStatThisMonth": "This month",
   "homeStatNone": "—",
   "homeSuggestions": "To watch or play",
-  "homeSuggestionsHint": "From {source}, at random. Nothing is stored.",
-  "@homeSuggestionsHint": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      }
-    }
-  },
   "homeSuggestionsAnother": "Another",
   "homeSuggestionsNoKey": "Add your TMDB or RAWG key in Settings to see suggestions.",
   "homeSuggestionsUnavailable": "Suggestions could not be fetched right now.",
