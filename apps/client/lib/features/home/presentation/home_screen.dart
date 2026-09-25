@@ -219,20 +219,35 @@ class _Numbers extends ConsumerWidget {
     final numbers = ref.watch(homeNumbersProvider);
     final locale = Localizations.localeOf(context).toLanguageTag();
 
-    return Wrap(
-      spacing: Gap.lg,
-      runSpacing: Gap.md,
+    // Three tiles of equal width rather than three figures floating in a
+    // wrap: the numbers are the same, but a row of tiles reads as a panel
+    // instead of as a sentence that ran out of punctuation.
+    return Row(
       children: [
-        _Number(label: l10n.homeStatEntries, value: '${numbers.entries}'),
-        _Number(
-          label: l10n.homeStatRating,
-          // One decimal: the difference between 7.8 and 7.9 is the whole
-          // point of keeping a score, and 7.83 is not a thing anyone means.
-          value: numbers.rating == null
-              ? l10n.homeStatNone
-              : NumberFormat('0.0', locale).format(numbers.rating),
+        Expanded(
+          child: _Number(
+            label: l10n.homeStatEntries,
+            value: '${numbers.entries}',
+          ),
         ),
-        _Number(label: l10n.homeStatThisMonth, value: '${numbers.thisMonth}'),
+        Gap.hSm,
+        Expanded(
+          child: _Number(
+            label: l10n.homeStatRating,
+            // One decimal: the difference between 7.8 and 7.9 is the whole
+            // point of keeping a score, and 7.83 is not a thing anyone means.
+            value: numbers.rating == null
+                ? l10n.homeStatNone
+                : NumberFormat('0.0', locale).format(numbers.rating),
+          ),
+        ),
+        Gap.hSm,
+        Expanded(
+          child: _Number(
+            label: l10n.homeStatThisMonth,
+            value: '${numbers.thisMonth}',
+          ),
+        ),
       ],
     );
   }
@@ -246,17 +261,33 @@ class _Number extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(value, style: context.text.headlineMedium),
-        Text(
-          label,
-          style: context.text.bodySmall?.copyWith(
-            color: context.semantics.muted,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Gap.md,
+        vertical: Gap.md - 2,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerHighest,
+        borderRadius: Radii.card,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: context.text.headlineMedium,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+          Text(
+            label,
+            style: context.text.bodySmall?.copyWith(
+              color: context.semantics.muted,
+            ),
+            maxLines: 2,
+          ),
+        ],
+      ),
     );
   }
 }

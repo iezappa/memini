@@ -124,6 +124,7 @@ abstract final class MeminiTheme {
     required MeminiSemantics semantics,
   }) {
     final base = ThemeData(brightness: brightness, colorScheme: scheme);
+    final onInk = brightness == Brightness.dark;
 
     // One face throughout, told apart by size and weight rather than by
     // family. Tight letter spacing on the big sizes is what keeps a sans
@@ -209,14 +210,25 @@ abstract final class MeminiTheme {
         titleTextStyle: text.titleLarge,
         iconTheme: IconThemeData(color: scheme.onSurface),
       ),
+      // Depth instead of an outline, where depth is visible.
+      //
+      // A 1px border around every card is what made the app read as a form:
+      // the eye sees the boxes before it sees what is in them. On paper a
+      // soft shadow does the same job of separating the card from the page
+      // without drawing anything, so the border goes. On ink a shadow is
+      // invisible — black on black — so there the hairline stays, and the
+      // surface is a shade lighter than the page instead.
       cardTheme: CardThemeData(
         color: scheme.surface,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
+        shadowColor: Colors.black.withValues(alpha: onInk ? 0 : 0.10),
+        elevation: onInk ? 0 : 3,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: Radii.card,
-          side: BorderSide(color: semantics.hairline),
+          side: onInk
+              ? BorderSide(color: semantics.hairline)
+              : BorderSide.none,
         ),
       ),
       dividerTheme: DividerThemeData(
@@ -229,19 +241,23 @@ abstract final class MeminiTheme {
         fillColor: scheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: Gap.md,
-          vertical: 14,
+          vertical: 15,
         ),
-        border: OutlineInputBorder(
+        // The fill is the field. A box drawn round a filled field says the
+        // same thing twice, and once the boxes are gone the focus ring is
+        // the only outline on the page — which is what makes it read as
+        // focus rather than as decoration.
+        border: const OutlineInputBorder(
           borderRadius: Radii.field,
-          borderSide: BorderSide(color: semantics.hairline),
+          borderSide: BorderSide.none,
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: Radii.field,
-          borderSide: BorderSide(color: semantics.hairline),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: Radii.field,
-          borderSide: BorderSide(color: scheme.primary, width: 1.5),
+          borderSide: BorderSide(color: scheme.primary, width: 2),
         ),
         labelStyle: TextStyle(fontFamily: _body, color: semantics.muted),
         hintStyle: TextStyle(fontFamily: _body, color: semantics.muted),
@@ -269,33 +285,86 @@ abstract final class MeminiTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Colors.transparent,
-        selectedColor: scheme.primary.withValues(alpha: 0.14),
-        side: BorderSide(color: semantics.hairline),
+        backgroundColor: scheme.surfaceContainerHighest,
+        selectedColor: scheme.primary.withValues(alpha: 0.18),
+        side: BorderSide.none,
         shape: const RoundedRectangleBorder(borderRadius: Radii.pill),
         labelStyle: TextStyle(
           fontFamily: _body,
           fontSize: 13,
+          fontWeight: FontWeight.w500,
           color: scheme.onSurface,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: scheme.surfaceContainerHighest,
         contentTextStyle: text.bodyMedium,
+        elevation: 4,
         shape: const RoundedRectangleBorder(borderRadius: Radii.field),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: scheme.surface,
         surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(borderRadius: Radii.card),
+        shape: const RoundedRectangleBorder(borderRadius: Radii.sheet),
         titleTextStyle: text.titleLarge,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+      ),
+      // A menu is a small card, so it is shaped like one.
+      popupMenuTheme: PopupMenuThemeData(
+        color: scheme.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 4,
+        shape: const RoundedRectangleBorder(borderRadius: Radii.field),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(scheme.surface),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+          shape: const WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: Radii.field),
+          ),
+        ),
+      ),
+      // Squircle rather than circle: the shape the rest of the app is cut
+      // to, at the size that makes it the loudest thing on the screen.
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 3,
+        focusElevation: 3,
+        hoverElevation: 5,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+        extendedTextStyle: text.labelLarge?.copyWith(color: scheme.onPrimary),
+        shape: const RoundedRectangleBorder(borderRadius: Radii.field),
+      ),
+      listTileTheme: const ListTileThemeData(
+        shape: RoundedRectangleBorder(borderRadius: Radii.field),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(text.labelLarge),
+          side: WidgetStatePropertyAll(
+            BorderSide(color: semantics.hairline),
+          ),
+          shape: const WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: Radii.pill),
+          ),
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: background,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: scheme.primary.withValues(alpha: 0.14),
+        indicatorColor: scheme.primary.withValues(alpha: 0.18),
+        indicatorShape: const RoundedRectangleBorder(
+          borderRadius: Radii.pill,
+        ),
         elevation: 0,
         // Room for an icon and one line under it. Left to Material's
         // default the bar is taller than it needs to be on a phone.
@@ -310,7 +379,10 @@ abstract final class MeminiTheme {
       // content beyond a hairline.
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: background,
-        indicatorColor: scheme.primary.withValues(alpha: 0.14),
+        indicatorColor: scheme.primary.withValues(alpha: 0.18),
+        indicatorShape: const RoundedRectangleBorder(
+          borderRadius: Radii.pill,
+        ),
         selectedLabelTextStyle: text.labelSmall?.copyWith(
           color: scheme.primary,
           fontWeight: FontWeight.w600,

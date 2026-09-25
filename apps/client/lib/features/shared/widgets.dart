@@ -44,10 +44,14 @@ class SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: Gap.sm),
       child: Text(
         text.toUpperCase(),
+        // Grey rather than the accent. A coloured micro-caps label over
+        // every block is a lot of shouting for text nobody reads twice;
+        // in grey it does what an eyebrow is for — marking where a block
+        // starts — and leaves the accent to things you can press.
         style: context.text.labelSmall?.copyWith(
-          color: context.colors.primary,
-          letterSpacing: 0.8,
-          fontWeight: FontWeight.w600,
+          color: context.semantics.muted,
+          letterSpacing: 0.9,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

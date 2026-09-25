@@ -82,9 +82,23 @@ abstract final class Gap {
   static const vSection = SizedBox(height: section);
 }
 
+/// How round things are.
+///
+/// Opened up from 14/10. A 14px card on a 1px border reads as a box drawn
+/// around content; the same card at 20 with the border traded for a shadow
+/// reads as a card sitting on the page, which is the difference between a
+/// form and an app. The scale still has three steps, so nothing had to move
+/// to use it.
 abstract final class Radii {
-  static const card = BorderRadius.all(Radius.circular(14));
-  static const field = BorderRadius.all(Radius.circular(10));
+  /// Cards, tiles, dialogs — anything holding content.
+  static const card = BorderRadius.all(Radius.circular(20));
+
+  /// Inputs, buttons, thumbnails — anything you touch or read one line of.
+  static const field = BorderRadius.all(Radius.circular(14));
+
+  /// A sheet or dialog, which is a card the size of the screen.
+  static const sheet = BorderRadius.all(Radius.circular(24));
+
   static const pill = BorderRadius.all(Radius.circular(999));
 }
 

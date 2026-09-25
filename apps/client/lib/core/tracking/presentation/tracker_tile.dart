@@ -50,20 +50,44 @@ class TrackerTile extends StatelessWidget {
                     posterUrl: posterUrl,
                     photoOwnerId: photoOwnerId,
                   ),
-                  if (rating != null)
-                    Positioned(
-                      top: Gap.xs,
-                      right: Gap.xs,
-                      // On the picture rather than beside the title: the
-                      // score is the one thing worth reading before the
-                      // eye has found the name.
-                      child: ScoreBadge(rating: rating),
+                  if (rating != null) ...[
+                    // A wash from the top, so a score over bright artwork
+                    // has something to sit on. Only where there is a score:
+                    // darkening a cover for nothing is just a dirty cover.
+                    const Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 72,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0x66000000), Color(0x00000000)],
+                          ),
+                        ),
+                      ),
                     ),
+                    Positioned(
+                      top: Gap.sm,
+                      right: Gap.sm,
+                      // On the picture rather than beside the title: the
+                      // score is the one thing worth reading before the eye
+                      // has found the name.
+                      child: _ScorePip(rating: rating!),
+                    ),
+                  ],
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(Gap.sm),
+              padding: const EdgeInsets.fromLTRB(
+                Gap.sm + 2,
+                Gap.sm + 2,
+                Gap.sm + 2,
+                Gap.sm + 4,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -86,6 +110,47 @@ class TrackerTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The score over a cover: white on a dark pill, so it reads on any picture.
+///
+/// The row's [ScoreBadge] sits on the page and can borrow the page's colours.
+/// This one sits on somebody's poster and cannot borrow anything, so it
+/// brings its own background.
+class _ScorePip extends StatelessWidget {
+  const _ScorePip({required this.rating});
+
+  final double rating;
+
+  @override
+  Widget build(BuildContext context) {
+    // Drop the trailing ".0", the way the row does: a 9 reads as "9".
+    final label = rating == rating.roundToDouble()
+        ? rating.toStringAsFixed(0)
+        : rating.toStringAsFixed(1);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 3),
+      decoration: const BoxDecoration(
+        color: Color(0xCC12100E),
+        borderRadius: Radii.pill,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star_rounded, size: 14, color: context.colors.primary),
+          Gap.hXs,
+          Text(
+            label,
+            style: context.text.labelLarge?.copyWith(
+              color: Colors.white,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
       ),
     );
   }

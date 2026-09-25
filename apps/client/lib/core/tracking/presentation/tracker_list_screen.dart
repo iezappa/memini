@@ -317,7 +317,10 @@ class _TrackerListScreenState<T>
                           else
                             SliverList.separated(
                               itemCount: shown.length,
-                              separatorBuilder: (_, _) => Gap.vSm,
+                              // A shade more than before: the cards carry a
+                              // shadow now, and 8px of air let two of them
+                              // bleed into one another.
+                              separatorBuilder: (_, _) => Gap.vMd,
                               itemBuilder: (context, index) =>
                                   _row(context, shown[index] as T),
                             ),
@@ -450,23 +453,31 @@ class ChipShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final semantics = context.semantics;
+    final colors = context.colors;
+    // Filled, like every other chip on the page now: a menu that opens from
+    // an outlined pill next to filled ones looks like a different control
+    // than it is.
+    final foreground = selected ? colors.primary : colors.onSurface;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Gap.md - 4),
+      padding: const EdgeInsets.symmetric(horizontal: Gap.md - 4, vertical: 7),
       decoration: BoxDecoration(
         color: selected
-            ? context.colors.secondaryContainer
-            : context.colors.surface,
+            ? colors.primary.withValues(alpha: 0.18)
+            : colors.surfaceContainerHighest,
         borderRadius: Radii.pill,
-        border: Border.all(
-          color: selected ? Colors.transparent : semantics.hairline,
-        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[Icon(icon, size: 16), Gap.hXs],
-          Text(label, style: context.text.labelLarge),
+          if (icon != null) ...[
+            Icon(icon, size: 16, color: foreground),
+            Gap.hXs,
+          ],
+          Text(
+            label,
+            style: context.text.labelLarge?.copyWith(color: foreground),
+          ),
         ],
       ),
     );

@@ -53,16 +53,16 @@ class TrackerCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(Gap.sm + 2),
+          padding: const EdgeInsets.all(Gap.sm + 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 44,
+                width: 52,
                 // The shape a poster is printed in, so a row of them lines
                 // up whatever the artwork behind it does — and so every
                 // domain's rows are the same height, cover or no cover.
-                height: 66,
+                height: 78,
                 child: EntryCover(
                   icon: icon,
                   borderRadius: Radii.field,
@@ -84,7 +84,9 @@ class TrackerCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: context.text.bodySmall,
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.semantics.muted,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

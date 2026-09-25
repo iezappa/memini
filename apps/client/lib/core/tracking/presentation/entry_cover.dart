@@ -59,11 +59,12 @@ class EntryCover extends ConsumerWidget {
     child: SizedBox.expand(child: child),
   );
 
+  /// No border on it: with the cards unboxed this was the only outline left
+  /// on a list, and an entry with no picture was drawn louder than one with.
   Widget _placeholder(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
       color: context.colors.surfaceContainerHighest,
       borderRadius: borderRadius,
-      border: Border.all(color: context.semantics.hairline),
     ),
     child: Center(
       child: Icon(
