@@ -62,11 +62,18 @@ final recentEntriesProvider = Provider<List<DomainEntry>>((ref) {
   return all.take(8).toList();
 });
 
-/// How many weeks of squares the grid shows.
+/// The narrowest and widest the grid ever gets, in weeks.
 ///
-/// Half a year. Fifty-two would be the familiar shape but it cannot be read
-/// on a phone without scrolling past most of it, and this grid answers "have
-/// I been out lately" rather than "what did I do last spring".
+/// How many it actually shows is decided by the window it is drawn in: the
+/// squares stay a readable size and the grid takes as many weeks as fit,
+/// rather than always drawing half a year and shrinking the squares to
+/// 7px on a phone and leaving half a desktop empty. A year and a week is
+/// the ceiling, which is the familiar shape and the most a calendar of days
+/// can say without repeating itself.
+const activityWeeksMin = 13;
+const activityWeeksMax = 53;
+
+/// What the grid falls back to when nothing has measured it yet.
 const activityWeeks = 26;
 
 /// Every entry of every domain, counted by the day it happened on.
@@ -75,7 +82,7 @@ const activityWeeks = 26;
 /// a query of its own: they are already in memory, and a UNION over five
 /// tables would have to flatten five different shapes into one row type for
 /// an answer that is one integer per day.
-final activityGridProvider = Provider<ActivityGrid>((ref) {
+final activityGridProvider = Provider.family<ActivityGrid, int>((ref, weeks) {
   final counts = <DateTime, int>{};
   for (final entry in _everything(ref)) {
     final day = dateOnly(entry.happenedOn);
@@ -84,13 +91,9 @@ final activityGridProvider = Provider<ActivityGrid>((ref) {
 
   final today = ref.watch(clockProvider)();
   // Counted back in whole weeks rather than in days, so the grid is exactly
-  // [activityWeeks] columns wide however far into the week today is.
+  // [weeks] columns wide however far into the week today is.
   final window = ActivityWindow(
-    from: DateTime(
-      today.year,
-      today.month,
-      today.day - (activityWeeks - 1) * 7,
-    ),
+    from: DateTime(today.year, today.month, today.day - (weeks - 1) * 7),
     to: today,
   );
 

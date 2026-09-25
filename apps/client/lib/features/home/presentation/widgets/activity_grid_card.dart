@@ -15,66 +15,97 @@ import '../home_providers.dart';
 /// months answers "have I been out lately" without a single square being
 /// inspected. The numbers under it are there for when the answer is "not
 /// much" and the reader wants to know how little.
-class ActivityGridCard extends ConsumerWidget {
+class ActivityGridCard extends StatelessWidget {
   const ActivityGridCard({super.key});
+
+  /// The squares themselves, so a test can measure what they fill.
+  static const squaresKey = Key('activity-squares');
+
+  /// The space one column wants: a square you can aim a cursor at, plus the
+  /// hairline of air between it and the next.
+  static const _column = 22.0;
+  static const gap = 3.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // The grid takes as many weeks as the window can show at a readable
+        // size, instead of always drawing half a year — which shrank the
+        // squares to 7px on a phone and left half of a desktop empty beside
+        // them. A wide window gets a year; a phone gets a season.
+        final weeks = (constraints.maxWidth / _column).floor().clamp(
+          activityWeeksMin,
+          activityWeeksMax,
+        );
+
+        return Consumer(
+          builder: (context, ref, _) =>
+              _Grid(weeks: weeks, width: constraints.maxWidth),
+        );
+      },
+    );
+  }
+}
+
+class _Grid extends ConsumerWidget {
+  const _Grid({required this.weeks, required this.width});
+
+  final int weeks;
+  final double width;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final grid = ref.watch(activityGridProvider);
+    final grid = ref.watch(activityGridProvider(weeks));
     final today = ref.watch(clockProvider)();
+
+    // Whatever is left over after the gaps, shared out: the columns fill the
+    // width exactly rather than stopping short of it.
+    const gap = ActivityGridCard.gap;
+    final columns = grid.weeks.length;
+    final side = ((width - gap * (columns - 1)) / columns).clamp(7.0, 26.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.homeActivityCaption(activityWeeks),
+          l10n.homeActivityCaption(columns),
           style: context.text.bodySmall?.copyWith(
             color: context.semantics.muted,
           ),
         ),
         Gap.vSm,
-        LayoutBuilder(
-          builder: (context, constraints) {
-            // The whole window is always on screen: a grid you have to
-            // scroll to see the shape of has lost the only thing it was
-            // better at than the numbers underneath. So the squares shrink
-            // to fit instead, down to the smallest size still legible, and
-            // are capped so they do not grow into tiles on a desktop.
-            const gap = 2.0;
-            final columns = grid.weeks.length;
-            final side = ((constraints.maxWidth - gap * columns) / columns)
-                .clamp(7.0, 20.0);
-
-            return Row(
-              // Left, with everything else on the page. Centred it read as
-              // a picture dropped into the column rather than as part of it.
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final week in grid.weeks)
-                  Padding(
-                    padding: const EdgeInsets.only(right: gap),
-                    child: Column(
-                      children: [
-                        for (final day in week)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: gap),
-                            child: _Cell(
-                              day: day,
-                              side: side,
-                              // A day that has not arrived is drawn away
-                              // rather than empty: empty would claim the
-                              // reader had nothing on.
-                              future: day.day.isAfter(dateOnly(today)),
-                              l10n: l10n,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-              ],
-            );
-          },
+        Row(
+          key: ActivityGridCard.squaresKey,
+          // Left, with everything else on the page. Centred it read as a
+          // picture dropped into the column rather than as part of it.
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final (index, week) in grid.weeks.indexed)
+              Padding(
+                padding: EdgeInsets.only(
+                  right: index == columns - 1 ? 0 : gap,
+                ),
+                child: Column(
+                  children: [
+                    for (final day in week)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: gap),
+                        child: _Cell(
+                          day: day,
+                          side: side,
+                          // A day that has not arrived is drawn away rather
+                          // than empty: empty would claim the reader had
+                          // nothing on.
+                          future: day.day.isAfter(dateOnly(today)),
+                          l10n: l10n,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+          ],
         ),
         Gap.vSm,
         if (grid.isEmpty)
