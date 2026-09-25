@@ -100,14 +100,21 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          // Inside the shell, like everything else. It used to be pushed
+          // over the whole app with a back arrow, which made configuring
+          // the app feel like leaving it — and on a wide window it took the
+          // navigation off screen to show a list of switches. It is a
+          // branch now: the rail stays put and settings opens beside it,
+          // and it keeps its own scroll position like every other section.
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (context, state) => const SettingsScreen(),
+              ),
+            ],
+          ),
         ],
-      ),
-      // Outside the shell on purpose: it is pushed over whatever tab is
-      // open, gets a real back arrow, and is reached from the gear on every
-      // screen rather than from a slot in the bar.
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );
@@ -170,6 +177,12 @@ class _HomeShell extends StatelessWidget {
       (Icons.insights_outlined, Icons.insights, l10n.navStats),
     ];
 
+    // Settings is the last branch, and it is not one of the sections: on a
+    // wide window it sits at the foot of the rail, below a rule; on a phone
+    // it stays the gear in the corner of every screen, because a bottom bar
+    // has no foot to put it at.
+    const settingsBranch = 8;
+
     if (!wide) {
       return Scaffold(
         body: _WithNotices(child: shell),
@@ -203,6 +216,13 @@ class _HomeShell extends StatelessWidget {
             destinations: destinations,
             selectedIndex: shell.currentIndex,
             onSelected: shell.goBranch,
+            footer: (
+              Icons.settings_outlined,
+              Icons.settings,
+              l10n.navSettings,
+            ),
+            footerSelected: shell.currentIndex == settingsBranch,
+            onFooterSelected: () => shell.goBranch(settingsBranch),
           ),
           Expanded(child: _WithNotices(child: shell)),
         ],

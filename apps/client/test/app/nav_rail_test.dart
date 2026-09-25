@@ -90,6 +90,74 @@ void main() {
     await unmount(tester);
   });
 
+  group('the gear at the foot', () {
+    Future<void> pumpWithFooter(
+      WidgetTester tester, {
+      bool selected = false,
+      VoidCallback? onTap,
+    }) async {
+      await tester.pumpWidget(
+        await harness(
+          Scaffold(
+            body: NavRail(
+              destinations: destinations,
+              selectedIndex: 0,
+              onSelected: tapped.add,
+              footer: (Icons.settings_outlined, Icons.settings, 'Settings'),
+              footerSelected: selected,
+              onFooterSelected: onTap,
+            ),
+          ),
+          database: db,
+        ),
+      );
+      await tester.pump();
+    }
+
+    testWidgets('sits under a rule, because it is not a section', (
+      tester,
+    ) async {
+      await pumpWithFooter(tester);
+
+      expect(find.byTooltip('Settings'), findsOneWidget);
+      expect(find.byType(Divider), findsOneWidget);
+      // Below every section, which is what makes it read as apart from them.
+      expect(
+        tester.getCenter(find.byTooltip('Settings')).dy,
+        greaterThan(tester.getCenter(find.byTooltip('Stats')).dy),
+      );
+      await unmount(tester);
+    });
+
+    testWidgets('fills like any other when that is where you are', (
+      tester,
+    ) async {
+      await pumpWithFooter(tester, selected: true);
+
+      expect(find.byIcon(Icons.settings), findsOneWidget);
+      expect(find.byIcon(Icons.settings_outlined), findsNothing);
+      await unmount(tester);
+    });
+
+    testWidgets('opens settings', (tester) async {
+      var opened = false;
+      await pumpWithFooter(tester, onTap: () => opened = true);
+
+      await tester.tap(find.byTooltip('Settings'));
+      await tester.pump();
+
+      expect(opened, isTrue);
+      await unmount(tester);
+    });
+
+    testWidgets('a rail without one shows no rule', (tester) async {
+      await pump(tester);
+
+      expect(find.byType(Divider), findsNothing);
+      await unmount(tester);
+    });
+  });
+
   testWidgets('a short window scrolls rather than hiding a section', (
     tester,
   ) async {

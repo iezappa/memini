@@ -25,11 +25,20 @@ class NavRail extends StatelessWidget {
     required this.destinations,
     required this.selectedIndex,
     required this.onSelected,
+    this.footer,
+    this.footerSelected = false,
+    this.onFooterSelected,
   });
 
   final List<NavDestination> destinations;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+
+  /// Pinned to the bottom, under a rule: settings, which is not a section
+  /// of the app but is somewhere you go from anywhere in it.
+  final NavDestination? footer;
+  final bool footerSelected;
+  final VoidCallback? onFooterSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +66,23 @@ class NavRail extends StatelessWidget {
                     selected: index == selectedIndex,
                     onTap: () => onSelected(index),
                   ),
+                if (footer case final settings?) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Gap.md,
+                      vertical: Gap.xs,
+                    ),
+                    child: Divider(
+                      height: 1,
+                      color: context.semantics.hairline,
+                    ),
+                  ),
+                  _RailButton(
+                    destination: settings,
+                    selected: footerSelected,
+                    onTap: onFooterSelected ?? () {},
+                  ),
+                ],
               ],
             ),
           ),
