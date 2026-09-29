@@ -243,7 +243,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importWarningBody =>
-      'Importing replaces every room and franchise currently stored. Export a backup first if you want to keep them.';
+      'Importing replaces every saved entry. Export a backup first if you want to keep them.';
 
   @override
   String get importConfirm => 'Replace';
@@ -253,8 +253,8 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count rooms restored',
-      one: '1 room restored',
+      other: '$count entries restored',
+      one: '1 entry restored',
     );
     return '$_temp0';
   }

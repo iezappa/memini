@@ -100,9 +100,9 @@
   "exportCsv": "Export as spreadsheet (CSV)",
   "importJson": "Import backup",
   "importWarningTitle": "Replace everything?",
-  "importWarningBody": "Importing replaces every room and franchise currently stored. Export a backup first if you want to keep them.",
+  "importWarningBody": "Importing replaces every saved entry. Export a backup first if you want to keep them.",
   "importConfirm": "Replace",
-  "importDone": "{count, plural, =1{1 room restored} other{{count} rooms restored}}",
+  "importDone": "{count, plural, =1{1 entry restored} other{{count} entries restored}}",
   "@importDone": {
     "placeholders": {
       "count": {

@@ -244,7 +244,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get importWarningBody =>
-      'Importar reemplaza todas las salas y franquicias guardadas. Exportá un backup primero si querés conservarlas.';
+      'Importar reemplaza todas las entradas guardadas. Exportá un backup primero si querés conservarlas.';
 
   @override
   String get importConfirm => 'Reemplazar';
@@ -254,8 +254,8 @@ class AppLocalizationsEs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count salas restauradas',
-      one: '1 sala restaurada',
+      other: '$count entradas restauradas',
+      one: '1 entrada restaurada',
     );
     return '$_temp0';
   }

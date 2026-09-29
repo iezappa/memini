@@ -533,7 +533,7 @@ abstract class AppLocalizations {
   /// No description provided for @importWarningBody.
   ///
   /// In en, this message translates to:
-  /// **'Importing replaces every room and franchise currently stored. Export a backup first if you want to keep them.'**
+  /// **'Importing replaces every saved entry. Export a backup first if you want to keep them.'**
   String get importWarningBody;
 
   /// No description provided for @importConfirm.
@@ -545,7 +545,7 @@ abstract class AppLocalizations {
   /// No description provided for @importDone.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 room restored} other{{count} rooms restored}}'**
+  /// **'{count, plural, =1{1 entry restored} other{{count} entries restored}}'**
   String importDone(int count);
 
   /// No description provided for @importFailed.

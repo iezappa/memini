@@ -584,7 +584,7 @@ class _DataSection extends ConsumerWidget {
           .read(backupServiceProvider)
           .import(utf8.decode(bytes));
       messenger.showSnackBar(
-        SnackBar(content: Text(l10n.importDone(document.rooms.length))),
+        SnackBar(content: Text(l10n.importDone(document.entryCount))),
       );
     } on BackupFormatException {
       messenger.showSnackBar(SnackBar(content: Text(l10n.importFailed)));
