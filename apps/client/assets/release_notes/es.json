@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.6",
+      "date": "2026-09-29",
+      "highlights": [
+        "Ajustes suma Syncer: exportá un paquete de sincronización e importalo en otro dispositivo con vista previa de nuevas, duplicadas y conflictos."
+      ]
+    },
+    {
       "version": "1.1.5",
       "date": "2026-09-29",
       "highlights": [

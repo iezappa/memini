@@ -500,6 +500,12 @@ abstract class AppLocalizations {
   /// **'Your data'**
   String get settingsData;
 
+  /// No description provided for @settingsSyncer.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncer'**
+  String get settingsSyncer;
+
   /// No description provided for @settingsSupport.
   ///
   /// In en, this message translates to:
@@ -565,6 +571,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That file is not a valid Memini backup.'**
   String get importFailed;
+
+  /// No description provided for @syncerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Move entries from another device without replacing this one. Memini previews new entries, duplicates and conflicts before writing anything.'**
+  String get syncerBody;
+
+  /// No description provided for @syncerExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export sync package'**
+  String get syncerExport;
+
+  /// No description provided for @syncerImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from another device'**
+  String get syncerImport;
+
+  /// No description provided for @syncerExportDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync package saved.'**
+  String get syncerExportDone;
+
+  /// No description provided for @syncerPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync preview'**
+  String get syncerPreviewTitle;
+
+  /// No description provided for @syncerPreviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{newCount, plural, =0{No new entries} =1{1 new entry} other{{newCount} new entries}}. {duplicateCount, plural, =0{No duplicates} =1{1 duplicate} other{{duplicateCount} duplicates}} will be skipped. {conflictCount, plural, =0{No conflicts} =1{1 conflict} other{{conflictCount} conflicts}} will not be overwritten.'**
+  String syncerPreviewBody(int newCount, int duplicateCount, int conflictCount);
+
+  /// No description provided for @syncerApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply sync'**
+  String get syncerApply;
+
+  /// No description provided for @syncerApplyDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{newCount, plural, =0{No entries added} =1{1 entry added} other{{newCount} entries added}}. {duplicateCount, plural, =0{No duplicates skipped} =1{1 duplicate skipped} other{{duplicateCount} duplicates skipped}}. {conflictCount, plural, =0{No conflicts} =1{1 conflict left unchanged} other{{conflictCount} conflicts left unchanged}}.'**
+  String syncerApplyDone(int newCount, int duplicateCount, int conflictCount);
+
+  /// No description provided for @syncerFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not sync that file.'**
+  String get syncerFailed;
 
   /// No description provided for @exportDone.
   ///

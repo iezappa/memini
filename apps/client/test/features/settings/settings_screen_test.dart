@@ -62,6 +62,7 @@ void main() {
       'SECURITY',
       'LOOKUPS',
       'YOUR DATA',
+      'SYNCER',
       'SUPPORT',
       'ABOUT',
     ]);

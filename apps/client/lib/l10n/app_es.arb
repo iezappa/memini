@@ -74,6 +74,7 @@
   "pinWrong": "PIN incorrecto.",
   "pinUnlock": "Desbloquear",
   "settingsData": "Tus datos",
+  "settingsSyncer": "Syncer",
   "settingsSupport": "Apoyo",
   "exportJson": "Exportar backup (JSON)",
   "exportCsv": "Exportar como planilla (CSV)",
@@ -99,6 +100,41 @@
     }
   },
   "importFailed": "Ese archivo no es un backup válido de Memini.",
+  "syncerBody": "Pasá entradas desde otro dispositivo sin reemplazar este. Memini te muestra nuevas, duplicadas y conflictos antes de escribir nada.",
+  "syncerExport": "Exportar paquete de sync",
+  "syncerImport": "Importar desde otro dispositivo",
+  "syncerExportDone": "Paquete de sync guardado.",
+  "syncerPreviewTitle": "Vista previa del sync",
+  "syncerPreviewBody": "{newCount, plural, =0{No hay entradas nuevas} =1{1 entrada nueva} other{{newCount} entradas nuevas}}. {duplicateCount, plural, =0{No hay duplicadas} =1{1 duplicada} other{{duplicateCount} duplicadas}} se van a omitir. {conflictCount, plural, =0{No hay conflictos} =1{1 conflicto} other{{conflictCount} conflictos}} no se van a sobrescribir.",
+  "@syncerPreviewBody": {
+    "placeholders": {
+      "newCount": {
+        "type": "int"
+      },
+      "duplicateCount": {
+        "type": "int"
+      },
+      "conflictCount": {
+        "type": "int"
+      }
+    }
+  },
+  "syncerApply": "Aplicar sync",
+  "syncerApplyDone": "{newCount, plural, =0{No se agregaron entradas} =1{1 entrada agregada} other{{newCount} entradas agregadas}}. {duplicateCount, plural, =0{No se omitieron duplicadas} =1{1 duplicada omitida} other{{duplicateCount} duplicadas omitidas}}. {conflictCount, plural, =0{Sin conflictos} =1{1 conflicto quedó sin cambios} other{{conflictCount} conflictos quedaron sin cambios}}.",
+  "@syncerApplyDone": {
+    "placeholders": {
+      "newCount": {
+        "type": "int"
+      },
+      "duplicateCount": {
+        "type": "int"
+      },
+      "conflictCount": {
+        "type": "int"
+      }
+    }
+  },
+  "syncerFailed": "No se pudo sincronizar ese archivo.",
   "exportDone": "Backup guardado.",
   "exportFailed": "No se pudo guardar el archivo.",
   "settingsAbout": "Acerca de",

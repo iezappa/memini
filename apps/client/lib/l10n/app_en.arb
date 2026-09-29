@@ -95,6 +95,7 @@
   "pinWrong": "Wrong PIN.",
   "pinUnlock": "Unlock",
   "settingsData": "Your data",
+  "settingsSyncer": "Syncer",
   "settingsSupport": "Support",
   "exportJson": "Export backup (JSON)",
   "exportCsv": "Export as spreadsheet (CSV)",
@@ -127,6 +128,41 @@
     }
   },
   "importFailed": "That file is not a valid Memini backup.",
+  "syncerBody": "Move entries from another device without replacing this one. Memini previews new entries, duplicates and conflicts before writing anything.",
+  "syncerExport": "Export sync package",
+  "syncerImport": "Import from another device",
+  "syncerExportDone": "Sync package saved.",
+  "syncerPreviewTitle": "Sync preview",
+  "syncerPreviewBody": "{newCount, plural, =0{No new entries} =1{1 new entry} other{{newCount} new entries}}. {duplicateCount, plural, =0{No duplicates} =1{1 duplicate} other{{duplicateCount} duplicates}} will be skipped. {conflictCount, plural, =0{No conflicts} =1{1 conflict} other{{conflictCount} conflicts}} will not be overwritten.",
+  "@syncerPreviewBody": {
+    "placeholders": {
+      "newCount": {
+        "type": "int"
+      },
+      "duplicateCount": {
+        "type": "int"
+      },
+      "conflictCount": {
+        "type": "int"
+      }
+    }
+  },
+  "syncerApply": "Apply sync",
+  "syncerApplyDone": "{newCount, plural, =0{No entries added} =1{1 entry added} other{{newCount} entries added}}. {duplicateCount, plural, =0{No duplicates skipped} =1{1 duplicate skipped} other{{duplicateCount} duplicates skipped}}. {conflictCount, plural, =0{No conflicts} =1{1 conflict left unchanged} other{{conflictCount} conflicts left unchanged}}.",
+  "@syncerApplyDone": {
+    "placeholders": {
+      "newCount": {
+        "type": "int"
+      },
+      "duplicateCount": {
+        "type": "int"
+      },
+      "conflictCount": {
+        "type": "int"
+      }
+    }
+  },
+  "syncerFailed": "Could not sync that file.",
   "exportDone": "Backup saved.",
   "exportFailed": "Could not save the file.",
   "settingsAbout": "About",

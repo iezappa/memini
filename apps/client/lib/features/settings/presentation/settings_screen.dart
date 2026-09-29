@@ -51,6 +51,8 @@ class SettingsScreen extends ConsumerWidget {
               Gap.vSection,
               _DataSection(),
               Gap.vSection,
+              _SyncSection(),
+              Gap.vSection,
               _SupportSection(),
               Gap.vSection,
               _AboutSection(),
@@ -616,6 +618,128 @@ class _DataSection extends ConsumerWidget {
           ),
         ),
       );
+    }
+  }
+}
+
+class _SyncSection extends ConsumerWidget {
+  const _SyncSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
+    return _Section(
+      title: l10n.settingsSyncer,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.sync_alt_outlined,
+              size: 18,
+              color: context.semantics.muted,
+            ),
+            Gap.hSm,
+            Expanded(
+              child: Text(
+                l10n.syncerBody,
+                style: context.text.bodySmall?.copyWith(
+                  color: context.semantics.muted,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Gap.vSm,
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.ios_share_outlined),
+          title: Text(l10n.syncerExport),
+          onTap: () => _export(context, ref),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.merge_type_outlined),
+          title: Text(l10n.syncerImport),
+          onTap: () => _import(context, ref),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _export(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final saved = await ref.read(backupActionsProvider).exportSyncPackage();
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(saved ? l10n.syncerExportDone : l10n.exportFailed),
+      ),
+    );
+  }
+
+  Future<void> _import(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      final bytes = await ref.read(backupFilesProvider).open();
+      if (bytes == null) return;
+      final document = BackupService.parse(utf8.decode(bytes));
+      final preview = await ref
+          .read(backupServiceProvider)
+          .previewSync(document);
+      if (!context.mounted) return;
+
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.syncerPreviewTitle),
+          content: Text(
+            l10n.syncerPreviewBody(
+              preview.newCount,
+              preview.duplicateCount,
+              preview.conflictCount,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: preview.hasChanges
+                  ? () => Navigator.of(context).pop(true)
+                  : null,
+              child: Text(l10n.syncerApply),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+
+      final result = await ref.read(backupServiceProvider).applySync(document);
+      if (!context.mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.syncerApplyDone(
+              result.newCount,
+              result.duplicateCount,
+              result.conflictCount,
+            ),
+          ),
+        ),
+      );
+    } on BackupFormatException catch (error) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.importInvalidFormat(error.reason))),
+      );
+    } on FormatException {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.importFailed)));
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.syncerFailed)));
     }
   }
 }

@@ -227,6 +227,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsData => 'Your data';
 
   @override
+  String get settingsSyncer => 'Syncer';
+
+  @override
   String get settingsSupport => 'Support';
 
   @override
@@ -277,6 +280,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importFailed => 'That file is not a valid Memini backup.';
+
+  @override
+  String get syncerBody =>
+      'Move entries from another device without replacing this one. Memini previews new entries, duplicates and conflicts before writing anything.';
+
+  @override
+  String get syncerExport => 'Export sync package';
+
+  @override
+  String get syncerImport => 'Import from another device';
+
+  @override
+  String get syncerExportDone => 'Sync package saved.';
+
+  @override
+  String get syncerPreviewTitle => 'Sync preview';
+
+  @override
+  String syncerPreviewBody(
+    int newCount,
+    int duplicateCount,
+    int conflictCount,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      newCount,
+      locale: localeName,
+      other: '$newCount new entries',
+      one: '1 new entry',
+      zero: 'No new entries',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      duplicateCount,
+      locale: localeName,
+      other: '$duplicateCount duplicates',
+      one: '1 duplicate',
+      zero: 'No duplicates',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      conflictCount,
+      locale: localeName,
+      other: '$conflictCount conflicts',
+      one: '1 conflict',
+      zero: 'No conflicts',
+    );
+    return '$_temp0. $_temp1 will be skipped. $_temp2 will not be overwritten.';
+  }
+
+  @override
+  String get syncerApply => 'Apply sync';
+
+  @override
+  String syncerApplyDone(int newCount, int duplicateCount, int conflictCount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      newCount,
+      locale: localeName,
+      other: '$newCount entries added',
+      one: '1 entry added',
+      zero: 'No entries added',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      duplicateCount,
+      locale: localeName,
+      other: '$duplicateCount duplicates skipped',
+      one: '1 duplicate skipped',
+      zero: 'No duplicates skipped',
+    );
+    String _temp2 = intl.Intl.pluralLogic(
+      conflictCount,
+      locale: localeName,
+      other: '$conflictCount conflicts left unchanged',
+      one: '1 conflict left unchanged',
+      zero: 'No conflicts',
+    );
+    return '$_temp0. $_temp1. $_temp2.';
+  }
+
+  @override
+  String get syncerFailed => 'Could not sync that file.';
 
   @override
   String get exportDone => 'Backup saved.';

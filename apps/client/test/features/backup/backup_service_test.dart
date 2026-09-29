@@ -356,6 +356,137 @@ void main() {
     });
   });
 
+  group('sync import', () {
+    test(
+      'previews and applies only entries that are not already local',
+      () async {
+        await DriftMealRepository(db).create(
+          MealDraft(
+            title: 'Don Julio',
+            happenedOn: DateTime(2026, 3, 1),
+            dish: 'Bife de chorizo',
+          ),
+        );
+
+        final incoming = BackupDocument.of(
+          franchises: const [],
+          rooms: const [],
+          meals: [
+            Meal(
+              id: 'external-duplicate',
+              updatedAt: DateTime(2026, 4),
+              title: '  don   julio ',
+              happenedOn: DateTime(2026, 3, 1),
+              dish: 'Bife de Chorizo',
+            ),
+            Meal(
+              id: 'external-new',
+              updatedAt: DateTime(2026, 4),
+              title: 'El Preferido',
+              happenedOn: DateTime(2026, 3, 2),
+              dish: 'Tortilla',
+            ),
+          ],
+        );
+
+        final preview = await service.previewSync(incoming);
+        expect(preview.newCount, 1);
+        expect(preview.duplicateCount, 1);
+        expect(preview.conflictCount, 0);
+
+        final result = await service.applySync(incoming);
+        expect(result.newCount, 1);
+
+        final meals = await DriftMealRepository(db).list(const MealFilter());
+        expect(
+          meals.map((m) => m.title),
+          containsAll(['Don Julio', 'El Preferido']),
+        );
+        expect(meals, hasLength(2));
+      },
+    );
+
+    test('does not overwrite a conflict', () async {
+      await DriftMealRepository(db).create(
+        MealDraft(
+          title: 'Don Julio',
+          happenedOn: DateTime(2026, 3, 1),
+          dish: 'Bife de chorizo',
+          rating: 9,
+        ),
+      );
+
+      final incoming = BackupDocument.of(
+        franchises: const [],
+        rooms: const [],
+        meals: [
+          Meal(
+            id: 'external-conflict',
+            updatedAt: DateTime(2026, 4),
+            title: 'Don Julio',
+            happenedOn: DateTime(2026, 3, 1),
+            dish: 'Bife de chorizo',
+            rating: 6,
+          ),
+        ],
+      );
+
+      final preview = await service.previewSync(incoming);
+      expect(preview.newCount, 0);
+      expect(preview.duplicateCount, 0);
+      expect(preview.conflictCount, 1);
+
+      await service.applySync(incoming);
+
+      final meals = await DriftMealRepository(db).list(const MealFilter());
+      expect(meals, hasLength(1));
+      expect(meals.single.rating, 9);
+    });
+
+    test(
+      'imports a new room with its franchise without replacing local data',
+      () async {
+        await seed();
+        final before = await rooms.list(const RoomFilter());
+        expect(before.single.title, 'The Vault');
+
+        final incoming = BackupDocument.of(
+          franchises: [
+            Franchise(
+              id: 'franchise-remote',
+              name: 'Remote Games',
+              updatedAt: DateTime(2026, 4),
+            ),
+          ],
+          rooms: [
+            Room(
+              id: 'room-remote',
+              updatedAt: DateTime(2026, 4),
+              title: 'The Signal',
+              happenedOn: DateTime(2026, 4, 2),
+              franchiseId: 'franchise-remote',
+              escaped: true,
+            ),
+          ],
+        );
+
+        final preview = await service.previewSync(incoming);
+        expect(preview.newCount, 1);
+
+        await service.applySync(incoming);
+
+        final syncedRooms = await rooms.list(const RoomFilter());
+        expect(
+          syncedRooms.map((r) => r.title),
+          containsAll(['The Vault', 'The Signal']),
+        );
+        final remote = syncedRooms.singleWhere((r) => r.title == 'The Signal');
+        final franchise = await franchises.findById(remote.franchiseId!);
+        expect(franchise!.name, 'Remote Games');
+      },
+    );
+  });
+
   group('relation integrity across a restore', () {
     test('a v3 round trip keeps ids, links and updatedAt exactly', () async {
       await seed();

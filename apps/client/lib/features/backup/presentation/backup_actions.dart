@@ -56,6 +56,18 @@ class BackupActions {
     }
   }
 
+  Future<bool> exportSyncPackage() async {
+    try {
+      final json = await _ref.read(backupServiceProvider).exportSyncJson();
+      final now = _ref.read(clockProvider)();
+      return await _ref.read(backupFilesProvider).save({
+        'memini-sync-${_stamp(now)}.json': utf8.encode(json),
+      });
+    } on Object {
+      return false;
+    }
+  }
+
   /// One CSV sheet per domain: five shapes cannot share a header without
   /// inventing empty columns.
   Future<bool> exportCsv() async {
