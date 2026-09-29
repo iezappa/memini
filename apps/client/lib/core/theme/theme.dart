@@ -87,10 +87,17 @@ abstract final class MeminiTheme {
     scheme: ColorScheme.light(
       primary: accent.deepSeed,
       onPrimary: Colors.white,
+      primaryContainer: accent.deepSeed.withValues(alpha: 0.16),
+      onPrimaryContainer: MeminiColors.textOnPaper,
       secondary: MeminiColors.escapedDeep,
       // White, not the default black: black on escapedDeep is 3.4:1, below
       // the 4.5:1 a selected segment's label needs.
       onSecondary: Colors.white,
+      secondaryContainer: accent.deepSeed.withValues(alpha: 0.12),
+      onSecondaryContainer: MeminiColors.textOnPaper,
+      tertiary: accent.deepSeed,
+      tertiaryContainer: accent.deepSeed.withValues(alpha: 0.12),
+      onTertiaryContainer: MeminiColors.textOnPaper,
       surface: MeminiColors.paperSurface,
       onSurface: MeminiColors.textOnPaper,
       surfaceContainerLowest: MeminiColors.paper,
@@ -112,7 +119,14 @@ abstract final class MeminiTheme {
     scheme: ColorScheme.dark(
       primary: accent.seed,
       onPrimary: MeminiColors.ink,
+      primaryContainer: accent.seed.withValues(alpha: 0.22),
+      onPrimaryContainer: MeminiColors.textOnInk,
       secondary: MeminiColors.escaped,
+      secondaryContainer: accent.seed.withValues(alpha: 0.18),
+      onSecondaryContainer: MeminiColors.textOnInk,
+      tertiary: accent.seed,
+      tertiaryContainer: accent.seed.withValues(alpha: 0.18),
+      onTertiaryContainer: MeminiColors.textOnInk,
       surface: MeminiColors.inkSurface,
       onSurface: MeminiColors.textOnInk,
       surfaceContainerLowest: MeminiColors.ink,
@@ -240,9 +254,7 @@ abstract final class MeminiTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: Radii.card,
-          side: onInk
-              ? BorderSide(color: semantics.hairline)
-              : BorderSide.none,
+          side: onInk ? BorderSide(color: semantics.hairline) : BorderSide.none,
         ),
       ),
       dividerTheme: DividerThemeData(
@@ -364,9 +376,17 @@ abstract final class MeminiTheme {
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           textStyle: WidgetStatePropertyAll(text.labelLarge),
-          side: WidgetStatePropertyAll(
-            BorderSide(color: semantics.hairline),
-          ),
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return scheme.primary.withValues(alpha: onInk ? 0.22 : 0.16);
+            }
+            return Colors.transparent;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) return scheme.primary;
+            return scheme.onSurface;
+          }),
+          side: WidgetStatePropertyAll(BorderSide(color: semantics.hairline)),
           shape: const WidgetStatePropertyAll(
             RoundedRectangleBorder(borderRadius: Radii.pill),
           ),
@@ -376,9 +396,7 @@ abstract final class MeminiTheme {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         indicatorColor: scheme.primary.withValues(alpha: 0.18),
-        indicatorShape: const RoundedRectangleBorder(
-          borderRadius: Radii.pill,
-        ),
+        indicatorShape: const RoundedRectangleBorder(borderRadius: Radii.pill),
         elevation: 0,
         // Room for an icon and one line under it. Left to Material's
         // default the bar is taller than it needs to be on a phone.

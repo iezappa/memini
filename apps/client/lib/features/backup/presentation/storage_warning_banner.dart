@@ -35,13 +35,18 @@ class StorageWarningBanner extends ConsumerWidget {
     return MaterialBanner(
       backgroundColor: volatile
           ? context.colors.errorContainer
-          : context.colors.tertiaryContainer,
+          : context.colors.primaryContainer,
       leading: Icon(
-        volatile ? Icons.error_outline : Icons.warning_amber_outlined,
-        color: volatile ? context.colors.error : null,
+        volatile ? Icons.error_outline : Icons.shield_outlined,
+        color: volatile ? context.colors.error : context.colors.primary,
       ),
       content: Text(
         volatile ? l10n.storageVolatileWarning : l10n.storageDegradedWarning,
+        style: context.text.bodyMedium?.copyWith(
+          color: volatile
+              ? context.colors.onErrorContainer
+              : context.colors.onPrimaryContainer,
+        ),
       ),
       actions: [
         TextButton(

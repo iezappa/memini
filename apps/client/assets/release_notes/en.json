@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.5",
+      "date": "2026-09-29",
+      "highlights": [
+        "Settings selectors and the storage warning now use the chosen accent instead of green."
+      ]
+    },
+    {
       "version": "1.1.4",
       "date": "2026-09-29",
       "highlights": [

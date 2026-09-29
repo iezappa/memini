@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.5",
+      "date": "2026-09-29",
+      "highlights": [
+        "Los selectores de ajustes y el aviso de almacenamiento ahora usan el color de acento elegido en vez de verde."
+      ]
+    },
+    {
       "version": "1.1.4",
       "date": "2026-09-29",
       "highlights": [
