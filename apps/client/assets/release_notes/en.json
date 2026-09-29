@@ -1,6 +1,14 @@
 {
   "releases": [
     {
+      "version": "1.1.1",
+      "date": "2026-09-29",
+      "highlights": [
+        "Books are now a tracked domain, with Open Library lookup and backup support.",
+        "Backup import now reports the total restored entries instead of only restored rooms."
+      ]
+    },
+    {
       "version": "1.1.0",
       "date": "2026-09-17",
       "highlights": [

@@ -1,6 +1,14 @@
 {
   "releases": [
     {
+      "version": "1.1.1",
+      "date": "2026-09-29",
+      "highlights": [
+        "Libros ahora es una sección registrada, con búsqueda en Open Library y soporte en backups.",
+        "La importación de backups ahora informa el total de entradas restauradas en vez de contar solo salas."
+      ]
+    },
+    {
       "version": "1.1.0",
       "date": "2026-09-17",
       "highlights": [
