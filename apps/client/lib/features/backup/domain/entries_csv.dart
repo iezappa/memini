@@ -1,5 +1,6 @@
 library;
 
+import '../../books/domain/book.dart';
 import '../../concerts/domain/gig.dart';
 import '../../dining/domain/meal.dart';
 import '../../franchises/domain/franchise.dart';
@@ -96,6 +97,8 @@ String gigsToCsv(List<Gig> gigs) {
         'support_acts',
         'company',
         'rating',
+        'photos_url',
+        'video_url',
         'setlist',
         'description',
         'review',
@@ -112,6 +115,8 @@ String gigsToCsv(List<Gig> gigs) {
         gig.supportActs ?? '',
         gig.company ?? '',
         gig.rating?.toString() ?? '',
+        gig.photosUrl ?? '',
+        gig.videoUrl ?? '',
         // A setlist is one song per line; the escaping quotes it so the cell
         // survives as a single field rather than breaking the row.
         gig.setlist ?? '',
@@ -154,6 +159,37 @@ String viewingsToCsv(List<Viewing> viewings) {
         viewing.rating?.toString() ?? '',
         viewing.description ?? '',
         viewing.review ?? '',
+      ]),
+    );
+  }
+
+  return buffer.toString();
+}
+
+String booksToCsv(List<Book> books) {
+  final buffer = StringBuffer()
+    ..writeln(
+      _row([
+        'title',
+        'author',
+        'publication_year',
+        'read_on',
+        'rating',
+        'description',
+        'review',
+      ]),
+    );
+
+  for (final book in books) {
+    buffer.writeln(
+      _row([
+        book.title,
+        book.author ?? '',
+        book.publicationYear?.toString() ?? '',
+        _dateOnly(book.readOn),
+        book.rating?.toString() ?? '',
+        book.description ?? '',
+        book.review ?? '',
       ]),
     );
   }

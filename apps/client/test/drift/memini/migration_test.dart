@@ -12,6 +12,8 @@ import 'generated/schema_v3.dart' as v3;
 import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v8.dart' as v8;
 import 'generated/schema_v9.dart' as v9;
+import 'generated/schema_v10.dart' as v10;
+import 'generated/schema_v11.dart' as v11;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -196,6 +198,52 @@ void main() {
     );
   });
 
+  test('v10 to v11 adds books without touching existing entries', () async {
+    await verifier.testWithDataIntegrity(
+      oldVersion: 10,
+      newVersion: 11,
+      createOld: v10.DatabaseAtV10.new,
+      createNew: v11.DatabaseAtV11.new,
+      openTestedDatabase: AppDatabase.forTesting,
+      createItems: (batch, oldDb) {
+        batch.insertAll(oldDb.gigs, [
+          const v10.GigsData(
+            id: 'c56a4180-65aa-42ec-a945-5fd21dec0538',
+            title: 'Radiohead',
+            happenedOn: 1773619200,
+            updatedAt: 1773619200,
+            photosUrl: 'https://photos.example/radiohead',
+            videoUrl: 'https://youtu.be/abc123',
+          ),
+        ]);
+        batch.insertAll(oldDb.viewings, [
+          const v10.ViewingsData(
+            id: '0f8fad5b-d9cb-469f-a165-70867728950e',
+            title: 'Severance',
+            happenedOn: 1773705600,
+            updatedAt: 1773705600,
+            kind: 1,
+            posterUrl: 'https://image.tmdb.org/t/p/w500/severance.jpg',
+          ),
+        ]);
+      },
+      validateItems: (newDb) async {
+        final gig = (await newDb.select(newDb.gigs).get()).single;
+        expect(gig.title, 'Radiohead');
+        expect(gig.photosUrl, 'https://photos.example/radiohead');
+        expect(gig.videoUrl, 'https://youtu.be/abc123');
+
+        final viewing = (await newDb.select(newDb.viewings).get()).single;
+        expect(viewing.title, 'Severance');
+        expect(
+          viewing.posterUrl,
+          'https://image.tmdb.org/t/p/w500/severance.jpg',
+        );
+        expect(await newDb.select(newDb.books).get(), isEmpty);
+      },
+    );
+  });
+
   group('v9 turns a neighbourhood into a link to the place', () {
     /// One meal per case, so a failure names which one went wrong.
     Future<void> upgrade({
@@ -280,6 +328,53 @@ void main() {
         },
       );
     });
+  });
+
+  test('v10 adds gig media links without touching existing gigs', () async {
+    await verifier.testWithDataIntegrity(
+      oldVersion: 9,
+      newVersion: 10,
+      createOld: v9.DatabaseAtV9.new,
+      createNew: v10.DatabaseAtV10.new,
+      openTestedDatabase: AppDatabase.forTesting,
+      createItems: (batch, oldDb) {
+        batch.insertAll(oldDb.gigs, [
+          const v9.GigsData(
+            id: '8c3f1a9e-5c7f-4f7b-9f45-48d8ccbb0e72',
+            title: 'Radiohead',
+            description: 'Encore',
+            review: 'Huge',
+            rating: 9.5,
+            happenedOn: 1773619200,
+            updatedAt: 1773619200,
+            venue: 'River Plate',
+            city: 'Buenos Aires',
+            supportActs: 'Patti Smith',
+            setlist: 'Everything in Its Right Place',
+            company: 'DF Entertainment',
+            externalId: 'mbid',
+          ),
+        ]);
+      },
+      validateItems: (newDb) async {
+        final gig = (await newDb.select(newDb.gigs).get()).single;
+        expect(gig.id, '8c3f1a9e-5c7f-4f7b-9f45-48d8ccbb0e72');
+        expect(gig.title, 'Radiohead');
+        expect(gig.description, 'Encore');
+        expect(gig.review, 'Huge');
+        expect(gig.rating, 9.5);
+        expect(gig.happenedOn, 1773619200);
+        expect(gig.updatedAt, 1773619200);
+        expect(gig.venue, 'River Plate');
+        expect(gig.city, 'Buenos Aires');
+        expect(gig.supportActs, 'Patti Smith');
+        expect(gig.setlist, 'Everything in Its Right Place');
+        expect(gig.company, 'DF Entertainment');
+        expect(gig.externalId, 'mbid');
+        expect(gig.photosUrl, isNull);
+        expect(gig.videoUrl, isNull);
+      },
+    );
   });
 
   group('v4 gives every record a UUID and an updatedAt', () {

@@ -31,6 +31,8 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
   late final TextEditingController _supportActs;
   late final TextEditingController _setlist;
   late final TextEditingController _company;
+  late final TextEditingController _photosUrl;
+  late final TextEditingController _videoUrl;
   late final TextEditingController _description;
   late final TextEditingController _review;
 
@@ -50,6 +52,8 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
     _supportActs = TextEditingController(text: gig?.supportActs ?? '');
     _setlist = TextEditingController(text: gig?.setlist ?? '');
     _company = TextEditingController(text: gig?.company ?? '');
+    _photosUrl = TextEditingController(text: gig?.photosUrl ?? '');
+    _videoUrl = TextEditingController(text: gig?.videoUrl ?? '');
     _description = TextEditingController(text: gig?.description ?? '');
     _review = TextEditingController(text: gig?.review ?? '');
 
@@ -67,6 +71,8 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
       _supportActs,
       _setlist,
       _company,
+      _photosUrl,
+      _videoUrl,
       _description,
       _review,
     ]) {
@@ -78,6 +84,37 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
   String? _trimmedOrNull(TextEditingController controller) {
     final value = controller.text.trim();
     return value.isEmpty ? null : value;
+  }
+
+  bool _isAbsoluteHttpUrl(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null &&
+        uri.hasScheme &&
+        uri.hasAuthority &&
+        (uri.scheme == 'http' || uri.scheme == 'https');
+  }
+
+  String? _validateOptionalHttpUrl(String? raw) {
+    final value = raw?.trim() ?? '';
+    if (value.isEmpty) return null;
+    return _isAbsoluteHttpUrl(value)
+        ? null
+        : AppLocalizations.of(context).urlInvalid;
+  }
+
+  String? _validateOptionalYouTubeUrl(String? raw) {
+    final value = raw?.trim() ?? '';
+    if (value.isEmpty) return null;
+    if (!_isAbsoluteHttpUrl(value)) {
+      return AppLocalizations.of(context).urlInvalid;
+    }
+
+    final host = Uri.parse(value).host.toLowerCase();
+    final isYouTube =
+        host == 'youtu.be' ||
+        host == 'youtube.com' ||
+        host.endsWith('.youtube.com');
+    return isYouTube ? null : AppLocalizations.of(context).youtubeUrlInvalid;
   }
 
   /// Fills in what the lookup knows, without clobbering what the owner
@@ -127,6 +164,8 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
             setlist: _trimmedOrNull(_setlist),
             company: _trimmedOrNull(_company),
             externalId: _externalId,
+            photosUrl: _trimmedOrNull(_photosUrl),
+            videoUrl: _trimmedOrNull(_videoUrl),
           ),
         );
       } else {
@@ -144,6 +183,8 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
             setlist: _trimmedOrNull(_setlist),
             company: _trimmedOrNull(_company),
             externalId: _externalId,
+            photosUrl: _trimmedOrNull(_photosUrl),
+            videoUrl: _trimmedOrNull(_videoUrl),
           ),
         );
       }
@@ -213,6 +254,20 @@ class _GigFormScreenState extends ConsumerState<GigFormScreen> {
           controller: _company,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(labelText: l10n.fieldCompany),
+        ),
+        Gap.vMd,
+        TextFormField(
+          controller: _photosUrl,
+          keyboardType: TextInputType.url,
+          decoration: InputDecoration(labelText: l10n.fieldPhotosUrl),
+          validator: _validateOptionalHttpUrl,
+        ),
+        Gap.vMd,
+        TextFormField(
+          controller: _videoUrl,
+          keyboardType: TextInputType.url,
+          decoration: InputDecoration(labelText: l10n.fieldVideoUrl),
+          validator: _validateOptionalYouTubeUrl,
         ),
         Gap.vSm,
         Align(

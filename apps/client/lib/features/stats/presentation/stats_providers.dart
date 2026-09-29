@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/providers.dart';
 import '../../../core/tracking/domain/trackable.dart';
 import '../../../core/tracking/domain/tracked_domain.dart';
+import '../../books/presentation/book_providers.dart';
 import '../../concerts/presentation/gig_providers.dart';
 import '../../dining/presentation/meal_providers.dart';
 import '../../games/presentation/game_providers.dart';
@@ -20,6 +21,7 @@ final entriesByDomainProvider = Provider<Map<TrackedDomain, List<Trackable>>>((
     TrackedDomain.screen:
         ref.watch(allViewingsProvider).valueOrNull ?? const [],
     TrackedDomain.games: ref.watch(allGamesProvider).valueOrNull ?? const [],
+    TrackedDomain.books: ref.watch(allBooksProvider).valueOrNull ?? const [],
   };
 });
 

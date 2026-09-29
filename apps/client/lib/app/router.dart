@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'nav_rail.dart';
 import '../features/backup/presentation/backup_notice.dart';
+import '../features/books/presentation/book_detail_screen.dart';
+import '../features/books/presentation/book_form_screen.dart';
+import '../features/books/presentation/book_list_screen.dart';
 import '../features/backup/presentation/backup_reminder_banner.dart';
 import '../features/backup/presentation/storage_warning_banner.dart';
 import '../features/concerts/presentation/gig_detail_screen.dart';
@@ -82,6 +85,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             list: () => const GameListScreen(),
             form: () => const GameFormScreen(),
             detail: (id) => GameDetailScreen(gameId: id),
+          ),
+          _domainBranch(
+            segment: 'books',
+            list: () => const BookListScreen(),
+            form: () => const BookFormScreen(),
+            detail: (id) => BookDetailScreen(bookId: id),
           ),
           // Between the five sections and the figures, which is where it
           // belongs: it is a list of entries like they are, but of the ones
@@ -181,7 +190,7 @@ class _HomeShell extends StatelessWidget {
     // wide window it sits at the foot of the rail, below a rule; on a phone
     // it stays the gear in the corner of every screen, because a bottom bar
     // has no foot to put it at.
-    const settingsBranch = 8;
+    const settingsBranch = 9;
 
     if (!wide) {
       return Scaffold(

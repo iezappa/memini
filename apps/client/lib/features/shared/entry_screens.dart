@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/tracking/domain/tracked_domain.dart';
+import '../books/presentation/book_detail_screen.dart';
+import '../books/presentation/book_form_screen.dart';
 import '../concerts/presentation/gig_detail_screen.dart';
 import '../concerts/presentation/gig_form_screen.dart';
 import '../dining/presentation/meal_detail_screen.dart';
@@ -23,6 +25,7 @@ Widget detailScreenFor(TrackedDomain domain, String id) => switch (domain) {
   TrackedDomain.concerts => GigDetailScreen(gigId: id),
   TrackedDomain.screen => ViewingDetailScreen(viewingId: id),
   TrackedDomain.games => GameDetailScreen(gameId: id),
+  TrackedDomain.books => BookDetailScreen(bookId: id),
 };
 
 Widget formScreenFor(TrackedDomain domain) => switch (domain) {
@@ -31,4 +34,5 @@ Widget formScreenFor(TrackedDomain domain) => switch (domain) {
   TrackedDomain.concerts => const GigFormScreen(),
   TrackedDomain.screen => const ViewingFormScreen(),
   TrackedDomain.games => const GameFormScreen(),
+  TrackedDomain.books => const BookFormScreen(),
 };

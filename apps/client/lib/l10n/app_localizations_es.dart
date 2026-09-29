@@ -493,6 +493,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fieldSetlistHint => 'Una canción por línea';
 
   @override
+  String get fieldPhotosUrl => 'URL del álbum de fotos';
+
+  @override
+  String get fieldVideoUrl => 'URL del video de YouTube';
+
+  @override
+  String get urlInvalid => 'Ingresá una URL http(s) completa.';
+
+  @override
+  String get youtubeUrlInvalid => 'Ingresá una URL de YouTube.';
+
+  @override
+  String get gigLinksLabel => 'Enlaces';
+
+  @override
+  String get gigPhotosLink => 'Álbum de fotos';
+
+  @override
+  String get gigVideoLink => 'Video de YouTube';
+
+  @override
   String get filterCity => 'Ciudad';
 
   @override
@@ -1226,4 +1247,52 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get mapNoCoordinates =>
       'Este link no trae la posición adentro, así que no hay nada que dibujar. Un link copiado del mapa en una computadora suele traerla.';
+
+  @override
+  String get domainBooks => 'Libros';
+
+  @override
+  String get bookSearchHint => 'Buscar libros, autores, notas';
+
+  @override
+  String bookCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count libros',
+      one: '1 libro',
+      zero: 'Sin libros',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookEmptyTitle => 'No hay libros registrados';
+
+  @override
+  String get bookEmptyBody => 'Agregá libros después de terminarlos.';
+
+  @override
+  String get bookEmptyFiltered => 'Ningún libro coincide con estos filtros';
+
+  @override
+  String get addBook => 'Agregar libro';
+
+  @override
+  String get newBook => 'Nuevo libro';
+
+  @override
+  String get editBook => 'Editar libro';
+
+  @override
+  String get deleteBook => 'Eliminar libro';
+
+  @override
+  String get fieldAuthor => 'Autor';
+
+  @override
+  String get fieldPublicationYear => 'Año de publicación';
+
+  @override
+  String get fieldReadOn => 'Leído el';
 }

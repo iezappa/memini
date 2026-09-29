@@ -493,6 +493,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldSetlistHint => 'One song per line';
 
   @override
+  String get fieldPhotosUrl => 'Photo album URL';
+
+  @override
+  String get fieldVideoUrl => 'YouTube video URL';
+
+  @override
+  String get urlInvalid => 'Enter a full http(s) URL.';
+
+  @override
+  String get youtubeUrlInvalid => 'Enter a YouTube URL.';
+
+  @override
+  String get gigLinksLabel => 'Links';
+
+  @override
+  String get gigPhotosLink => 'Photo album';
+
+  @override
+  String get gigVideoLink => 'YouTube video';
+
+  @override
   String get filterCity => 'City';
 
   @override
@@ -1226,4 +1247,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mapNoCoordinates =>
       'This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one.';
+
+  @override
+  String get domainBooks => 'Books';
+
+  @override
+  String get bookSearchHint => 'Search books, authors, notes';
+
+  @override
+  String bookCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count books',
+      one: '1 book',
+      zero: 'No books',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookEmptyTitle => 'No books logged';
+
+  @override
+  String get bookEmptyBody => 'Add books after you finish reading them.';
+
+  @override
+  String get bookEmptyFiltered => 'No book matches these filters';
+
+  @override
+  String get addBook => 'Add book';
+
+  @override
+  String get newBook => 'New book';
+
+  @override
+  String get editBook => 'Edit book';
+
+  @override
+  String get deleteBook => 'Delete book';
+
+  @override
+  String get fieldAuthor => 'Author';
+
+  @override
+  String get fieldPublicationYear => 'Publication year';
+
+  @override
+  String get fieldReadOn => 'Read on';
 }

@@ -80,7 +80,73 @@ void main() {
     expect(saved.venue, isNull);
     expect(saved.city, isNull);
     expect(saved.setlist, isNull);
+    expect(saved.photosUrl, isNull);
+    expect(saved.videoUrl, isNull);
     expect(saved.rating, isNull);
+
+    await unmount(tester);
+  });
+
+  testWidgets('records optional album and YouTube links trimmed', (
+    tester,
+  ) async {
+    await pumpForm(tester);
+
+    await fillField(tester, 'Band', 'Divididos');
+    await fillField(tester, 'Photo album URL', ' https://photos.example/a ');
+    await fillField(tester, 'YouTube video URL', ' https://youtu.be/abc123 ');
+    await tapSave(tester);
+
+    final saved = (await gigs.list(const GigFilter())).single;
+    expect(saved.photosUrl, 'https://photos.example/a');
+    expect(saved.videoUrl, 'https://youtu.be/abc123');
+
+    await unmount(tester);
+  });
+
+  testWidgets('validates optional gig links before saving', (tester) async {
+    await pumpForm(tester);
+
+    await fillField(tester, 'Band', 'Divididos');
+    await fillField(tester, 'Photo album URL', 'ftp://photos.example/a');
+    await fillField(
+      tester,
+      'YouTube video URL',
+      'https://youtube.com.evil/watch',
+    );
+    await tapSave(tester);
+
+    expect(find.text('Enter a full http(s) URL.'), findsOneWidget);
+    expect(find.text('Enter a YouTube URL.'), findsOneWidget);
+    expect(await gigs.list(const GigFilter()), isEmpty);
+
+    await unmount(tester);
+  });
+
+  testWidgets('opens on existing links and can clear them while editing', (
+    tester,
+  ) async {
+    final original = await gigs.create(
+      GigDraft(
+        title: 'Divididos',
+        happenedOn: DateTime(2026, 4, 18),
+        photosUrl: 'https://photos.example/a',
+        videoUrl: 'https://www.youtube.com/watch?v=abc123',
+      ),
+    );
+
+    await pumpForm(tester, gig: original);
+
+    expect(find.text('https://photos.example/a'), findsOneWidget);
+    expect(find.text('https://www.youtube.com/watch?v=abc123'), findsOneWidget);
+
+    await fillField(tester, 'Photo album URL', '   ');
+    await fillField(tester, 'YouTube video URL', '   ');
+    await tapSave(tester);
+
+    final saved = (await gigs.list(const GigFilter())).single;
+    expect(saved.photosUrl, isNull);
+    expect(saved.videoUrl, isNull);
 
     await unmount(tester);
   });

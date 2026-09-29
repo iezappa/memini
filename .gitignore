@@ -19,3 +19,5 @@ Estandarización/
 key.properties
 *.jks
 *.keystore
+# Local Pi runtime state
+.atl/

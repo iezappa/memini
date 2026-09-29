@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../../core/database/app_database.dart';
+import '../../books/domain/book.dart';
 import '../../concerts/domain/gig.dart';
 import '../../dining/domain/meal.dart';
 import '../../franchises/domain/franchise.dart';
@@ -35,6 +36,7 @@ class BackupService {
     final gigRows = await _db.select(_db.gigs).get();
     final viewingRows = await _db.select(_db.viewings).get();
     final gameRows = await _db.select(_db.games).get();
+    final bookRows = await _db.select(_db.books).get();
     final wishRows = await _db.select(_db.wishes).get();
 
     return BackupDocument.of(
@@ -94,6 +96,8 @@ class BackupService {
             setlist: row.setlist,
             company: row.company,
             externalId: row.externalId,
+            photosUrl: row.photosUrl,
+            videoUrl: row.videoUrl,
           ),
       ],
       viewings: [
@@ -134,6 +138,22 @@ class BackupService {
             coverUrl: row.coverUrl,
           ),
       ],
+      books: [
+        for (final row in bookRows)
+          Book(
+            id: row.id,
+            updatedAt: row.updatedAt,
+            title: row.title,
+            description: row.description,
+            rating: row.rating,
+            review: row.review,
+            readOn: row.happenedOn,
+            author: row.author,
+            publicationYear: row.publicationYear,
+            externalId: row.externalId,
+            coverUrl: row.coverUrl,
+          ),
+      ],
       wishes: [
         for (final row in wishRows)
           Wish(
@@ -170,6 +190,7 @@ class BackupService {
       'gigs': gigsToCsv(document.gigs),
       'viewings': viewingsToCsv(document.viewings),
       'games': gamesToCsv(document.games),
+      'books': booksToCsv(document.books),
     };
   }
 
@@ -192,6 +213,7 @@ class BackupService {
       _db.viewings,
       _db.games,
       _db.wishes,
+      _db.books,
     ]) {
       final row = await _db
           .customSelect(
@@ -217,6 +239,7 @@ class BackupService {
     await _db.delete(_db.viewings).go();
     await _db.delete(_db.games).go();
     await _db.delete(_db.wishes).go();
+    await _db.delete(_db.books).go();
   }
 
   /// Decodes and validates [contents] without touching the database, so a
@@ -293,6 +316,8 @@ class BackupService {
               setlist: Value(g.setlist),
               company: Value(g.company),
               externalId: Value(g.externalId),
+              photosUrl: Value(g.photosUrl),
+              videoUrl: Value(g.videoUrl),
             ),
         ]);
         batch.insertAll(_db.viewings, [
@@ -331,6 +356,22 @@ class BackupService {
               releaseYear: Value(g.releaseYear),
               externalId: Value(g.externalId),
               coverUrl: Value(g.coverUrl),
+            ),
+        ]);
+        batch.insertAll(_db.books, [
+          for (final b in document.books)
+            BooksCompanion.insert(
+              id: Value(b.id),
+              updatedAt: b.updatedAt ?? _now(),
+              title: b.title,
+              description: Value(b.description),
+              rating: Value(b.rating),
+              review: Value(b.review),
+              happenedOn: b.readOn,
+              author: Value(b.author),
+              publicationYear: Value(b.publicationYear),
+              externalId: Value(b.externalId),
+              coverUrl: Value(b.coverUrl),
             ),
         ]);
         batch.insertAll(_db.wishes, [

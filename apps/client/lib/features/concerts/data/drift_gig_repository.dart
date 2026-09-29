@@ -42,6 +42,8 @@ class DriftGigRepository implements GigRepository {
     setlist: row.setlist,
     company: row.company,
     externalId: row.externalId,
+    photosUrl: row.photosUrl,
+    videoUrl: row.videoUrl,
   );
 
   SimpleSelectStatement<$GigsTable, GigRow> _query(GigFilter filter) {
@@ -96,6 +98,8 @@ class DriftGigRepository implements GigRepository {
             setlist: Value(draft.setlist),
             company: Value(draft.company),
             externalId: Value(draft.externalId),
+            photosUrl: Value(draft.photosUrl),
+            videoUrl: Value(draft.videoUrl),
           ),
         );
     return _toDomain(row);
@@ -117,6 +121,8 @@ class DriftGigRepository implements GigRepository {
         setlist: Value(entry.setlist),
         company: Value(entry.company),
         externalId: Value(entry.externalId),
+        photosUrl: Value(entry.photosUrl),
+        videoUrl: Value(entry.videoUrl),
       ),
     );
   }

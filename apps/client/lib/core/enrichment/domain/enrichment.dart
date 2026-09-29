@@ -11,6 +11,7 @@ class EnrichmentSuggestion {
     this.description,
     this.releaseYear,
     this.director,
+    this.author,
     this.cast,
     this.platforms,
     this.origin,
@@ -25,6 +26,9 @@ class EnrichmentSuggestion {
 
   final int? releaseYear;
   final String? director;
+
+  /// Author or authors, comma separated.
+  final String? author;
 
   /// Principal cast, comma separated.
   final String? cast;
@@ -49,7 +53,7 @@ class EnrichmentSuggestion {
   /// A one-line hint under the title in the picker, so two films with the
   /// same name are still tellable apart.
   String get subtitle =>
-      [?releaseYear?.toString(), ?director, ?origin, ?platforms].join(' · ');
+      [?releaseYear?.toString(), ?director, ?author, ?origin, ?platforms].join(' · ');
 
   /// The same suggestion with a description on it.
   EnrichmentSuggestion withDescription(String? description) =>
@@ -59,6 +63,7 @@ class EnrichmentSuggestion {
         description: description,
         releaseYear: releaseYear,
         director: director,
+        author: author,
         cast: cast,
         platforms: platforms,
         origin: origin,

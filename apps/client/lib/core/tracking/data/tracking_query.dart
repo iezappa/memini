@@ -15,6 +15,7 @@ class TrackingColumns {
     required this.review,
     required this.rating,
     required this.happenedOn,
+    this.extraSearch = const [],
   });
 
   final GeneratedColumn<String> id;
@@ -23,6 +24,7 @@ class TrackingColumns {
   final GeneratedColumn<String> review;
   final GeneratedColumn<double> rating;
   final GeneratedColumn<DateTime> happenedOn;
+  final List<GeneratedColumn<String>> extraSearch;
 }
 
 /// The shared part of a filter's WHERE clause, or null when nothing in it
@@ -39,9 +41,12 @@ Expression<bool>? trackingPredicate(
     // lowered rather than trusting the collation.
     final pattern = '%${term.toLowerCase()}%';
     predicates.add(
-      columns.title.lower().like(pattern) |
-          columns.description.lower().like(pattern) |
-          columns.review.lower().like(pattern),
+      [
+        columns.title.lower().like(pattern),
+        columns.description.lower().like(pattern),
+        columns.review.lower().like(pattern),
+        for (final column in columns.extraSearch) column.lower().like(pattern),
+      ].reduce((a, b) => a | b),
     );
   }
 

@@ -2,6 +2,7 @@ library;
 
 import '../../../core/ids/uuid.dart';
 import '../../../core/tracking/domain/trackable.dart';
+import '../../books/domain/book.dart';
 import '../../concerts/domain/gig.dart';
 import '../../dining/domain/meal.dart';
 import '../../franchises/domain/franchise.dart';
@@ -34,6 +35,7 @@ class BackupDocument {
     required this.gigs,
     required this.viewings,
     required this.games,
+    this.books = const [],
     this.wishes = const [],
   });
 
@@ -45,7 +47,12 @@ class BackupDocument {
   /// v3 carries UUID ids and an updatedAt on every record (schema v4). A v1
   /// or v2 file, with integer ids, is given fresh UUIDs on import and its
   /// room-to-franchise links are remapped onto them.
-  static const currentVersion = 3;
+  ///
+  /// v4 added gig photo album and YouTube video links. Older v3 builds would
+  /// ignore unknown link keys, so exports must be marked too new for them.
+  ///
+  /// v5 added completed books.
+  static const currentVersion = 5;
 
   final int version;
   final DateTime exportedAt;
@@ -55,6 +62,7 @@ class BackupDocument {
   final List<Gig> gigs;
   final List<Viewing> viewings;
   final List<Game> games;
+  final List<Book> books;
 
   /// The watchlist. Defaulted rather than required, because every file
   /// written before the watchlist existed simply has none.
@@ -67,6 +75,7 @@ class BackupDocument {
     List<Gig> gigs = const [],
     List<Viewing> viewings = const [],
     List<Game> games = const [],
+    List<Book> books = const [],
     List<Wish> wishes = const [],
     DateTime? exportedAt,
   }) {
@@ -79,6 +88,7 @@ class BackupDocument {
       gigs: gigs,
       viewings: viewings,
       games: games,
+      books: books,
       wishes: wishes,
     );
   }
@@ -94,7 +104,8 @@ class BackupDocument {
       meals.length +
       gigs.length +
       viewings.length +
-      games.length;
+      games.length +
+      books.length;
 
   Map<String, dynamic> toJson() => {
     'version': version,
@@ -137,6 +148,8 @@ class BackupDocument {
           'setlist': g.setlist,
           'company': g.company,
           'externalId': g.externalId,
+          'photosUrl': g.photosUrl,
+          'videoUrl': g.videoUrl,
         },
     ],
     'viewings': [
@@ -156,6 +169,16 @@ class BackupDocument {
           // while it fetches every cover again.
           'posterUrl': v.posterUrl,
           'backdropUrl': v.backdropUrl,
+        },
+    ],
+    'books': [
+      for (final b in books)
+        {
+          ..._commonJson(b),
+          'author': b.author,
+          'publicationYear': b.publicationYear,
+          'externalId': b.externalId,
+          'coverUrl': b.coverUrl,
         },
     ],
     'wishes': [
@@ -239,6 +262,7 @@ class BackupDocument {
     final gigIds = reader.scope('invalid-gig');
     final viewingIds = reader.scope('invalid-viewing');
     final gameIds = reader.scope('invalid-game');
+    final bookIds = reader.scope('invalid-book');
     final wishIds = reader.scope('invalid-wish');
 
     return BackupDocument(
@@ -259,6 +283,9 @@ class BackupDocument {
       games: [
         for (final json in _listOf(raw['games'])) _game(json, gameIds, reader),
       ],
+      books: [
+        for (final json in _listOf(raw['books'])) _book(json, bookIds, reader),
+      ],
       wishes: [
         for (final json in _listOf(raw['wishes'])) _wish(json, wishIds, reader),
       ],
@@ -267,11 +294,7 @@ class BackupDocument {
 
   /// A wish, which shares none of [_common]: it has no day it happened, no
   /// score and no review, which is the whole point of it being its own list.
-  static Wish _wish(
-    Map<String, dynamic> json,
-    _IdScope ids,
-    _IdReader reader,
-  ) {
+  static Wish _wish(Map<String, dynamic> json, _IdScope ids, _IdReader reader) {
     const reason = 'invalid-wish';
     final title = json['title'];
     final addedOn = DateTime.tryParse(json['addedOn'] as String? ?? '');
@@ -427,6 +450,8 @@ class BackupDocument {
       setlist: json['setlist'] as String?,
       company: json['company'] as String?,
       externalId: json['externalId'] as String?,
+      photosUrl: json['photosUrl'] as String?,
+      videoUrl: json['videoUrl'] as String?,
     );
   }
 
@@ -456,6 +481,24 @@ class BackupDocument {
       // before, and the backfill still fills it in on first open.
       posterUrl: json['posterUrl'] as String?,
       backdropUrl: json['backdropUrl'] as String?,
+    );
+  }
+
+  static Book _book(Map<String, dynamic> json, _IdScope ids, _IdReader reader) {
+    final common = _common(json, 'invalid-book', ids, reader);
+
+    return Book(
+      id: common.id,
+      updatedAt: common.updatedAt,
+      title: common.title,
+      description: common.description,
+      rating: common.rating,
+      review: common.review,
+      readOn: common.happenedOn,
+      author: json['author'] as String?,
+      publicationYear: json['publicationYear'] as int?,
+      externalId: json['externalId'] as String?,
+      coverUrl: json['coverUrl'] as String?,
     );
   }
 

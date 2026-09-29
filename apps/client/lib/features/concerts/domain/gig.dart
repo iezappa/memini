@@ -20,6 +20,8 @@ class Gig implements Trackable {
     this.setlist,
     this.company,
     this.externalId,
+    this.photosUrl,
+    this.videoUrl,
   });
 
   @override
@@ -54,6 +56,10 @@ class Gig implements Trackable {
   /// MusicBrainz id of the artist, cached when the owner enriched the entry.
   final String? externalId;
 
+  /// Links to the night: the album of photographs, and a video of it.
+  final String? photosUrl;
+  final String? videoUrl;
+
   @override
   bool get isRated => rating != null;
 
@@ -69,6 +75,8 @@ class Gig implements Trackable {
     String? setlist,
     String? company,
     String? externalId,
+    String? photosUrl,
+    String? videoUrl,
     bool clearRating = false,
     bool clearExternalId = false,
   }) {
@@ -86,6 +94,8 @@ class Gig implements Trackable {
       setlist: setlist ?? this.setlist,
       company: company ?? this.company,
       externalId: clearExternalId ? null : (externalId ?? this.externalId),
+      photosUrl: photosUrl ?? this.photosUrl,
+      videoUrl: videoUrl ?? this.videoUrl,
     );
   }
 }
@@ -104,6 +114,8 @@ class GigDraft {
     this.setlist,
     this.company,
     this.externalId,
+    this.photosUrl,
+    this.videoUrl,
   });
 
   final String title;
@@ -117,4 +129,6 @@ class GigDraft {
   final String? setlist;
   final String? company;
   final String? externalId;
+  final String? photosUrl;
+  final String? videoUrl;
 }

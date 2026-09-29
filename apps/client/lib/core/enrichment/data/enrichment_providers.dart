@@ -4,6 +4,7 @@ import '../../../app/providers.dart';
 import '../../../core/tracking/domain/tracked_domain.dart';
 import '../domain/enrichment.dart';
 import 'musicbrainz_source.dart';
+import 'open_library_source.dart';
 import 'rawg_source.dart';
 import 'tmdb_source.dart';
 
@@ -22,6 +23,10 @@ final musicBrainzSourceProvider = Provider<EnrichmentSource>(
   (ref) => const MusicBrainzSource(userAgent: kMusicBrainzUserAgent),
 );
 
+final openLibrarySourceProvider = Provider<EnrichmentSource>(
+  (ref) => const OpenLibrarySource(),
+);
+
 /// The source for a domain, or null where no free API covers it.
 ///
 /// Dining is deliberately absent: no free places API returns reviews,
@@ -32,6 +37,7 @@ EnrichmentSource? enrichmentSourceFor(WidgetRef ref, TrackedDomain domain) {
     TrackedDomain.screen => ref.watch(tmdbSourceProvider),
     TrackedDomain.games => ref.watch(rawgSourceProvider),
     TrackedDomain.concerts => ref.watch(musicBrainzSourceProvider),
+    TrackedDomain.books => ref.watch(openLibrarySourceProvider),
     TrackedDomain.rooms || TrackedDomain.dining => null,
   };
 }

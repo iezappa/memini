@@ -24,11 +24,20 @@ void main() {
       happenedOn: DateTime(2026, 4, 18),
       venue: 'Estadio Obras',
       review: 'Loud in the right way.',
+      photosUrl: 'https://photos.example/divididos',
+      videoUrl: 'https://youtu.be/divididos',
     ),
   );
 
-  Future<void> pumpDetail(WidgetTester tester, Gig entry) =>
-      pumpPushed(tester, GigDetailScreen(gigId: entry.id), database: db);
+  Future<void> pumpDetail(
+    WidgetTester tester,
+    Gig entry, {
+    Future<bool> Function(Uri url)? openLink,
+  }) => pumpPushed(
+    tester,
+    GigDetailScreen(gigId: entry.id, openLink: openLink ?? (_) async => true),
+    database: db,
+  );
 
   Future<void> tapDelete(WidgetTester tester) async {
     await tester.tap(find.byIcon(Icons.delete_outline));
@@ -40,6 +49,22 @@ void main() {
 
     expect(find.text('Divididos'), findsWidgets);
     expect(find.text('Loud in the right way.'), findsOneWidget);
+
+    await unmount(tester);
+  });
+
+  testWidgets('shows album and video links and reports launch failures', (
+    tester,
+  ) async {
+    await pumpDetail(tester, await log(), openLink: (_) async => false);
+
+    expect(find.text('Photo album'), findsOneWidget);
+    expect(find.text('YouTube video'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Photo album'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Could not open the link.'), findsOneWidget);
 
     await unmount(tester);
   });

@@ -53,6 +53,8 @@ void main() {
         setlist: 'Bloom\nDaydreaming\nDecks Dark',
         company: 'Nico',
         externalId: 'a74b1b7f-71a5-4011-9441-d0b5e4122711',
+        photosUrl: 'https://photos.example/radiohead',
+        videoUrl: 'https://www.youtube.com/watch?v=abc123',
       ),
     );
 
@@ -65,6 +67,8 @@ void main() {
     expect(reloaded.setlist, contains('Daydreaming'));
     expect(reloaded.company, 'Nico');
     expect(reloaded.externalId, 'a74b1b7f-71a5-4011-9441-d0b5e4122711');
+    expect(reloaded.photosUrl, 'https://photos.example/radiohead');
+    expect(reloaded.videoUrl, 'https://www.youtube.com/watch?v=abc123');
     expect(reloaded.happenedOn, DateTime(2026, 3, 14));
   });
 
@@ -112,6 +116,25 @@ void main() {
 
     expect(result, hasLength(2));
     expect(result, isNot(contains('Away')));
+  });
+
+  test('clears stored links on update', () async {
+    final created = await repository.create(
+      GigDraft(
+        title: 'Band',
+        happenedOn: DateTime(2026, 1, 1),
+        photosUrl: 'https://photos.example/a',
+        videoUrl: 'https://youtu.be/abc123',
+      ),
+    );
+
+    await repository.update(
+      Gig(id: created.id, title: 'Band', happenedOn: created.happenedOn),
+    );
+
+    final reloaded = await repository.findById(created.id);
+    expect(reloaded!.photosUrl, isNull);
+    expect(reloaded.videoUrl, isNull);
   });
 
   test('deletes a gig', () async {

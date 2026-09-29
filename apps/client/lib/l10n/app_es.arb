@@ -165,6 +165,13 @@
   "fieldSupportActsHint": "Separalos con comas",
   "fieldSetlist": "Setlist",
   "fieldSetlistHint": "Una canción por línea",
+  "fieldPhotosUrl": "URL del álbum de fotos",
+  "fieldVideoUrl": "URL del video de YouTube",
+  "urlInvalid": "Ingresá una URL http(s) completa.",
+  "youtubeUrlInvalid": "Ingresá una URL de YouTube.",
+  "gigLinksLabel": "Enlaces",
+  "gigPhotosLink": "Álbum de fotos",
+  "gigVideoLink": "Video de YouTube",
   "filterCity": "Ciudad",
   "filterAllCities": "En todas",
   "viewingCount": "{count, plural, =0{Nada visto} =1{1 título} other{{count} títulos}}",
@@ -467,5 +474,25 @@
   "fieldMapsUrlHint": "Pegá el link de cualquier app de mapas. Si trae coordenadas, acá se dibuja el mapa; un link acortado igual abre, solo que no se puede dibujar.",
   "mapLabel": "Dónde queda",
   "mapOpen": "Abrir en el mapa",
-  "mapNoCoordinates": "Este link no trae la posición adentro, así que no hay nada que dibujar. Un link copiado del mapa en una computadora suele traerla."
+  "mapNoCoordinates": "Este link no trae la posición adentro, así que no hay nada que dibujar. Un link copiado del mapa en una computadora suele traerla.",
+  "domainBooks": "Libros",
+  "bookSearchHint": "Buscar libros, autores, notas",
+  "bookCount": "{count, plural, =0{Sin libros} =1{1 libro} other{{count} libros}}",
+  "@bookCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookEmptyTitle": "No hay libros registrados",
+  "bookEmptyBody": "Agregá libros después de terminarlos.",
+  "bookEmptyFiltered": "Ningún libro coincide con estos filtros",
+  "addBook": "Agregar libro",
+  "newBook": "Nuevo libro",
+  "editBook": "Editar libro",
+  "deleteBook": "Eliminar libro",
+  "fieldAuthor": "Autor",
+  "fieldPublicationYear": "Año de publicación",
+  "fieldReadOn": "Leído el"
 }

@@ -193,6 +193,13 @@
   "fieldSupportActsHint": "Separate them with commas",
   "fieldSetlist": "Setlist",
   "fieldSetlistHint": "One song per line",
+  "fieldPhotosUrl": "Photo album URL",
+  "fieldVideoUrl": "YouTube video URL",
+  "urlInvalid": "Enter a full http(s) URL.",
+  "youtubeUrlInvalid": "Enter a YouTube URL.",
+  "gigLinksLabel": "Links",
+  "gigPhotosLink": "Photo album",
+  "gigVideoLink": "YouTube video",
   "filterCity": "City",
   "filterAllCities": "Everywhere",
   "viewingCount": "{count, plural, =0{Nothing watched} =1{1 title} other{{count} titles}}",
@@ -573,5 +580,25 @@
   "fieldMapsUrlHint": "Paste the link from any map app. If it carries coordinates you get a map here; a shortened link still opens, it just cannot be drawn.",
   "mapLabel": "Where it is",
   "mapOpen": "Open in maps",
-  "mapNoCoordinates": "This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one."
+  "mapNoCoordinates": "This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one.",
+  "domainBooks": "Books",
+  "bookSearchHint": "Search books, authors, notes",
+  "bookCount": "{count, plural, =0{No books} =1{1 book} other{{count} books}}",
+  "@bookCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookEmptyTitle": "No books logged",
+  "bookEmptyBody": "Add books after you finish reading them.",
+  "bookEmptyFiltered": "No book matches these filters",
+  "addBook": "Add book",
+  "newBook": "New book",
+  "editBook": "Edit book",
+  "deleteBook": "Delete book",
+  "fieldAuthor": "Author",
+  "fieldPublicationYear": "Publication year",
+  "fieldReadOn": "Read on"
 }

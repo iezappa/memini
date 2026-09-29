@@ -1766,6 +1766,28 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _photosUrlMeta = const VerificationMeta(
+    'photosUrl',
+  );
+  @override
+  late final GeneratedColumn<String> photosUrl = GeneratedColumn<String>(
+    'photos_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _videoUrlMeta = const VerificationMeta(
+    'videoUrl',
+  );
+  @override
+  late final GeneratedColumn<String> videoUrl = GeneratedColumn<String>(
+    'video_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1781,6 +1803,8 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
     setlist,
     company,
     externalId,
+    photosUrl,
+    videoUrl,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1881,6 +1905,18 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
         externalId.isAcceptableOrUnknown(data['external_id']!, _externalIdMeta),
       );
     }
+    if (data.containsKey('photos_url')) {
+      context.handle(
+        _photosUrlMeta,
+        photosUrl.isAcceptableOrUnknown(data['photos_url']!, _photosUrlMeta),
+      );
+    }
+    if (data.containsKey('video_url')) {
+      context.handle(
+        _videoUrlMeta,
+        videoUrl.isAcceptableOrUnknown(data['video_url']!, _videoUrlMeta),
+      );
+    }
     return context;
   }
 
@@ -1942,6 +1978,14 @@ class $GigsTable extends Gigs with TableInfo<$GigsTable, GigRow> {
         DriftSqlType.string,
         data['${effectivePrefix}external_id'],
       ),
+      photosUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photos_url'],
+      ),
+      videoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}video_url'],
+      ),
     );
   }
 
@@ -1969,6 +2013,16 @@ class GigRow extends DataClass implements Insertable<GigRow> {
 
   /// MusicBrainz artist id, cached from an enrichment lookup.
   final String? externalId;
+
+  /// Where the photographs of the night live: a shared album, wherever the
+  /// owner keeps it. A link and not the pictures — an album of a concert is
+  /// two hundred photographs, and the ones worth keeping in the app can be
+  /// attached to the entry like any other.
+  final String? photosUrl;
+
+  /// A video of the night. Someone else's recording as often as the owner's,
+  /// which is why it is a link and not a file.
+  final String? videoUrl;
   const GigRow({
     required this.id,
     required this.title,
@@ -1983,6 +2037,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     this.setlist,
     this.company,
     this.externalId,
+    this.photosUrl,
+    this.videoUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2018,6 +2074,12 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     if (!nullToAbsent || externalId != null) {
       map['external_id'] = Variable<String>(externalId);
     }
+    if (!nullToAbsent || photosUrl != null) {
+      map['photos_url'] = Variable<String>(photosUrl);
+    }
+    if (!nullToAbsent || videoUrl != null) {
+      map['video_url'] = Variable<String>(videoUrl);
+    }
     return map;
   }
 
@@ -2052,6 +2114,12 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       externalId: externalId == null && nullToAbsent
           ? const Value.absent()
           : Value(externalId),
+      photosUrl: photosUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(photosUrl),
+      videoUrl: videoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(videoUrl),
     );
   }
 
@@ -2074,6 +2142,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       setlist: serializer.fromJson<String?>(json['setlist']),
       company: serializer.fromJson<String?>(json['company']),
       externalId: serializer.fromJson<String?>(json['externalId']),
+      photosUrl: serializer.fromJson<String?>(json['photosUrl']),
+      videoUrl: serializer.fromJson<String?>(json['videoUrl']),
     );
   }
   @override
@@ -2093,6 +2163,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       'setlist': serializer.toJson<String?>(setlist),
       'company': serializer.toJson<String?>(company),
       'externalId': serializer.toJson<String?>(externalId),
+      'photosUrl': serializer.toJson<String?>(photosUrl),
+      'videoUrl': serializer.toJson<String?>(videoUrl),
     };
   }
 
@@ -2110,6 +2182,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     Value<String?> setlist = const Value.absent(),
     Value<String?> company = const Value.absent(),
     Value<String?> externalId = const Value.absent(),
+    Value<String?> photosUrl = const Value.absent(),
+    Value<String?> videoUrl = const Value.absent(),
   }) => GigRow(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -2124,6 +2198,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     setlist: setlist.present ? setlist.value : this.setlist,
     company: company.present ? company.value : this.company,
     externalId: externalId.present ? externalId.value : this.externalId,
+    photosUrl: photosUrl.present ? photosUrl.value : this.photosUrl,
+    videoUrl: videoUrl.present ? videoUrl.value : this.videoUrl,
   );
   GigRow copyWithCompanion(GigsCompanion data) {
     return GigRow(
@@ -2148,6 +2224,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
       externalId: data.externalId.present
           ? data.externalId.value
           : this.externalId,
+      photosUrl: data.photosUrl.present ? data.photosUrl.value : this.photosUrl,
+      videoUrl: data.videoUrl.present ? data.videoUrl.value : this.videoUrl,
     );
   }
 
@@ -2166,7 +2244,9 @@ class GigRow extends DataClass implements Insertable<GigRow> {
           ..write('supportActs: $supportActs, ')
           ..write('setlist: $setlist, ')
           ..write('company: $company, ')
-          ..write('externalId: $externalId')
+          ..write('externalId: $externalId, ')
+          ..write('photosUrl: $photosUrl, ')
+          ..write('videoUrl: $videoUrl')
           ..write(')'))
         .toString();
   }
@@ -2186,6 +2266,8 @@ class GigRow extends DataClass implements Insertable<GigRow> {
     setlist,
     company,
     externalId,
+    photosUrl,
+    videoUrl,
   );
   @override
   bool operator ==(Object other) =>
@@ -2203,7 +2285,9 @@ class GigRow extends DataClass implements Insertable<GigRow> {
           other.supportActs == this.supportActs &&
           other.setlist == this.setlist &&
           other.company == this.company &&
-          other.externalId == this.externalId);
+          other.externalId == this.externalId &&
+          other.photosUrl == this.photosUrl &&
+          other.videoUrl == this.videoUrl);
 }
 
 class GigsCompanion extends UpdateCompanion<GigRow> {
@@ -2220,6 +2304,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
   final Value<String?> setlist;
   final Value<String?> company;
   final Value<String?> externalId;
+  final Value<String?> photosUrl;
+  final Value<String?> videoUrl;
   final Value<int> rowid;
   const GigsCompanion({
     this.id = const Value.absent(),
@@ -2235,6 +2321,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     this.setlist = const Value.absent(),
     this.company = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.photosUrl = const Value.absent(),
+    this.videoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GigsCompanion.insert({
@@ -2251,6 +2339,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     this.setlist = const Value.absent(),
     this.company = const Value.absent(),
     this.externalId = const Value.absent(),
+    this.photosUrl = const Value.absent(),
+    this.videoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : title = Value(title),
        happenedOn = Value(happenedOn),
@@ -2269,6 +2359,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     Expression<String>? setlist,
     Expression<String>? company,
     Expression<String>? externalId,
+    Expression<String>? photosUrl,
+    Expression<String>? videoUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2285,6 +2377,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
       if (setlist != null) 'setlist': setlist,
       if (company != null) 'company': company,
       if (externalId != null) 'external_id': externalId,
+      if (photosUrl != null) 'photos_url': photosUrl,
+      if (videoUrl != null) 'video_url': videoUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2303,6 +2397,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     Value<String?>? setlist,
     Value<String?>? company,
     Value<String?>? externalId,
+    Value<String?>? photosUrl,
+    Value<String?>? videoUrl,
     Value<int>? rowid,
   }) {
     return GigsCompanion(
@@ -2319,6 +2415,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
       setlist: setlist ?? this.setlist,
       company: company ?? this.company,
       externalId: externalId ?? this.externalId,
+      photosUrl: photosUrl ?? this.photosUrl,
+      videoUrl: videoUrl ?? this.videoUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2365,6 +2463,12 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
     if (externalId.present) {
       map['external_id'] = Variable<String>(externalId.value);
     }
+    if (photosUrl.present) {
+      map['photos_url'] = Variable<String>(photosUrl.value);
+    }
+    if (videoUrl.present) {
+      map['video_url'] = Variable<String>(videoUrl.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2387,6 +2491,8 @@ class GigsCompanion extends UpdateCompanion<GigRow> {
           ..write('setlist: $setlist, ')
           ..write('company: $company, ')
           ..write('externalId: $externalId, ')
+          ..write('photosUrl: $photosUrl, ')
+          ..write('videoUrl: $videoUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4066,6 +4172,686 @@ class GamesCompanion extends UpdateCompanion<GameRow> {
   }
 }
 
+class $BooksTable extends Books with TableInfo<$BooksTable, BookRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BooksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: newUuid,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 200,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _ratingMeta = const VerificationMeta('rating');
+  @override
+  late final GeneratedColumn<double> rating = GeneratedColumn<double>(
+    'rating',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reviewMeta = const VerificationMeta('review');
+  @override
+  late final GeneratedColumn<String> review = GeneratedColumn<String>(
+    'review',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _happenedOnMeta = const VerificationMeta(
+    'happenedOn',
+  );
+  @override
+  late final GeneratedColumn<DateTime> happenedOn = GeneratedColumn<DateTime>(
+    'happened_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _authorMeta = const VerificationMeta('author');
+  @override
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+    'author',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _publicationYearMeta = const VerificationMeta(
+    'publicationYear',
+  );
+  @override
+  late final GeneratedColumn<int> publicationYear = GeneratedColumn<int>(
+    'publication_year',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _externalIdMeta = const VerificationMeta(
+    'externalId',
+  );
+  @override
+  late final GeneratedColumn<String> externalId = GeneratedColumn<String>(
+    'external_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _coverUrlMeta = const VerificationMeta(
+    'coverUrl',
+  );
+  @override
+  late final GeneratedColumn<String> coverUrl = GeneratedColumn<String>(
+    'cover_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    description,
+    rating,
+    review,
+    happenedOn,
+    updatedAt,
+    author,
+    publicationYear,
+    externalId,
+    coverUrl,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'books';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BookRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('rating')) {
+      context.handle(
+        _ratingMeta,
+        rating.isAcceptableOrUnknown(data['rating']!, _ratingMeta),
+      );
+    }
+    if (data.containsKey('review')) {
+      context.handle(
+        _reviewMeta,
+        review.isAcceptableOrUnknown(data['review']!, _reviewMeta),
+      );
+    }
+    if (data.containsKey('happened_on')) {
+      context.handle(
+        _happenedOnMeta,
+        happenedOn.isAcceptableOrUnknown(data['happened_on']!, _happenedOnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_happenedOnMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('author')) {
+      context.handle(
+        _authorMeta,
+        author.isAcceptableOrUnknown(data['author']!, _authorMeta),
+      );
+    }
+    if (data.containsKey('publication_year')) {
+      context.handle(
+        _publicationYearMeta,
+        publicationYear.isAcceptableOrUnknown(
+          data['publication_year']!,
+          _publicationYearMeta,
+        ),
+      );
+    }
+    if (data.containsKey('external_id')) {
+      context.handle(
+        _externalIdMeta,
+        externalId.isAcceptableOrUnknown(data['external_id']!, _externalIdMeta),
+      );
+    }
+    if (data.containsKey('cover_url')) {
+      context.handle(
+        _coverUrlMeta,
+        coverUrl.isAcceptableOrUnknown(data['cover_url']!, _coverUrlMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BookRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BookRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      rating: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}rating'],
+      ),
+      review: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}review'],
+      ),
+      happenedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}happened_on'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      author: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}author'],
+      ),
+      publicationYear: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}publication_year'],
+      ),
+      externalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}external_id'],
+      ),
+      coverUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cover_url'],
+      ),
+    );
+  }
+
+  @override
+  $BooksTable createAlias(String alias) {
+    return $BooksTable(attachedDatabase, alias);
+  }
+}
+
+class BookRow extends DataClass implements Insertable<BookRow> {
+  final String id;
+  final String title;
+  final String? description;
+  final double? rating;
+  final String? review;
+  final DateTime happenedOn;
+
+  /// When the row was last written, by this device.
+  final DateTime updatedAt;
+
+  /// The author string Open Library returns, or what the owner typed.
+  final String? author;
+  final int? publicationYear;
+
+  /// Open Library work key, cached when the owner enriched the entry.
+  final String? externalId;
+
+  /// The cover URL, usually served by Open Library's cover endpoint.
+  final String? coverUrl;
+  const BookRow({
+    required this.id,
+    required this.title,
+    this.description,
+    this.rating,
+    this.review,
+    required this.happenedOn,
+    required this.updatedAt,
+    this.author,
+    this.publicationYear,
+    this.externalId,
+    this.coverUrl,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || rating != null) {
+      map['rating'] = Variable<double>(rating);
+    }
+    if (!nullToAbsent || review != null) {
+      map['review'] = Variable<String>(review);
+    }
+    map['happened_on'] = Variable<DateTime>(happenedOn);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || author != null) {
+      map['author'] = Variable<String>(author);
+    }
+    if (!nullToAbsent || publicationYear != null) {
+      map['publication_year'] = Variable<int>(publicationYear);
+    }
+    if (!nullToAbsent || externalId != null) {
+      map['external_id'] = Variable<String>(externalId);
+    }
+    if (!nullToAbsent || coverUrl != null) {
+      map['cover_url'] = Variable<String>(coverUrl);
+    }
+    return map;
+  }
+
+  BooksCompanion toCompanion(bool nullToAbsent) {
+    return BooksCompanion(
+      id: Value(id),
+      title: Value(title),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      rating: rating == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rating),
+      review: review == null && nullToAbsent
+          ? const Value.absent()
+          : Value(review),
+      happenedOn: Value(happenedOn),
+      updatedAt: Value(updatedAt),
+      author: author == null && nullToAbsent
+          ? const Value.absent()
+          : Value(author),
+      publicationYear: publicationYear == null && nullToAbsent
+          ? const Value.absent()
+          : Value(publicationYear),
+      externalId: externalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(externalId),
+      coverUrl: coverUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(coverUrl),
+    );
+  }
+
+  factory BookRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BookRow(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      description: serializer.fromJson<String?>(json['description']),
+      rating: serializer.fromJson<double?>(json['rating']),
+      review: serializer.fromJson<String?>(json['review']),
+      happenedOn: serializer.fromJson<DateTime>(json['happenedOn']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      author: serializer.fromJson<String?>(json['author']),
+      publicationYear: serializer.fromJson<int?>(json['publicationYear']),
+      externalId: serializer.fromJson<String?>(json['externalId']),
+      coverUrl: serializer.fromJson<String?>(json['coverUrl']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'description': serializer.toJson<String?>(description),
+      'rating': serializer.toJson<double?>(rating),
+      'review': serializer.toJson<String?>(review),
+      'happenedOn': serializer.toJson<DateTime>(happenedOn),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'author': serializer.toJson<String?>(author),
+      'publicationYear': serializer.toJson<int?>(publicationYear),
+      'externalId': serializer.toJson<String?>(externalId),
+      'coverUrl': serializer.toJson<String?>(coverUrl),
+    };
+  }
+
+  BookRow copyWith({
+    String? id,
+    String? title,
+    Value<String?> description = const Value.absent(),
+    Value<double?> rating = const Value.absent(),
+    Value<String?> review = const Value.absent(),
+    DateTime? happenedOn,
+    DateTime? updatedAt,
+    Value<String?> author = const Value.absent(),
+    Value<int?> publicationYear = const Value.absent(),
+    Value<String?> externalId = const Value.absent(),
+    Value<String?> coverUrl = const Value.absent(),
+  }) => BookRow(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    description: description.present ? description.value : this.description,
+    rating: rating.present ? rating.value : this.rating,
+    review: review.present ? review.value : this.review,
+    happenedOn: happenedOn ?? this.happenedOn,
+    updatedAt: updatedAt ?? this.updatedAt,
+    author: author.present ? author.value : this.author,
+    publicationYear: publicationYear.present
+        ? publicationYear.value
+        : this.publicationYear,
+    externalId: externalId.present ? externalId.value : this.externalId,
+    coverUrl: coverUrl.present ? coverUrl.value : this.coverUrl,
+  );
+  BookRow copyWithCompanion(BooksCompanion data) {
+    return BookRow(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      rating: data.rating.present ? data.rating.value : this.rating,
+      review: data.review.present ? data.review.value : this.review,
+      happenedOn: data.happenedOn.present
+          ? data.happenedOn.value
+          : this.happenedOn,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      author: data.author.present ? data.author.value : this.author,
+      publicationYear: data.publicationYear.present
+          ? data.publicationYear.value
+          : this.publicationYear,
+      externalId: data.externalId.present
+          ? data.externalId.value
+          : this.externalId,
+      coverUrl: data.coverUrl.present ? data.coverUrl.value : this.coverUrl,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BookRow(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('description: $description, ')
+          ..write('rating: $rating, ')
+          ..write('review: $review, ')
+          ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('author: $author, ')
+          ..write('publicationYear: $publicationYear, ')
+          ..write('externalId: $externalId, ')
+          ..write('coverUrl: $coverUrl')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    title,
+    description,
+    rating,
+    review,
+    happenedOn,
+    updatedAt,
+    author,
+    publicationYear,
+    externalId,
+    coverUrl,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BookRow &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.description == this.description &&
+          other.rating == this.rating &&
+          other.review == this.review &&
+          other.happenedOn == this.happenedOn &&
+          other.updatedAt == this.updatedAt &&
+          other.author == this.author &&
+          other.publicationYear == this.publicationYear &&
+          other.externalId == this.externalId &&
+          other.coverUrl == this.coverUrl);
+}
+
+class BooksCompanion extends UpdateCompanion<BookRow> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String?> description;
+  final Value<double?> rating;
+  final Value<String?> review;
+  final Value<DateTime> happenedOn;
+  final Value<DateTime> updatedAt;
+  final Value<String?> author;
+  final Value<int?> publicationYear;
+  final Value<String?> externalId;
+  final Value<String?> coverUrl;
+  final Value<int> rowid;
+  const BooksCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.description = const Value.absent(),
+    this.rating = const Value.absent(),
+    this.review = const Value.absent(),
+    this.happenedOn = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.author = const Value.absent(),
+    this.publicationYear = const Value.absent(),
+    this.externalId = const Value.absent(),
+    this.coverUrl = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BooksCompanion.insert({
+    this.id = const Value.absent(),
+    required String title,
+    this.description = const Value.absent(),
+    this.rating = const Value.absent(),
+    this.review = const Value.absent(),
+    required DateTime happenedOn,
+    required DateTime updatedAt,
+    this.author = const Value.absent(),
+    this.publicationYear = const Value.absent(),
+    this.externalId = const Value.absent(),
+    this.coverUrl = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : title = Value(title),
+       happenedOn = Value(happenedOn),
+       updatedAt = Value(updatedAt);
+  static Insertable<BookRow> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? description,
+    Expression<double>? rating,
+    Expression<String>? review,
+    Expression<DateTime>? happenedOn,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? author,
+    Expression<int>? publicationYear,
+    Expression<String>? externalId,
+    Expression<String>? coverUrl,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
+      if (rating != null) 'rating': rating,
+      if (review != null) 'review': review,
+      if (happenedOn != null) 'happened_on': happenedOn,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (author != null) 'author': author,
+      if (publicationYear != null) 'publication_year': publicationYear,
+      if (externalId != null) 'external_id': externalId,
+      if (coverUrl != null) 'cover_url': coverUrl,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BooksCompanion copyWith({
+    Value<String>? id,
+    Value<String>? title,
+    Value<String?>? description,
+    Value<double?>? rating,
+    Value<String?>? review,
+    Value<DateTime>? happenedOn,
+    Value<DateTime>? updatedAt,
+    Value<String?>? author,
+    Value<int?>? publicationYear,
+    Value<String?>? externalId,
+    Value<String?>? coverUrl,
+    Value<int>? rowid,
+  }) {
+    return BooksCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      rating: rating ?? this.rating,
+      review: review ?? this.review,
+      happenedOn: happenedOn ?? this.happenedOn,
+      updatedAt: updatedAt ?? this.updatedAt,
+      author: author ?? this.author,
+      publicationYear: publicationYear ?? this.publicationYear,
+      externalId: externalId ?? this.externalId,
+      coverUrl: coverUrl ?? this.coverUrl,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (rating.present) {
+      map['rating'] = Variable<double>(rating.value);
+    }
+    if (review.present) {
+      map['review'] = Variable<String>(review.value);
+    }
+    if (happenedOn.present) {
+      map['happened_on'] = Variable<DateTime>(happenedOn.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
+    if (publicationYear.present) {
+      map['publication_year'] = Variable<int>(publicationYear.value);
+    }
+    if (externalId.present) {
+      map['external_id'] = Variable<String>(externalId.value);
+    }
+    if (coverUrl.present) {
+      map['cover_url'] = Variable<String>(coverUrl.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BooksCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('description: $description, ')
+          ..write('rating: $rating, ')
+          ..write('review: $review, ')
+          ..write('happenedOn: $happenedOn, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('author: $author, ')
+          ..write('publicationYear: $publicationYear, ')
+          ..write('externalId: $externalId, ')
+          ..write('coverUrl: $coverUrl, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $EntryPhotosTable extends EntryPhotos
     with TableInfo<$EntryPhotosTable, EntryPhotoRow> {
   @override
@@ -5074,6 +5860,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $GigsTable gigs = $GigsTable(this);
   late final $ViewingsTable viewings = $ViewingsTable(this);
   late final $GamesTable games = $GamesTable(this);
+  late final $BooksTable books = $BooksTable(this);
   late final $EntryPhotosTable entryPhotos = $EntryPhotosTable(this);
   late final $WishesTable wishes = $WishesTable(this);
   late final Index photoByOwner = Index(
@@ -5095,6 +5882,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     gigs,
     viewings,
     games,
+    books,
     entryPhotos,
     wishes,
     photoByOwner,
@@ -6125,6 +6913,8 @@ typedef $$GigsTableCreateCompanionBuilder = GigsCompanion Function({
   Value<String?> setlist,
   Value<String?> company,
   Value<String?> externalId,
+  Value<String?> photosUrl,
+  Value<String?> videoUrl,
   Value<int> rowid,
 });
 typedef $$GigsTableUpdateCompanionBuilder = GigsCompanion Function({
@@ -6141,6 +6931,8 @@ typedef $$GigsTableUpdateCompanionBuilder = GigsCompanion Function({
   Value<String?> setlist,
   Value<String?> company,
   Value<String?> externalId,
+  Value<String?> photosUrl,
+  Value<String?> videoUrl,
   Value<int> rowid,
 });
 
@@ -6214,6 +7006,16 @@ class $$GigsTableFilterComposer extends Composer<_$AppDatabase, $GigsTable> {
 
   ColumnFilters<String> get externalId => $composableBuilder(
     column: $table.externalId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get photosUrl => $composableBuilder(
+    column: $table.photosUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get videoUrl => $composableBuilder(
+    column: $table.videoUrl,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -6290,6 +7092,16 @@ class $$GigsTableOrderingComposer extends Composer<_$AppDatabase, $GigsTable> {
     column: $table.externalId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get photosUrl => $composableBuilder(
+    column: $table.photosUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get videoUrl => $composableBuilder(
+    column: $table.videoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$GigsTableAnnotationComposer
@@ -6347,6 +7159,12 @@ class $$GigsTableAnnotationComposer
     column: $table.externalId,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get photosUrl =>
+      $composableBuilder(column: $table.photosUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get videoUrl =>
+      $composableBuilder(column: $table.videoUrl, builder: (column) => column);
 }
 
 class $$GigsTableTableManager
@@ -6390,6 +7208,8 @@ class $$GigsTableTableManager
                 Value<String?> setlist = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<String?> photosUrl = const Value.absent(),
+                Value<String?> videoUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GigsCompanion(
                 id: id,
@@ -6405,6 +7225,8 @@ class $$GigsTableTableManager
                 setlist: setlist,
                 company: company,
                 externalId: externalId,
+                photosUrl: photosUrl,
+                videoUrl: videoUrl,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -6422,6 +7244,8 @@ class $$GigsTableTableManager
                 Value<String?> setlist = const Value.absent(),
                 Value<String?> company = const Value.absent(),
                 Value<String?> externalId = const Value.absent(),
+                Value<String?> photosUrl = const Value.absent(),
+                Value<String?> videoUrl = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GigsCompanion.insert(
                 id: id,
@@ -6437,6 +7261,8 @@ class $$GigsTableTableManager
                 setlist: setlist,
                 company: company,
                 externalId: externalId,
+                photosUrl: photosUrl,
+                videoUrl: videoUrl,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -7211,6 +8037,319 @@ typedef $$GamesTableProcessedTableManager =
       GameRow,
       PrefetchHooks Function()
     >;
+typedef $$BooksTableCreateCompanionBuilder = BooksCompanion Function({
+  Value<String> id,
+  required String title,
+  Value<String?> description,
+  Value<double?> rating,
+  Value<String?> review,
+  required DateTime happenedOn,
+  required DateTime updatedAt,
+  Value<String?> author,
+  Value<int?> publicationYear,
+  Value<String?> externalId,
+  Value<String?> coverUrl,
+  Value<int> rowid,
+});
+typedef $$BooksTableUpdateCompanionBuilder = BooksCompanion Function({
+  Value<String> id,
+  Value<String> title,
+  Value<String?> description,
+  Value<double?> rating,
+  Value<String?> review,
+  Value<DateTime> happenedOn,
+  Value<DateTime> updatedAt,
+  Value<String?> author,
+  Value<int?> publicationYear,
+  Value<String?> externalId,
+  Value<String?> coverUrl,
+  Value<int> rowid,
+});
+
+class $$BooksTableFilterComposer extends Composer<_$AppDatabase, $BooksTable> {
+  $$BooksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get review => $composableBuilder(
+    column: $table.review,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get happenedOn => $composableBuilder(
+    column: $table.happenedOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get author => $composableBuilder(
+    column: $table.author,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get publicationYear => $composableBuilder(
+    column: $table.publicationYear,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get coverUrl => $composableBuilder(
+    column: $table.coverUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BooksTableOrderingComposer
+    extends Composer<_$AppDatabase, $BooksTable> {
+  $$BooksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get review => $composableBuilder(
+    column: $table.review,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get happenedOn => $composableBuilder(
+    column: $table.happenedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get author => $composableBuilder(
+    column: $table.author,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get publicationYear => $composableBuilder(
+    column: $table.publicationYear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get coverUrl => $composableBuilder(
+    column: $table.coverUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BooksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BooksTable> {
+  $$BooksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get rating =>
+      $composableBuilder(column: $table.rating, builder: (column) => column);
+
+  GeneratedColumn<String> get review =>
+      $composableBuilder(column: $table.review, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get happenedOn => $composableBuilder(
+    column: $table.happenedOn,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get author =>
+      $composableBuilder(column: $table.author, builder: (column) => column);
+
+  GeneratedColumn<int> get publicationYear => $composableBuilder(
+    column: $table.publicationYear,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get externalId => $composableBuilder(
+    column: $table.externalId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get coverUrl =>
+      $composableBuilder(column: $table.coverUrl, builder: (column) => column);
+}
+
+class $$BooksTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BooksTable,
+          BookRow,
+          $$BooksTableFilterComposer,
+          $$BooksTableOrderingComposer,
+          $$BooksTableAnnotationComposer,
+          $$BooksTableCreateCompanionBuilder,
+          $$BooksTableUpdateCompanionBuilder,
+          (BookRow, BaseReferences<_$AppDatabase, $BooksTable, BookRow>),
+          BookRow,
+          PrefetchHooks Function()
+        > {
+  $$BooksTableTableManager(_$AppDatabase db, $BooksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BooksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BooksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BooksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<double?> rating = const Value.absent(),
+                Value<String?> review = const Value.absent(),
+                Value<DateTime> happenedOn = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> author = const Value.absent(),
+                Value<int?> publicationYear = const Value.absent(),
+                Value<String?> externalId = const Value.absent(),
+                Value<String?> coverUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BooksCompanion(
+                id: id,
+                title: title,
+                description: description,
+                rating: rating,
+                review: review,
+                happenedOn: happenedOn,
+                updatedAt: updatedAt,
+                author: author,
+                publicationYear: publicationYear,
+                externalId: externalId,
+                coverUrl: coverUrl,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                required String title,
+                Value<String?> description = const Value.absent(),
+                Value<double?> rating = const Value.absent(),
+                Value<String?> review = const Value.absent(),
+                required DateTime happenedOn,
+                required DateTime updatedAt,
+                Value<String?> author = const Value.absent(),
+                Value<int?> publicationYear = const Value.absent(),
+                Value<String?> externalId = const Value.absent(),
+                Value<String?> coverUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BooksCompanion.insert(
+                id: id,
+                title: title,
+                description: description,
+                rating: rating,
+                review: review,
+                happenedOn: happenedOn,
+                updatedAt: updatedAt,
+                author: author,
+                publicationYear: publicationYear,
+                externalId: externalId,
+                coverUrl: coverUrl,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BooksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BooksTable,
+      BookRow,
+      $$BooksTableFilterComposer,
+      $$BooksTableOrderingComposer,
+      $$BooksTableAnnotationComposer,
+      $$BooksTableCreateCompanionBuilder,
+      $$BooksTableUpdateCompanionBuilder,
+      (BookRow, BaseReferences<_$AppDatabase, $BooksTable, BookRow>),
+      BookRow,
+      PrefetchHooks Function()
+    >;
 typedef $$EntryPhotosTableCreateCompanionBuilder =
     EntryPhotosCompanion Function({
       required String id,
@@ -7720,6 +8859,8 @@ class $AppDatabaseManager {
       $$ViewingsTableTableManager(_db, _db.viewings);
   $$GamesTableTableManager get games =>
       $$GamesTableTableManager(_db, _db.games);
+  $$BooksTableTableManager get books =>
+      $$BooksTableTableManager(_db, _db.books);
   $$EntryPhotosTableTableManager get entryPhotos =>
       $$EntryPhotosTableTableManager(_db, _db.entryPhotos);
   $$WishesTableTableManager get wishes =>

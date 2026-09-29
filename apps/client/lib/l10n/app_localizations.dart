@@ -962,6 +962,48 @@ abstract class AppLocalizations {
   /// **'One song per line'**
   String get fieldSetlistHint;
 
+  /// No description provided for @fieldPhotosUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo album URL'**
+  String get fieldPhotosUrl;
+
+  /// No description provided for @fieldVideoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube video URL'**
+  String get fieldVideoUrl;
+
+  /// No description provided for @urlInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a full http(s) URL.'**
+  String get urlInvalid;
+
+  /// No description provided for @youtubeUrlInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a YouTube URL.'**
+  String get youtubeUrlInvalid;
+
+  /// No description provided for @gigLinksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get gigLinksLabel;
+
+  /// No description provided for @gigPhotosLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo album'**
+  String get gigPhotosLink;
+
+  /// No description provided for @gigVideoLink.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube video'**
+  String get gigVideoLink;
+
   /// No description provided for @filterCity.
   ///
   /// In en, this message translates to:
@@ -2239,6 +2281,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This link has no position in it, so there is nothing to draw. A link copied from a map on a computer usually has one.'**
   String get mapNoCoordinates;
+
+  /// No description provided for @domainBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get domainBooks;
+
+  /// No description provided for @bookSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search books, authors, notes'**
+  String get bookSearchHint;
+
+  /// No description provided for @bookCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No books} =1{1 book} other{{count} books}}'**
+  String bookCount(int count);
+
+  /// No description provided for @bookEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No books logged'**
+  String get bookEmptyTitle;
+
+  /// No description provided for @bookEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add books after you finish reading them.'**
+  String get bookEmptyBody;
+
+  /// No description provided for @bookEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No book matches these filters'**
+  String get bookEmptyFiltered;
+
+  /// No description provided for @addBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Add book'**
+  String get addBook;
+
+  /// No description provided for @newBook.
+  ///
+  /// In en, this message translates to:
+  /// **'New book'**
+  String get newBook;
+
+  /// No description provided for @editBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit book'**
+  String get editBook;
+
+  /// No description provided for @deleteBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete book'**
+  String get deleteBook;
+
+  /// No description provided for @fieldAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get fieldAuthor;
+
+  /// No description provided for @fieldPublicationYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Publication year'**
+  String get fieldPublicationYear;
+
+  /// No description provided for @fieldReadOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on'**
+  String get fieldReadOn;
 }
 
 class _AppLocalizationsDelegate

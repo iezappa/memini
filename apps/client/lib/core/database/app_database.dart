@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import '../../features/books/data/book_tables.dart';
 import '../../features/concerts/data/gig_tables.dart';
 import '../../features/dining/data/meal_tables.dart';
 import '../../features/franchises/data/franchise_tables.dart';
@@ -27,6 +28,7 @@ part 'app_database.g.dart';
     Gigs,
     Viewings,
     Games,
+    Books,
     EntryPhotos,
     Wishes,
   ],
@@ -65,7 +67,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schema this build writes, readable without opening a store — which
   /// is exactly when recovery needs it.
-  static const currentSchemaVersion = 9;
+  static const currentSchemaVersion = 11;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -236,6 +238,19 @@ class AppDatabase extends _$AppDatabase {
             // about the place, so it is appended to the meal's description
             // — the field it would have been written in had this always
             // been a link.
+            // v10 gives a night its links: the album of photographs and a
+            // video of it. Two nullable columns added rather than a
+            // rebuild, so nothing already written is touched and a gig
+            // logged before this simply has neither.
+            from9To10: (m, schema) async {
+              await m.addColumn(schema.gigs, schema.gigs.photosUrl);
+              await m.addColumn(schema.gigs, schema.gigs.videoUrl);
+            },
+            // v11 adds read books as completed entries only. A new table,
+            // so every existing entry in the other domains remains untouched.
+            from10To11: (m, schema) async {
+              await m.createTable(schema.books);
+            },
             from8To9: (m, schema) async {
               await m.alterTable(
                 TableMigration(

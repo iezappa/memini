@@ -2163,6 +2163,510 @@ i1.GeneratedColumn<String> _column_40(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NULL',
     );
+
+final class Schema10 extends i0.VersionedSchema {
+  Schema10({required super.database}) : super(version: 10);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    franchises,
+    rooms,
+    meals,
+    gigs,
+    viewings,
+    games,
+    entryPhotos,
+    wishes,
+    photoByOwner,
+    wishByKind,
+  ];
+  late final Shape11 franchises = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'franchises',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_29, _column_1, _column_2, _column_30],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 rooms = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'rooms',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_31,
+        _column_10,
+        _column_11,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape21 meals = Shape21(
+    source: i0.VersionedTable(
+      entityName: 'meals',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_12,
+        _column_13,
+        _column_14,
+        _column_40,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape22 gigs = Shape22(
+    source: i0.VersionedTable(
+      entityName: 'gigs',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_16,
+        _column_17,
+        _column_18,
+        _column_19,
+        _column_14,
+        _column_20,
+        _column_41,
+        _column_42,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape17 viewings = Shape17(
+    source: i0.VersionedTable(
+      entityName: 'viewings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_20,
+        _column_32,
+        _column_33,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape18 games = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'games',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_22,
+        _column_20,
+        _column_34,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape19 entryPhotos = Shape19(
+    source: i0.VersionedTable(
+      entityName: 'entry_photos',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_29, _column_35, _column_36, _column_37, _column_30],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape20 wishes = Shape20(
+    source: i0.VersionedTable(
+      entityName: 'wishes',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_21,
+        _column_3,
+        _column_38,
+        _column_5,
+        _column_22,
+        _column_20,
+        _column_32,
+        _column_39,
+        _column_30,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index photoByOwner = i1.Index(
+    'photo_by_owner',
+    'CREATE INDEX IF NOT EXISTS photo_by_owner ON entry_photos (owner_id)',
+  );
+  final i1.Index wishByKind = i1.Index(
+    'wish_by_kind',
+    'CREATE INDEX IF NOT EXISTS wish_by_kind ON wishes (kind)',
+  );
+}
+
+class Shape22 extends i0.VersionedTable {
+  Shape22({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get title =>
+      columnsByName['title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get description =>
+      columnsByName['description']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<double> get rating =>
+      columnsByName['rating']! as i1.GeneratedColumn<double>;
+  i1.GeneratedColumn<String> get review =>
+      columnsByName['review']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get happenedOn =>
+      columnsByName['happened_on']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get venue =>
+      columnsByName['venue']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get city =>
+      columnsByName['city']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get supportActs =>
+      columnsByName['support_acts']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get setlist =>
+      columnsByName['setlist']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get company =>
+      columnsByName['company']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get externalId =>
+      columnsByName['external_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get photosUrl =>
+      columnsByName['photos_url']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get videoUrl =>
+      columnsByName['video_url']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_41(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'photos_url',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_42(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'video_url',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+
+final class Schema11 extends i0.VersionedSchema {
+  Schema11({required super.database}) : super(version: 11);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    franchises,
+    rooms,
+    meals,
+    gigs,
+    viewings,
+    games,
+    books,
+    entryPhotos,
+    wishes,
+    photoByOwner,
+    wishByKind,
+  ];
+  late final Shape11 franchises = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'franchises',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_29, _column_1, _column_2, _column_30],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 rooms = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'rooms',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_31,
+        _column_10,
+        _column_11,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape21 meals = Shape21(
+    source: i0.VersionedTable(
+      entityName: 'meals',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_12,
+        _column_13,
+        _column_14,
+        _column_40,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape22 gigs = Shape22(
+    source: i0.VersionedTable(
+      entityName: 'gigs',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_16,
+        _column_17,
+        _column_18,
+        _column_19,
+        _column_14,
+        _column_20,
+        _column_41,
+        _column_42,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape17 viewings = Shape17(
+    source: i0.VersionedTable(
+      entityName: 'viewings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_20,
+        _column_32,
+        _column_33,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape18 games = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'games',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_22,
+        _column_20,
+        _column_34,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape23 books = Shape23(
+    source: i0.VersionedTable(
+      entityName: 'books',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_3,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_30,
+        _column_43,
+        _column_44,
+        _column_20,
+        _column_34,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape19 entryPhotos = Shape19(
+    source: i0.VersionedTable(
+      entityName: 'entry_photos',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_29, _column_35, _column_36, _column_37, _column_30],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape20 wishes = Shape20(
+    source: i0.VersionedTable(
+      entityName: 'wishes',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_29,
+        _column_21,
+        _column_3,
+        _column_38,
+        _column_5,
+        _column_22,
+        _column_20,
+        _column_32,
+        _column_39,
+        _column_30,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index photoByOwner = i1.Index(
+    'photo_by_owner',
+    'CREATE INDEX IF NOT EXISTS photo_by_owner ON entry_photos (owner_id)',
+  );
+  final i1.Index wishByKind = i1.Index(
+    'wish_by_kind',
+    'CREATE INDEX IF NOT EXISTS wish_by_kind ON wishes (kind)',
+  );
+}
+
+class Shape23 extends i0.VersionedTable {
+  Shape23({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get title =>
+      columnsByName['title']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get description =>
+      columnsByName['description']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<double> get rating =>
+      columnsByName['rating']! as i1.GeneratedColumn<double>;
+  i1.GeneratedColumn<String> get review =>
+      columnsByName['review']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get happenedOn =>
+      columnsByName['happened_on']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get author =>
+      columnsByName['author']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get publicationYear =>
+      columnsByName['publication_year']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get externalId =>
+      columnsByName['external_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get coverUrl =>
+      columnsByName['cover_url']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_43(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'author',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<int> _column_44(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'publication_year',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
@@ -2172,6 +2676,8 @@ i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema7 schema) from6To7,
   required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
   required Future<void> Function(i1.Migrator m, Schema9 schema) from8To9,
+  required Future<void> Function(i1.Migrator m, Schema10 schema) from9To10,
+  required Future<void> Function(i1.Migrator m, Schema11 schema) from10To11,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -2215,6 +2721,16 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from8To9(migrator, schema);
         return 9;
+      case 9:
+        final schema = Schema10(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from9To10(migrator, schema);
+        return 10;
+      case 10:
+        final schema = Schema11(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from10To11(migrator, schema);
+        return 11;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -2230,6 +2746,8 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema7 schema) from6To7,
   required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
   required Future<void> Function(i1.Migrator m, Schema9 schema) from8To9,
+  required Future<void> Function(i1.Migrator m, Schema10 schema) from9To10,
+  required Future<void> Function(i1.Migrator m, Schema11 schema) from10To11,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
@@ -2240,5 +2758,7 @@ i1.OnUpgrade stepByStep({
     from6To7: from6To7,
     from7To8: from7To8,
     from8To9: from8To9,
+    from9To10: from9To10,
+    from10To11: from10To11,
   ),
 );

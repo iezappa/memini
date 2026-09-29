@@ -6,10 +6,7 @@ import '../domain/tracking_filter.dart';
 
 export '../domain/tracked_domain.dart';
 
-/// The ordering labels, written once for all five domains.
-///
-/// The wording stays domain-neutral on purpose — "most recent" reads right
-/// whether the entry is a room, a meal or a game.
+/// The ordering labels, written once for all domains.
 String trackingSortLabel(AppLocalizations l10n, TrackingSort sort) {
   return switch (sort) {
     TrackingSort.happenedOnDesc => l10n.sortDateNewest,
@@ -27,6 +24,7 @@ extension TrackedDomainPresentation on TrackedDomain {
     TrackedDomain.concerts => l10n.domainConcerts,
     TrackedDomain.screen => l10n.domainScreen,
     TrackedDomain.games => l10n.domainGames,
+    TrackedDomain.books => l10n.domainBooks,
   };
 
   IconData get icon => switch (this) {
@@ -35,6 +33,7 @@ extension TrackedDomainPresentation on TrackedDomain {
     TrackedDomain.concerts => Icons.music_note_outlined,
     TrackedDomain.screen => Icons.movie_outlined,
     TrackedDomain.games => Icons.sports_esports_outlined,
+    TrackedDomain.books => Icons.menu_book_outlined,
   };
 
   String get route => switch (this) {
@@ -43,5 +42,6 @@ extension TrackedDomainPresentation on TrackedDomain {
     TrackedDomain.concerts => '/gigs',
     TrackedDomain.screen => '/viewings',
     TrackedDomain.games => '/games',
+    TrackedDomain.books => '/books',
   };
 }

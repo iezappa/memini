@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:memini/core/ids/uuid.dart';
 import 'package:memini/features/backup/domain/backup_document.dart';
 import 'package:memini/features/backup/domain/entries_csv.dart';
+import 'package:memini/features/books/domain/book.dart';
+import 'package:memini/features/concerts/domain/gig.dart';
 import 'package:memini/features/franchises/domain/franchise.dart';
 import 'package:memini/features/rooms/domain/room.dart';
 
@@ -52,6 +54,50 @@ void main() {
       expect(restoredRoom.happenedOn, DateTime(2026, 3, 14));
       expect(restoredRoom.escaped, isTrue);
       expect(restoredRoom.timeLeftMinutes, 4);
+    });
+
+    test('round trips gig album and YouTube links', () {
+      final gig = Gig(
+        id: 'c56a4180-65aa-42ec-a945-5fd21dec0538',
+        updatedAt: DateTime.utc(2026, 9, 3, 8),
+        title: 'Radiohead',
+        happenedOn: DateTime(2026, 3, 14),
+        photosUrl: 'https://photos.example/radiohead',
+        videoUrl: 'https://www.youtube.com/watch?v=abc123',
+      );
+
+      final restored = roundTrip(
+        BackupDocument.of(franchises: [], rooms: [], gigs: [gig]),
+      );
+
+      expect(
+        restored.gigs.single.photosUrl,
+        'https://photos.example/radiohead',
+      );
+      expect(
+        restored.gigs.single.videoUrl,
+        'https://www.youtube.com/watch?v=abc123',
+      );
+    });
+
+    test('reads older gig backups without link keys', () {
+      final restored = BackupDocument.fromJson({
+        'version': 3,
+        'exportedAt': '2026-09-17T10:00:00.000Z',
+        'franchises': [],
+        'rooms': [],
+        'gigs': [
+          {
+            'id': 'c56a4180-65aa-42ec-a945-5fd21dec0538',
+            'updatedAt': '2026-09-03T08:00:00.000Z',
+            'title': 'Radiohead',
+            'happenedOn': '2026-03-14',
+          },
+        ],
+      });
+
+      expect(restored.gigs.single.photosUrl, isNull);
+      expect(restored.gigs.single.videoUrl, isNull);
     });
 
     test('round trips an empty database', () {
@@ -154,15 +200,64 @@ void main() {
     });
   });
 
-  group('format v3', () {
+  group('format v5', () {
     test('is the version written today', () {
-      expect(BackupDocument.currentVersion, 3);
+      expect(BackupDocument.currentVersion, 5);
       expect(
         BackupDocument.of(franchises: [], rooms: []).toJson()['version'],
-        3,
+        5,
       );
     });
 
+    test('marks gig link backups as unreadable by older v3 clients', () {
+      final json = BackupDocument.of(
+        franchises: [],
+        rooms: [],
+        gigs: [
+          Gig(
+            id: 'c56a4180-65aa-42ec-a945-5fd21dec0538',
+            updatedAt: DateTime.utc(2026, 9, 3, 8),
+            title: 'Radiohead',
+            happenedOn: DateTime(2026, 3, 14),
+            photosUrl: 'https://photos.example/radiohead',
+            videoUrl: 'https://youtu.be/abc123',
+          ),
+        ],
+      ).toJson();
+
+      expect(json['version'], 5);
+      expect(json['gigs'], [
+        containsPair('photosUrl', 'https://photos.example/radiohead'),
+      ]);
+    });
+  });
+
+  test('round trips books', () {
+    final restored = roundTrip(
+      BackupDocument.of(
+        franchises: [],
+        rooms: [],
+        books: [
+          Book(
+            id: 'c56a4180-65aa-42ec-a945-5fd21dec0538',
+            updatedAt: DateTime.utc(2026, 9, 3, 8),
+            title: 'Kindred',
+            author: 'Octavia E. Butler',
+            readOn: DateTime(2026, 3, 14),
+            publicationYear: 1979,
+            coverUrl: 'https://covers.openlibrary.org/b/id/12345-L.jpg',
+          ),
+        ],
+      ),
+    );
+
+    expect(restored.books.single.title, 'Kindred');
+    expect(restored.books.single.author, 'Octavia E. Butler');
+    expect(restored.books.single.publicationYear, 1979);
+    expect(restored.books.single.coverUrl, contains('12345'));
+  });
+
+  group('format v3', () {
     Map<String, dynamic> v3({
       List<Map<String, dynamic>> franchises = const [],
       List<Map<String, dynamic>> rooms = const [],

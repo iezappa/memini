@@ -2,6 +2,9 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memini/core/database/app_database.dart';
 import 'package:memini/features/backup/data/backup_service.dart';
+import 'package:memini/features/books/data/drift_book_repository.dart';
+import 'package:memini/features/books/domain/book.dart';
+import 'package:memini/features/books/domain/book_repository.dart';
 import 'package:memini/features/concerts/data/drift_gig_repository.dart';
 import 'package:memini/features/concerts/domain/gig.dart';
 import 'package:memini/features/concerts/domain/gig_repository.dart';
@@ -53,6 +56,14 @@ void main() {
       ),
     );
   }
+
+  test('exports the whole database as the current backup version', () async {
+    await seed();
+    final exported = BackupService.parse(await service.exportJson());
+
+    expect(exported.version, BackupDocument.currentVersion);
+    expect(exported.version, 5);
+  });
 
   test('exports the whole database and imports it back unchanged', () async {
     await seed();
@@ -150,7 +161,7 @@ void main() {
   });
 
   group('every domain survives a round trip', () {
-    /// One entry in each of the five domains, so a restore that silently
+    /// One entry in each tracked domain, so a restore that silently
     /// drops a table fails loudly here instead of in the owner's data.
     Future<void> seedAllDomains() async {
       await DriftMealRepository(db).create(
@@ -170,6 +181,8 @@ void main() {
           venue: 'Vélez',
           city: 'Buenos Aires',
           setlist: 'Bloom\nDaydreaming',
+          photosUrl: 'https://photos.example/radiohead',
+          videoUrl: 'https://youtu.be/abc123',
         ),
       );
       await DriftViewingRepository(db).create(
@@ -191,6 +204,15 @@ void main() {
           platform: 'PC',
           happenedOn: DateTime(2026, 3, 4),
           coverUrl: 'https://media.rawg.io/outer-wilds.jpg',
+        ),
+      );
+      await DriftBookRepository(db).create(
+        BookDraft(
+          title: 'Kindred',
+          author: 'Octavia E. Butler',
+          readOn: DateTime(2026, 3, 5),
+          publicationYear: 1979,
+          coverUrl: 'https://covers.openlibrary.org/b/id/12345-L.jpg',
         ),
       );
       await DriftWishRepository(db).create(
@@ -215,10 +237,11 @@ void main() {
       expect(document.gigs, hasLength(1));
       expect(document.viewings, hasLength(1));
       expect(document.games, hasLength(1));
+      expect(document.books, hasLength(1));
       expect(document.wishes, hasLength(1));
       // The watchlist is not in the count: nothing on it has happened, and
       // this figure is what the owner has done.
-      expect(document.entryCount, 5);
+      expect(document.entryCount, 6);
     });
 
     test('import restores every domain with its own fields intact', () async {
@@ -248,6 +271,8 @@ void main() {
       final gig = (await DriftGigRepository(db).list(const GigFilter())).single;
       expect(gig.venue, 'Vélez');
       expect(gig.setlist, 'Bloom\nDaydreaming');
+      expect(gig.photosUrl, 'https://photos.example/radiohead');
+      expect(gig.videoUrl, 'https://youtu.be/abc123');
 
       final viewing = (await DriftViewingRepository(
         db,
@@ -272,6 +297,13 @@ void main() {
       expect(game.hoursPlayed, 27.5);
       expect(game.platform, 'PC');
       expect(game.coverUrl, 'https://media.rawg.io/outer-wilds.jpg');
+
+      final book = (await DriftBookRepository(db).list(const BookFilter()))
+          .single;
+      expect(book.title, 'Kindred');
+      expect(book.author, 'Octavia E. Butler');
+      expect(book.publicationYear, 1979);
+      expect(book.coverUrl, 'https://covers.openlibrary.org/b/id/12345-L.jpg');
 
       final wish = (await DriftWishRepository(db).list(const WishFilter()))
           .single;
@@ -312,12 +344,15 @@ void main() {
 
       expect(
         sheets.keys,
-        containsAll(['rooms', 'meals', 'gigs', 'viewings', 'games']),
+        containsAll(['rooms', 'meals', 'gigs', 'viewings', 'games', 'books']),
       );
       expect(sheets['meals'], contains('Bife de chorizo'));
       expect(sheets['games'], contains('hundredPercent'));
+      expect(sheets['books'], contains('Kindred'));
       // A multi-line setlist must stay inside one quoted cell.
       expect(sheets['gigs'], contains('"Bloom\nDaydreaming"'));
+      expect(sheets['gigs'], contains('https://photos.example/radiohead'));
+      expect(sheets['gigs'], contains('https://youtu.be/abc123'));
     });
   });
 

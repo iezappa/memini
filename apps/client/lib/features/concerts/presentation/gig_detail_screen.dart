@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -13,13 +14,40 @@ import '../domain/gig.dart';
 import 'gig_form_screen.dart';
 import 'gig_providers.dart';
 
+typedef UrlOpener = Future<bool> Function(Uri url);
+
+Future<bool> _launchExternally(Uri url) =>
+    launchUrl(url, mode: LaunchMode.externalApplication);
+
 class GigDetailScreen extends ConsumerWidget {
-  const GigDetailScreen({super.key, required this.gigId});
+  const GigDetailScreen({
+    super.key,
+    required this.gigId,
+    this.openLink = _launchExternally,
+  });
 
   final String gigId;
+  final UrlOpener openLink;
 
   Future<void> _edit(BuildContext context, Gig gig) async {
     await showEntryDialog(context, GigFormScreen(gig: gig));
+  }
+
+  Future<void> _openLink(BuildContext context, String url) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final failure = AppLocalizations.of(context).linkFailed;
+    final uri = Uri.parse(url);
+
+    var ok = false;
+    try {
+      ok = await openLink(uri);
+    } catch (_) {
+      ok = false;
+    }
+
+    if (!ok) {
+      messenger.showSnackBar(SnackBar(content: Text(failure)));
+    }
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Gig gig) async {
@@ -93,6 +121,32 @@ class GigDetailScreen extends ConsumerWidget {
                 SectionLabel(l10n.photosLabel),
                 Gap.vSm,
                 PhotoStrip(ownerId: value.id),
+                if (value.photosUrl != null || value.videoUrl != null) ...[
+                  Gap.vXl,
+                  SectionLabel(l10n.gigLinksLabel),
+                  Gap.vSm,
+                  Wrap(
+                    spacing: Gap.sm,
+                    runSpacing: Gap.sm,
+                    children: [
+                      if (value.photosUrl != null)
+                        OutlinedButton.icon(
+                          onPressed: () => _openLink(context, value.photosUrl!),
+                          icon: const Icon(
+                            Icons.photo_library_outlined,
+                            size: 18,
+                          ),
+                          label: Text(l10n.gigPhotosLink),
+                        ),
+                      if (value.videoUrl != null)
+                        OutlinedButton.icon(
+                          onPressed: () => _openLink(context, value.videoUrl!),
+                          icon: const Icon(Icons.play_circle_outline, size: 18),
+                          label: Text(l10n.gigVideoLink),
+                        ),
+                    ],
+                  ),
+                ],
                 if (value.setlist != null) ...[
                   Gap.vXl,
                   SectionLabel(l10n.fieldSetlist),
