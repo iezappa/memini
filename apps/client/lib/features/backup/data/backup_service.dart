@@ -259,137 +259,162 @@ class BackupService {
     await _db.transaction(() async {
       await _deleteAll();
 
-      await _db.batch((batch) {
-        batch.insertAll(_db.franchises, [
-          for (final f in document.franchises)
-            FranchisesCompanion.insert(
-              id: Value(f.id),
-              updatedAt: f.updatedAt ?? _now(),
-              name: f.name,
-              logoPath: Value(f.logoPath),
-            ),
-        ]);
-        batch.insertAll(_db.rooms, [
-          for (final r in document.rooms)
-            RoomsCompanion.insert(
-              id: Value(r.id),
-              updatedAt: r.updatedAt ?? _now(),
-              title: r.title,
-              description: Value(r.description),
-              franchiseId: Value(r.franchiseId),
-              rating: Value(r.rating),
-              review: Value(r.review),
-              happenedOn: r.happenedOn,
-              escaped: r.escaped,
-              timeLeftMinutes: Value(r.timeLeftMinutes),
-            ),
-        ]);
-        batch.insertAll(_db.meals, [
-          for (final m in document.meals)
-            MealsCompanion.insert(
-              id: Value(m.id),
-              updatedAt: m.updatedAt ?? _now(),
-              title: m.title,
-              description: Value(m.description),
-              rating: Value(m.rating),
-              review: Value(m.review),
-              happenedOn: m.happenedOn,
-              dish: Value(m.dish),
-              price: Value(m.price),
-              company: Value(m.company),
-              mapsUrl: Value(m.mapsUrl),
-            ),
-        ]);
-        batch.insertAll(_db.gigs, [
-          for (final g in document.gigs)
-            GigsCompanion.insert(
-              id: Value(g.id),
-              updatedAt: g.updatedAt ?? _now(),
-              title: g.title,
-              description: Value(g.description),
-              rating: Value(g.rating),
-              review: Value(g.review),
-              happenedOn: g.happenedOn,
-              venue: Value(g.venue),
-              city: Value(g.city),
-              supportActs: Value(g.supportActs),
-              setlist: Value(g.setlist),
-              company: Value(g.company),
-              externalId: Value(g.externalId),
-              photosUrl: Value(g.photosUrl),
-              videoUrl: Value(g.videoUrl),
-            ),
-        ]);
-        batch.insertAll(_db.viewings, [
-          for (final v in document.viewings)
-            ViewingsCompanion.insert(
-              id: Value(v.id),
-              updatedAt: v.updatedAt ?? _now(),
-              title: v.title,
-              description: Value(v.description),
-              rating: Value(v.rating),
-              review: Value(v.review),
-              happenedOn: v.happenedOn,
-              kind: v.kind,
-              releaseYear: Value(v.releaseYear),
-              director: Value(v.director),
-              cast: Value(v.cast),
-              season: Value(v.season),
-              externalId: Value(v.externalId),
-              posterUrl: Value(v.posterUrl),
-              backdropUrl: Value(v.backdropUrl),
-            ),
-        ]);
-        batch.insertAll(_db.games, [
-          for (final g in document.games)
-            GamesCompanion.insert(
-              id: Value(g.id),
-              updatedAt: g.updatedAt ?? _now(),
-              title: g.title,
-              description: Value(g.description),
-              rating: Value(g.rating),
-              review: Value(g.review),
-              happenedOn: g.happenedOn,
-              status: g.status,
-              platform: Value(g.platform),
-              hoursPlayed: Value(g.hoursPlayed),
-              releaseYear: Value(g.releaseYear),
-              externalId: Value(g.externalId),
-              coverUrl: Value(g.coverUrl),
-            ),
-        ]);
-        batch.insertAll(_db.books, [
-          for (final b in document.books)
-            BooksCompanion.insert(
-              id: Value(b.id),
-              updatedAt: b.updatedAt ?? _now(),
-              title: b.title,
-              description: Value(b.description),
-              rating: Value(b.rating),
-              review: Value(b.review),
-              happenedOn: b.readOn,
-              author: Value(b.author),
-              publicationYear: Value(b.publicationYear),
-              externalId: Value(b.externalId),
-              coverUrl: Value(b.coverUrl),
-            ),
-        ]);
-        batch.insertAll(_db.wishes, [
-          for (final w in document.wishes)
-            WishesCompanion.insert(
-              id: Value(w.id),
-              kind: w.kind,
-              title: w.title,
-              addedOn: w.addedOn,
-              updatedAt: w.updatedAt ?? _now(),
-              note: Value(w.note),
-              description: Value(w.description),
-              releaseYear: Value(w.releaseYear),
-              externalId: Value(w.externalId),
-              posterUrl: Value(w.posterUrl),
-            ),
-        ]);
-      });
+      // Insert row-by-row instead of one large batch. The web SQLite backend is
+      // more sensitive to large batch payloads, and a restore should prefer a
+      // slower, predictable transaction over a backend-specific bulk failure.
+      for (final f in document.franchises) {
+        await _db
+            .into(_db.franchises)
+            .insert(
+              FranchisesCompanion.insert(
+                id: Value(f.id),
+                updatedAt: f.updatedAt ?? _now(),
+                name: f.name,
+                logoPath: Value(f.logoPath),
+              ),
+            );
+      }
+      for (final r in document.rooms) {
+        await _db
+            .into(_db.rooms)
+            .insert(
+              RoomsCompanion.insert(
+                id: Value(r.id),
+                updatedAt: r.updatedAt ?? _now(),
+                title: r.title,
+                description: Value(r.description),
+                franchiseId: Value(r.franchiseId),
+                rating: Value(r.rating),
+                review: Value(r.review),
+                happenedOn: r.happenedOn,
+                escaped: r.escaped,
+                timeLeftMinutes: Value(r.timeLeftMinutes),
+              ),
+            );
+      }
+      for (final m in document.meals) {
+        await _db
+            .into(_db.meals)
+            .insert(
+              MealsCompanion.insert(
+                id: Value(m.id),
+                updatedAt: m.updatedAt ?? _now(),
+                title: m.title,
+                description: Value(m.description),
+                rating: Value(m.rating),
+                review: Value(m.review),
+                happenedOn: m.happenedOn,
+                dish: Value(m.dish),
+                price: Value(m.price),
+                company: Value(m.company),
+                mapsUrl: Value(m.mapsUrl),
+              ),
+            );
+      }
+      for (final g in document.gigs) {
+        await _db
+            .into(_db.gigs)
+            .insert(
+              GigsCompanion.insert(
+                id: Value(g.id),
+                updatedAt: g.updatedAt ?? _now(),
+                title: g.title,
+                description: Value(g.description),
+                rating: Value(g.rating),
+                review: Value(g.review),
+                happenedOn: g.happenedOn,
+                venue: Value(g.venue),
+                city: Value(g.city),
+                supportActs: Value(g.supportActs),
+                setlist: Value(g.setlist),
+                company: Value(g.company),
+                externalId: Value(g.externalId),
+                photosUrl: Value(g.photosUrl),
+                videoUrl: Value(g.videoUrl),
+              ),
+            );
+      }
+      for (final v in document.viewings) {
+        await _db
+            .into(_db.viewings)
+            .insert(
+              ViewingsCompanion.insert(
+                id: Value(v.id),
+                updatedAt: v.updatedAt ?? _now(),
+                title: v.title,
+                description: Value(v.description),
+                rating: Value(v.rating),
+                review: Value(v.review),
+                happenedOn: v.happenedOn,
+                kind: v.kind,
+                releaseYear: Value(v.releaseYear),
+                director: Value(v.director),
+                cast: Value(v.cast),
+                season: Value(v.season),
+                externalId: Value(v.externalId),
+                posterUrl: Value(v.posterUrl),
+                backdropUrl: Value(v.backdropUrl),
+              ),
+            );
+      }
+      for (final g in document.games) {
+        await _db
+            .into(_db.games)
+            .insert(
+              GamesCompanion.insert(
+                id: Value(g.id),
+                updatedAt: g.updatedAt ?? _now(),
+                title: g.title,
+                description: Value(g.description),
+                rating: Value(g.rating),
+                review: Value(g.review),
+                happenedOn: g.happenedOn,
+                status: g.status,
+                platform: Value(g.platform),
+                hoursPlayed: Value(g.hoursPlayed),
+                releaseYear: Value(g.releaseYear),
+                externalId: Value(g.externalId),
+                coverUrl: Value(g.coverUrl),
+              ),
+            );
+      }
+      for (final b in document.books) {
+        await _db
+            .into(_db.books)
+            .insert(
+              BooksCompanion.insert(
+                id: Value(b.id),
+                updatedAt: b.updatedAt ?? _now(),
+                title: b.title,
+                description: Value(b.description),
+                rating: Value(b.rating),
+                review: Value(b.review),
+                happenedOn: b.readOn,
+                author: Value(b.author),
+                publicationYear: Value(b.publicationYear),
+                externalId: Value(b.externalId),
+                coverUrl: Value(b.coverUrl),
+              ),
+            );
+      }
+      for (final w in document.wishes) {
+        await _db
+            .into(_db.wishes)
+            .insert(
+              WishesCompanion.insert(
+                id: Value(w.id),
+                kind: w.kind,
+                title: w.title,
+                addedOn: w.addedOn,
+                updatedAt: w.updatedAt ?? _now(),
+                note: Value(w.note),
+                description: Value(w.description),
+                releaseYear: Value(w.releaseYear),
+                externalId: Value(w.externalId),
+                posterUrl: Value(w.posterUrl),
+              ),
+            );
+      }
     });
   }
 }
