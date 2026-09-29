@@ -9,6 +9,7 @@ import '../../../core/photos/presentation/photo_folder_tile.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../backup/data/backup_service.dart';
 import '../../backup/domain/backup_document.dart';
 import '../../backup/presentation/backup_actions.dart';
 import '../../backup/presentation/backup_feedback.dart';
@@ -576,20 +577,33 @@ class _DataSection extends ConsumerWidget {
     );
     if (confirmed != true) return;
 
+    BackupDocument? document;
     try {
       final bytes = await ref.read(backupFilesProvider).open();
       if (bytes == null) return;
 
-      final document = await ref
-          .read(backupServiceProvider)
-          .import(utf8.decode(bytes));
+      final parsed = BackupService.parse(utf8.decode(bytes));
+      document = parsed;
+      await ref.read(backupServiceProvider).restore(parsed);
       messenger.showSnackBar(
-        SnackBar(content: Text(l10n.importDone(document.entryCount))),
+        SnackBar(content: Text(l10n.importDone(parsed.entryCount))),
       );
-    } on BackupFormatException {
+    } on BackupFormatException catch (error) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.importInvalidFormat(error.reason))),
+      );
+    } on FormatException {
       messenger.showSnackBar(SnackBar(content: Text(l10n.importFailed)));
     } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.importFailed)));
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            document == null
+                ? l10n.importFailed
+                : l10n.importRestoreFailed(document.entryCount),
+          ),
+        ),
+      );
     }
   }
 }

@@ -548,6 +548,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 entry restored} other{{count} entries restored}}'**
   String importDone(int count);
 
+  /// No description provided for @importInvalidFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'That file is not a valid Memini backup ({reason}).'**
+  String importInvalidFormat(String reason);
+
+  /// No description provided for @importRestoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is valid and contains {count, plural, =1{1 entry} other{{count} entries}}, but it could not be written to browser storage.'**
+  String importRestoreFailed(int count);
+
   /// No description provided for @importFailed.
   ///
   /// In en, this message translates to:

@@ -260,6 +260,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String importInvalidFormat(String reason) {
+    return 'That file is not a valid Memini backup ($reason).';
+  }
+
+  @override
+  String importRestoreFailed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries',
+      one: '1 entry',
+    );
+    return 'The file is valid and contains $_temp0, but it could not be written to browser storage.';
+  }
+
+  @override
   String get importFailed => 'That file is not a valid Memini backup.';
 
   @override

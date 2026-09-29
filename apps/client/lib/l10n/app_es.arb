@@ -82,6 +82,22 @@
   "importWarningBody": "Importar reemplaza todas las entradas guardadas. Exportá un backup primero si querés conservarlas.",
   "importConfirm": "Reemplazar",
   "importDone": "{count, plural, =1{1 entrada restaurada} other{{count} entradas restauradas}}",
+  "importInvalidFormat": "Ese archivo no es un backup válido de Memini ({reason}).",
+  "@importInvalidFormat": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "importRestoreFailed": "El archivo es válido y contiene {count, plural, =1{1 entrada} other{{count} entradas}}, pero no se pudo escribir en el almacenamiento del navegador.",
+  "@importRestoreFailed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "importFailed": "Ese archivo no es un backup válido de Memini.",
   "exportDone": "Backup guardado.",
   "exportFailed": "No se pudo guardar el archivo.",
