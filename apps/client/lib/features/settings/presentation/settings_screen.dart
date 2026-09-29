@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../core/database/local_store.dart';
 import '../../../core/photos/presentation/photo_folder_tile.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
@@ -584,7 +585,18 @@ class _DataSection extends ConsumerWidget {
 
       final parsed = BackupService.parse(utf8.decode(bytes));
       document = parsed;
+
+      try {
+        await ref.read(databaseProvider).close();
+      } on Object {
+        // Import is replace-only and the file has already been validated. If the
+        // current connection is stale or broken, deleting the store is still the
+        // safer path than trying to write into it.
+      }
+      await ref.read(eraseLocalStoreProvider)();
+      ref.invalidate(databaseProvider);
       await ref.read(backupServiceProvider).restore(parsed);
+
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.importDone(parsed.entryCount))),
       );

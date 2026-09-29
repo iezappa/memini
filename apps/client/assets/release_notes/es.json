@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.4",
+      "date": "2026-09-29",
+      "highlights": [
+        "Importar un backup ahora recrea el almacenamiento local antes de restaurar, evitando errores de esquemas antiguos del navegador."
+      ]
+    },
+    {
       "version": "1.1.3",
       "date": "2026-09-29",
       "highlights": [
