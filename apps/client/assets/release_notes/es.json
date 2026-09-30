@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.12",
+      "date": "2026-09-30",
+      "highlights": [
+        "El build de la imagen Docker ahora instala la misma versión de Flutter usada por las pruebas de release."
+      ]
+    },
+    {
       "version": "1.1.11",
       "date": "2026-09-30",
       "highlights": [

@@ -63,8 +63,8 @@ void main() {
     );
     expect(top('Licences'), greaterThan(top('Developer')));
     await tester.pumpAndSettle();
-    expect(top('Version 1.1.11'), greaterThan(top('Licences')));
-    expect(top('Show the tutorial again'), greaterThan(top('Version 1.1.11')));
+    expect(top('Version 1.1.12'), greaterThan(top('Licences')));
+    expect(top('Show the tutorial again'), greaterThan(top('Version 1.1.12')));
 
     await unmount(tester);
   });
@@ -121,7 +121,7 @@ void main() {
     await pumpSettings(tester);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Version 1.1.11'));
+    await tester.tap(find.text('Version 1.1.12'));
     await tester.pumpAndSettle();
 
     expect(find.text('Release notes'), findsOneWidget);

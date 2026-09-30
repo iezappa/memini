@@ -13,17 +13,35 @@
 # Only the tiny nginx stage is resolved per target platform: no QEMU emulation
 # of the Flutter SDK is needed.
 
-# release.yml passes the image explicitly. Cirrus does not publish every Flutter
-# patch as a Docker tag, so the release workflow uses ghcr.io/cirruslabs/flutter:stable.
-ARG FLUTTER_IMAGE=ghcr.io/cirruslabs/flutter:stable
-
 # ---------- Stage 1: build Flutter web ----------
-FROM --platform=$BUILDPLATFORM ${FLUTTER_IMAGE} AS build
+FROM --platform=$BUILDPLATFORM ubuntu:24.04 AS build
 
 # Path of the Flutter project inside the repository.
 ARG APP_DIR=apps/client
 # The container serves the app at the root of its own origin.
 ARG BASE_HREF=/
+# Keep this in sync with release.yml/subosito-flutter-action.
+ARG FLUTTER_VERSION=3.47.1
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH=/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:$PATH
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      bash \
+      ca-certificates \
+      curl \
+      file \
+      git \
+      unzip \
+      xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz" \
+      | tar -xJ -C /opt \
+    && git config --global --add safe.directory /opt/flutter \
+    && flutter --version \
+    && flutter config --enable-web
 
 WORKDIR /src
 COPY ${APP_DIR}/pubspec.yaml ${APP_DIR}/pubspec.lock* ./
@@ -55,3 +73,4 @@ EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -q --spider http://127.0.0.1:8080/healthz || exit 1
+

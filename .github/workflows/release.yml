@@ -40,9 +40,6 @@ env:
   # Pinned like ci.yml and pages.yml: a release must build with the toolchain
   # the tests ran on.
   FLUTTER_VERSION: 3.47.1
-  # Cirrus does not publish every Flutter patch as a Docker tag; use its
-  # rolling stable image for the static web image build.
-  FLUTTER_DOCKER_IMAGE: ghcr.io/cirruslabs/flutter:stable
 
 defaults:
   run:
@@ -251,14 +248,14 @@ jobs:
           build-args: |
             APP_DIR=${{ env.APP_DIR }}
             BASE_HREF=/
-            FLUTTER_IMAGE=${{ env.FLUTTER_DOCKER_IMAGE }}
+            FLUTTER_VERSION=${{ env.FLUTTER_VERSION }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
   release:
-    needs: [linux, windows, macos, web]
+    needs: [linux, windows, macos, web, docker]
     runs-on: ubuntu-latest
     defaults:
       run:
