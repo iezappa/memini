@@ -2,6 +2,16 @@
 
 **English** · [Español](README.es.md)
 
+<p align="center">
+  <img src="assets/banner.png" alt="Memini — local-first tracker" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/icon.png" alt="Memini app icon" width="112" height="112"><br>
+  <strong>Track what you lived. Keep it yours.</strong><br>
+  <a href="https://iezappa.github.io/memini/">Open the web app</a>
+</p>
+
 [![CI](https://github.com/iezappa/memini/actions/workflows/ci.yml/badge.svg)](https://github.com/iezappa/memini/actions/workflows/ci.yml)
 
 A personal log of the things you have actually done — escape rooms, meals out,
