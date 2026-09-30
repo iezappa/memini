@@ -293,6 +293,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get syncerImport => 'Importar desde otro dispositivo';
 
   @override
+  String get syncerReceiveWifi => 'Recibir por WiFi';
+
+  @override
+  String get syncerSendWifi => 'Enviar por WiFi';
+
+  @override
+  String get syncerWifiNativeHint =>
+      'Funciona mejor entre apps instaladas en el mismo WiFi. En navegador, mantené el sync por archivo como respaldo.';
+
+  @override
   String get syncerExportDone => 'Paquete de sync guardado.';
 
   @override
@@ -359,6 +369,39 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get syncerFailed => 'No se pudo sincronizar ese archivo.';
+
+  @override
+  String get syncerWifiUnsupported =>
+      'El sync WiFi en vivo no está disponible en esta versión de navegador. Usá exportar/importar paquete de sync.';
+
+  @override
+  String get syncerReceiveWifiTitle => 'Recibir por WiFi';
+
+  @override
+  String syncerReceiveWifiBody(String url) {
+    return 'Dejá esta pantalla abierta. En el otro dispositivo, abrí esta dirección desde Enviar por WiFi de Memini, o abrila en un navegador y subí un paquete de sync:\n\n$url';
+  }
+
+  @override
+  String get syncerSendWifiTitle => 'Enviar por WiFi';
+
+  @override
+  String get syncerSendWifiHint =>
+      'Dirección del receptor, ej. http://192.168.1.20:12345/codigo';
+
+  @override
+  String get syncerSendWifiAction => 'Enviar';
+
+  @override
+  String get syncerWifiBadUrl => 'Esa dirección de recepción no es válida.';
+
+  @override
+  String get syncerWifiSent =>
+      'Paquete de sync enviado. Revisá el dispositivo receptor.';
+
+  @override
+  String get syncerWifiFailed =>
+      'No se pudo completar el sync WiFi. Usá exportar/importar paquete de sync.';
 
   @override
   String get exportDone => 'Backup guardado.';

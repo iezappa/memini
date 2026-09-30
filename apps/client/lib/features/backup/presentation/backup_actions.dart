@@ -8,6 +8,7 @@ import '../../../core/app/app_restart.dart';
 import '../../../core/database/local_store.dart';
 import '../../../core/time/clock.dart';
 import '../data/backup_service.dart';
+import '../data/sync_lan_service.dart';
 import '../domain/backup_document.dart';
 import '../domain/backup_reminder.dart';
 import 'backup_files.dart';
@@ -87,6 +88,10 @@ class BackupActions {
 }
 
 final backupActionsProvider = Provider<BackupActions>(BackupActions.new);
+
+final lanSyncServiceProvider = Provider<LanSyncService>(
+  (ref) => const LanSyncService(),
+);
 
 /// The way out of a store that cannot be opened.
 ///

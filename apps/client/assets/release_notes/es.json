@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.7",
+      "date": "2026-09-30",
+      "highlights": [
+        "Syncer suma transferencia WiFi inicial: las apps instaladas pueden recibir o enviar paquetes en la red local, manteniendo la vista previa segura antes de aplicar."
+      ]
+    },
+    {
       "version": "1.1.6",
       "date": "2026-09-29",
       "highlights": [

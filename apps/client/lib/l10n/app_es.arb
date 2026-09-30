@@ -103,6 +103,9 @@
   "syncerBody": "Pasá entradas desde otro dispositivo sin reemplazar este. Memini te muestra nuevas, duplicadas y conflictos antes de escribir nada.",
   "syncerExport": "Exportar paquete de sync",
   "syncerImport": "Importar desde otro dispositivo",
+  "syncerReceiveWifi": "Recibir por WiFi",
+  "syncerSendWifi": "Enviar por WiFi",
+  "syncerWifiNativeHint": "Funciona mejor entre apps instaladas en el mismo WiFi. En navegador, mantené el sync por archivo como respaldo.",
   "syncerExportDone": "Paquete de sync guardado.",
   "syncerPreviewTitle": "Vista previa del sync",
   "syncerPreviewBody": "{newCount, plural, =0{No hay entradas nuevas} =1{1 entrada nueva} other{{newCount} entradas nuevas}}. {duplicateCount, plural, =0{No hay duplicadas} =1{1 duplicada} other{{duplicateCount} duplicadas}} se van a omitir. {conflictCount, plural, =0{No hay conflictos} =1{1 conflicto} other{{conflictCount} conflictos}} no se van a sobrescribir.",
@@ -135,6 +138,22 @@
     }
   },
   "syncerFailed": "No se pudo sincronizar ese archivo.",
+  "syncerWifiUnsupported": "El sync WiFi en vivo no está disponible en esta versión de navegador. Usá exportar/importar paquete de sync.",
+  "syncerReceiveWifiTitle": "Recibir por WiFi",
+  "syncerReceiveWifiBody": "Dejá esta pantalla abierta. En el otro dispositivo, abrí esta dirección desde Enviar por WiFi de Memini, o abrila en un navegador y subí un paquete de sync:\n\n{url}",
+  "@syncerReceiveWifiBody": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "syncerSendWifiTitle": "Enviar por WiFi",
+  "syncerSendWifiHint": "Dirección del receptor, ej. http://192.168.1.20:12345/codigo",
+  "syncerSendWifiAction": "Enviar",
+  "syncerWifiBadUrl": "Esa dirección de recepción no es válida.",
+  "syncerWifiSent": "Paquete de sync enviado. Revisá el dispositivo receptor.",
+  "syncerWifiFailed": "No se pudo completar el sync WiFi. Usá exportar/importar paquete de sync.",
   "exportDone": "Backup guardado.",
   "exportFailed": "No se pudo guardar el archivo.",
   "settingsAbout": "Acerca de",

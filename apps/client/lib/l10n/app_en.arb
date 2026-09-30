@@ -131,6 +131,9 @@
   "syncerBody": "Move entries from another device without replacing this one. Memini previews new entries, duplicates and conflicts before writing anything.",
   "syncerExport": "Export sync package",
   "syncerImport": "Import from another device",
+  "syncerReceiveWifi": "Receive over WiFi",
+  "syncerSendWifi": "Send over WiFi",
+  "syncerWifiNativeHint": "Works best between installed apps on the same WiFi. Keep file sync as the browser fallback.",
   "syncerExportDone": "Sync package saved.",
   "syncerPreviewTitle": "Sync preview",
   "syncerPreviewBody": "{newCount, plural, =0{No new entries} =1{1 new entry} other{{newCount} new entries}}. {duplicateCount, plural, =0{No duplicates} =1{1 duplicate} other{{duplicateCount} duplicates}} will be skipped. {conflictCount, plural, =0{No conflicts} =1{1 conflict} other{{conflictCount} conflicts}} will not be overwritten.",
@@ -163,6 +166,22 @@
     }
   },
   "syncerFailed": "Could not sync that file.",
+  "syncerWifiUnsupported": "Live WiFi sync is not available in this browser build. Use sync package export/import instead.",
+  "syncerReceiveWifiTitle": "Receive over WiFi",
+  "syncerReceiveWifiBody": "Keep this screen open. On the other device, open this address in Memini's Send over WiFi flow, or open it in a browser and upload a sync package:\n\n{url}",
+  "@syncerReceiveWifiBody": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "syncerSendWifiTitle": "Send over WiFi",
+  "syncerSendWifiHint": "Receiver address, e.g. http://192.168.1.20:12345/code",
+  "syncerSendWifiAction": "Send",
+  "syncerWifiBadUrl": "That receiver address is not valid.",
+  "syncerWifiSent": "Sync package sent. Check the receiving device.",
+  "syncerWifiFailed": "Could not complete WiFi sync. Use sync package export/import instead.",
   "exportDone": "Backup saved.",
   "exportFailed": "Could not save the file.",
   "settingsAbout": "About",

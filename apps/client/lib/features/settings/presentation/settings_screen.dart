@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -664,6 +665,20 @@ class _SyncSection extends ConsumerWidget {
           title: Text(l10n.syncerImport),
           onTap: () => _import(context, ref),
         ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.wifi_tethering_outlined),
+          title: Text(l10n.syncerReceiveWifi),
+          subtitle: Text(l10n.syncerWifiNativeHint),
+          onTap: () => _receiveWifi(context, ref),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: const Icon(Icons.send_to_mobile_outlined),
+          title: Text(l10n.syncerSendWifi),
+          subtitle: Text(l10n.syncerWifiNativeHint),
+          onTap: () => _sendWifi(context, ref),
+        ),
       ],
     );
   }
@@ -685,53 +700,9 @@ class _SyncSection extends ConsumerWidget {
 
     try {
       final bytes = await ref.read(backupFilesProvider).open();
-      if (bytes == null) return;
+      if (bytes == null || !context.mounted) return;
       final document = BackupService.parse(utf8.decode(bytes));
-      final preview = await ref
-          .read(backupServiceProvider)
-          .previewSync(document);
-      if (!context.mounted) return;
-
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(l10n.syncerPreviewTitle),
-          content: Text(
-            l10n.syncerPreviewBody(
-              preview.newCount,
-              preview.duplicateCount,
-              preview.conflictCount,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: preview.hasChanges
-                  ? () => Navigator.of(context).pop(true)
-                  : null,
-              child: Text(l10n.syncerApply),
-            ),
-          ],
-        ),
-      );
-      if (confirmed != true) return;
-
-      final result = await ref.read(backupServiceProvider).applySync(document);
-      if (!context.mounted) return;
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n.syncerApplyDone(
-              result.newCount,
-              result.duplicateCount,
-              result.conflictCount,
-            ),
-          ),
-        ),
-      );
+      await _previewAndApply(context, ref, document);
     } on BackupFormatException catch (error) {
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.importInvalidFormat(error.reason))),
@@ -740,6 +711,170 @@ class _SyncSection extends ConsumerWidget {
       messenger.showSnackBar(SnackBar(content: Text(l10n.importFailed)));
     } catch (_) {
       messenger.showSnackBar(SnackBar(content: Text(l10n.syncerFailed)));
+    }
+  }
+
+  Future<void> _previewAndApply(
+    BuildContext context,
+    WidgetRef ref,
+    BackupDocument document,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final preview = await ref.read(backupServiceProvider).previewSync(document);
+    if (!context.mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.syncerPreviewTitle),
+        content: Text(
+          l10n.syncerPreviewBody(
+            preview.newCount,
+            preview.duplicateCount,
+            preview.conflictCount,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: preview.hasChanges
+                ? () => Navigator.of(context).pop(true)
+                : null,
+            child: Text(l10n.syncerApply),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final result = await ref.read(backupServiceProvider).applySync(document);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          l10n.syncerApplyDone(
+            result.newCount,
+            result.duplicateCount,
+            result.conflictCount,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _receiveWifi(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final service = ref.read(lanSyncServiceProvider);
+    if (!service.isSupported) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.syncerWifiUnsupported)),
+      );
+      return;
+    }
+
+    try {
+      final session = await service.startReceiving();
+      if (!context.mounted) {
+        await session.close();
+        return;
+      }
+
+      StreamSubscription<String>? subscription;
+      subscription = session.received.listen((contents) async {
+        await subscription?.cancel();
+        await session.close();
+        if (!context.mounted) return;
+        Navigator.of(context).pop();
+        try {
+          final document = BackupService.parse(contents);
+          await _previewAndApply(context, ref, document);
+        } on BackupFormatException catch (error) {
+          messenger.showSnackBar(
+            SnackBar(content: Text(l10n.importInvalidFormat(error.reason))),
+          );
+        } on FormatException {
+          messenger.showSnackBar(SnackBar(content: Text(l10n.importFailed)));
+        } catch (_) {
+          messenger.showSnackBar(SnackBar(content: Text(l10n.syncerFailed)));
+        }
+      });
+
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.syncerReceiveWifiTitle),
+          content: SelectableText(
+            l10n.syncerReceiveWifiBody(session.url.toString()),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            ),
+          ],
+        ),
+      );
+      await subscription.cancel();
+      await session.close();
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.syncerWifiFailed)));
+    }
+  }
+
+  Future<void> _sendWifi(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final service = ref.read(lanSyncServiceProvider);
+    if (!service.isSupported) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.syncerWifiUnsupported)),
+      );
+      return;
+    }
+
+    final controller = TextEditingController();
+    final urlText = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.syncerSendWifiTitle),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          keyboardType: TextInputType.url,
+          decoration: InputDecoration(hintText: l10n.syncerSendWifiHint),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(controller.text),
+            child: Text(l10n.syncerSendWifiAction),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (urlText == null || urlText.trim().isEmpty) return;
+
+    final url = Uri.tryParse(urlText.trim());
+    if (url == null || !url.hasScheme || url.host.isEmpty) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.syncerWifiBadUrl)));
+      return;
+    }
+
+    try {
+      final contents = await ref.read(backupServiceProvider).exportSyncJson();
+      await service.send(url: url, contents: contents);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.syncerWifiSent)));
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.syncerWifiFailed)));
     }
   }
 }

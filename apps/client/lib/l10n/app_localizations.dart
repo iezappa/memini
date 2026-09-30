@@ -590,6 +590,24 @@ abstract class AppLocalizations {
   /// **'Import from another device'**
   String get syncerImport;
 
+  /// No description provided for @syncerReceiveWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive over WiFi'**
+  String get syncerReceiveWifi;
+
+  /// No description provided for @syncerSendWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Send over WiFi'**
+  String get syncerSendWifi;
+
+  /// No description provided for @syncerWifiNativeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Works best between installed apps on the same WiFi. Keep file sync as the browser fallback.'**
+  String get syncerWifiNativeHint;
+
   /// No description provided for @syncerExportDone.
   ///
   /// In en, this message translates to:
@@ -625,6 +643,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not sync that file.'**
   String get syncerFailed;
+
+  /// No description provided for @syncerWifiUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Live WiFi sync is not available in this browser build. Use sync package export/import instead.'**
+  String get syncerWifiUnsupported;
+
+  /// No description provided for @syncerReceiveWifiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive over WiFi'**
+  String get syncerReceiveWifiTitle;
+
+  /// No description provided for @syncerReceiveWifiBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this screen open. On the other device, open this address in Memini\'s Send over WiFi flow, or open it in a browser and upload a sync package:\n\n{url}'**
+  String syncerReceiveWifiBody(String url);
+
+  /// No description provided for @syncerSendWifiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send over WiFi'**
+  String get syncerSendWifiTitle;
+
+  /// No description provided for @syncerSendWifiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiver address, e.g. http://192.168.1.20:12345/code'**
+  String get syncerSendWifiHint;
+
+  /// No description provided for @syncerSendWifiAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get syncerSendWifiAction;
+
+  /// No description provided for @syncerWifiBadUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'That receiver address is not valid.'**
+  String get syncerWifiBadUrl;
+
+  /// No description provided for @syncerWifiSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync package sent. Check the receiving device.'**
+  String get syncerWifiSent;
+
+  /// No description provided for @syncerWifiFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete WiFi sync. Use sync package export/import instead.'**
+  String get syncerWifiFailed;
 
   /// No description provided for @exportDone.
   ///

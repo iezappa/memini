@@ -292,6 +292,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncerImport => 'Import from another device';
 
   @override
+  String get syncerReceiveWifi => 'Receive over WiFi';
+
+  @override
+  String get syncerSendWifi => 'Send over WiFi';
+
+  @override
+  String get syncerWifiNativeHint =>
+      'Works best between installed apps on the same WiFi. Keep file sync as the browser fallback.';
+
+  @override
   String get syncerExportDone => 'Sync package saved.';
 
   @override
@@ -358,6 +368,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncerFailed => 'Could not sync that file.';
+
+  @override
+  String get syncerWifiUnsupported =>
+      'Live WiFi sync is not available in this browser build. Use sync package export/import instead.';
+
+  @override
+  String get syncerReceiveWifiTitle => 'Receive over WiFi';
+
+  @override
+  String syncerReceiveWifiBody(String url) {
+    return 'Keep this screen open. On the other device, open this address in Memini\'s Send over WiFi flow, or open it in a browser and upload a sync package:\n\n$url';
+  }
+
+  @override
+  String get syncerSendWifiTitle => 'Send over WiFi';
+
+  @override
+  String get syncerSendWifiHint =>
+      'Receiver address, e.g. http://192.168.1.20:12345/code';
+
+  @override
+  String get syncerSendWifiAction => 'Send';
+
+  @override
+  String get syncerWifiBadUrl => 'That receiver address is not valid.';
+
+  @override
+  String get syncerWifiSent => 'Sync package sent. Check the receiving device.';
+
+  @override
+  String get syncerWifiFailed =>
+      'Could not complete WiFi sync. Use sync package export/import instead.';
 
   @override
   String get exportDone => 'Backup saved.';

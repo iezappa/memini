@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Everything the app stores stays on this device (PRIVACY.md): the Drift
          database holds every entry and the TMDB/RAWG keys. Android's default
          would let Auto Backup copy it to the user's Google account.
