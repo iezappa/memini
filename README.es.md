@@ -17,6 +17,11 @@
 Un registro personal de lo que realmente hiciste —escape rooms, comidas fuera,
 conciertos, películas y series, y juegos—, cada cosa con una puntuación y tu propia reseña.
 
+<p align="center">
+  <img src="assets/preview-home.png" alt="Panel de actividad de Memini" width="49%">
+  <img src="assets/preview-films.png" alt="Biblioteca de películas y series de Memini" width="49%">
+</p>
+
 - **Descargas:** https://github.com/iezappa/memini/releases/latest
 - **Versión web (iPhone, iPad y cualquier navegador):** https://iezappa.github.io/memini/
 

@@ -5,6 +5,9 @@
 .DS_Store
 Thumbs.db
 
+# Local screenshots used as source material for README artwork.
+Screenshot *.png
+
 # Agent tooling cache — the registry itself is tracked, the cache is not.
 .atl/.skill-registry.cache.json
 

@@ -17,6 +17,11 @@
 A personal log of the things you have actually done — escape rooms, meals out,
 concerts, films and series, and games — each with a score and your own review.
 
+<p align="center">
+  <img src="assets/preview-home.png" alt="Memini activity dashboard" width="49%">
+  <img src="assets/preview-films.png" alt="Memini films and series library" width="49%">
+</p>
+
 - **Downloads:** https://github.com/iezappa/memini/releases/latest
 - **Web version (iPhone, iPad and any browser):** https://iezappa.github.io/memini/
 
