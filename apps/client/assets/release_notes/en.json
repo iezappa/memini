@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.11",
+      "date": "2026-09-30",
+      "highlights": [
+        "Docker release pipeline fix: use a published Flutter Docker image and download only release assets."
+      ]
+    },
+    {
       "version": "1.1.10",
       "date": "2026-09-30",
       "highlights": [

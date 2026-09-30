@@ -13,8 +13,9 @@
 # Only the tiny nginx stage is resolved per target platform: no QEMU emulation
 # of the Flutter SDK is needed.
 
-# Pinned to the toolchain CI tests with (release.yml passes the same tag).
-ARG FLUTTER_IMAGE=ghcr.io/cirruslabs/flutter:3.47.1
+# release.yml passes the image explicitly. Cirrus does not publish every Flutter
+# patch as a Docker tag, so the release workflow uses ghcr.io/cirruslabs/flutter:stable.
+ARG FLUTTER_IMAGE=ghcr.io/cirruslabs/flutter:stable
 
 # ---------- Stage 1: build Flutter web ----------
 FROM --platform=$BUILDPLATFORM ${FLUTTER_IMAGE} AS build
