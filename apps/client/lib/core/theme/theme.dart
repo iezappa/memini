@@ -382,10 +382,7 @@ abstract final class MeminiTheme {
             }
             return Colors.transparent;
           }),
-          foregroundColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) return scheme.primary;
-            return scheme.onSurface;
-          }),
+          foregroundColor: WidgetStatePropertyAll(scheme.onSurface),
           side: WidgetStatePropertyAll(BorderSide(color: semantics.hairline)),
           shape: const WidgetStatePropertyAll(
             RoundedRectangleBorder(borderRadius: Radii.pill),
