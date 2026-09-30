@@ -99,7 +99,6 @@ void main() {
     ]);
   });
 
-
   test('updates a meal and can clear its price', () async {
     final created = await add(title: 'Old');
     await repository.update(

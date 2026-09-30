@@ -52,8 +52,13 @@ class EnrichmentSuggestion {
 
   /// A one-line hint under the title in the picker, so two films with the
   /// same name are still tellable apart.
-  String get subtitle =>
-      [?releaseYear?.toString(), ?director, ?author, ?origin, ?platforms].join(' · ');
+  String get subtitle => [
+    ?releaseYear?.toString(),
+    ?director,
+    ?author,
+    ?origin,
+    ?platforms,
+  ].join(' · ');
 
   /// The same suggestion with a description on it.
   EnrichmentSuggestion withDescription(String? description) =>

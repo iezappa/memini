@@ -137,11 +137,7 @@ class WishDetailScreen extends ConsumerWidget {
               padding: EdgeInsets.zero,
               children: [
                 if (value.posterUrl case final art?)
-                  ArtHeader(
-                    backdropUrl: art,
-                    posterUrl: art,
-                    heading: heading,
-                  )
+                  ArtHeader(backdropUrl: art, posterUrl: art, heading: heading)
                 else
                   Padding(
                     padding: const EdgeInsets.fromLTRB(

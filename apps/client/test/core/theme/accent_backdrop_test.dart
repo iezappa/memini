@@ -24,10 +24,12 @@ void main() {
     await tester.pump();
 
     final box = tester.widget<DecoratedBox>(
-      find.descendant(
-        of: find.byType(AccentBackdrop),
-        matching: find.byType(DecoratedBox),
-      ).first,
+      find
+          .descendant(
+            of: find.byType(AccentBackdrop),
+            matching: find.byType(DecoratedBox),
+          )
+          .first,
     );
 
     return ((box.decoration as BoxDecoration).gradient! as LinearGradient)

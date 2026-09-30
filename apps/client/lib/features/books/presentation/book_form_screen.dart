@@ -75,9 +75,10 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
     final picked = await showEnrichmentSheet(
       context: context,
       source: source,
-      initialQuery: [_title.text.trim(), _author.text.trim()]
-          .where((part) => part.isNotEmpty)
-          .join(' '),
+      initialQuery: [
+        _title.text.trim(),
+        _author.text.trim(),
+      ].where((part) => part.isNotEmpty).join(' '),
     );
     if (picked == null || !mounted) return;
 
@@ -176,7 +177,9 @@ class _BookFormScreenState extends ConsumerState<BookFormScreen> {
                 controller: _publicationYear,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(labelText: l10n.fieldPublicationYear),
+                decoration: InputDecoration(
+                  labelText: l10n.fieldPublicationYear,
+                ),
               ),
             ),
             Gap.hMd,

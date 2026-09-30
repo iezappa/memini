@@ -84,9 +84,7 @@ class _Grid extends ConsumerWidget {
           children: [
             for (final (index, week) in grid.weeks.indexed)
               Padding(
-                padding: EdgeInsets.only(
-                  right: index == columns - 1 ? 0 : gap,
-                ),
+                padding: EdgeInsets.only(right: index == columns - 1 ? 0 : gap),
                 child: Column(
                   children: [
                     for (final day in week)

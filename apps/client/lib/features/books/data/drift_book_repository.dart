@@ -91,7 +91,9 @@ class DriftBookRepository implements BookRepository {
 
   @override
   Future<void> update(Book entry) async {
-    await (_db.update(_db.books)..where((book) => book.id.equals(entry.id))).write(
+    await (_db.update(
+      _db.books,
+    )..where((book) => book.id.equals(entry.id))).write(
       BooksCompanion(
         updatedAt: Value(_now()),
         title: Value(entry.title.trim()),

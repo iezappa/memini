@@ -65,7 +65,9 @@ final _patterns = <RegExp>[
   // Google's viewport: /@lat,lng,17z
   RegExp(r'@(-?\d+\.\d+),(-?\d+\.\d+)'),
   // ?q=lat,lng — Google, and what a "copy coordinates" gives you.
-  RegExp(r'[?&](?:q|query|ll|center|daddr)=(-?\d+\.\d+)(?:,|%2C)\s*(-?\d+\.\d+)'),
+  RegExp(
+    r'[?&](?:q|query|ll|center|daddr)=(-?\d+\.\d+)(?:,|%2C)\s*(-?\d+\.\d+)',
+  ),
   // geo: URIs, which is what a phone hands over when you share a pin.
   RegExp(r'^geo:(-?\d+\.\d+),(-?\d+\.\d+)'),
   // OpenStreetMap's own address bar: #map=19/lat/lon

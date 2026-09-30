@@ -31,9 +31,10 @@ class TrackerViewController extends Notifier<TrackerView> {
   }
 }
 
-final trackerViewProvider = NotifierProvider<TrackerViewController, TrackerView>(
-  TrackerViewController.new,
-);
+final trackerViewProvider =
+    NotifierProvider<TrackerViewController, TrackerView>(
+      TrackerViewController.new,
+    );
 
 /// How many entries fill one page.
 ///

@@ -47,9 +47,7 @@ void main() {
     await unmount(tester);
   });
 
-  testWidgets('no link at all shows nothing, not an empty box', (
-    tester,
-  ) async {
+  testWidgets('no link at all shows nothing, not an empty box', (tester) async {
     await pump(tester, null);
 
     expect(find.text('Open in maps'), findsNothing);

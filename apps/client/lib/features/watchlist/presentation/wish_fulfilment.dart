@@ -32,45 +32,57 @@ class WishFulfilment {
     final fulfilled = switch (wish.kind) {
       WishKind.screen => (
         domain: TrackedDomain.screen,
-        id: (await _ref.read(viewingRepositoryProvider).create(
-          ViewingDraft(
-            title: wish.title,
-            happenedOn: today,
-            // The coarse guess: a wish does not say whether it is a film or
-            // a series, and the owner can correct it where they add the
-            // score.
-            kind: ViewingKind.film,
-            description: wish.description,
-            releaseYear: wish.releaseYear,
-            externalId: wish.externalId,
-            posterUrl: wish.posterUrl,
-          ),
-        )).id,
+        id:
+            (await _ref
+                    .read(viewingRepositoryProvider)
+                    .create(
+                      ViewingDraft(
+                        title: wish.title,
+                        happenedOn: today,
+                        // The coarse guess: a wish does not say whether it is a film or
+                        // a series, and the owner can correct it where they add the
+                        // score.
+                        kind: ViewingKind.film,
+                        description: wish.description,
+                        releaseYear: wish.releaseYear,
+                        externalId: wish.externalId,
+                        posterUrl: wish.posterUrl,
+                      ),
+                    ))
+                .id,
       ),
       WishKind.game => (
         domain: TrackedDomain.games,
-        id: (await _ref.read(gameRepositoryProvider).create(
-          GameDraft(
-            title: wish.title,
-            happenedOn: today,
-            status: GameStatus.finished,
-            description: wish.description,
-            releaseYear: wish.releaseYear,
-            externalId: wish.externalId,
-            coverUrl: wish.posterUrl,
-          ),
-        )).id,
+        id:
+            (await _ref
+                    .read(gameRepositoryProvider)
+                    .create(
+                      GameDraft(
+                        title: wish.title,
+                        happenedOn: today,
+                        status: GameStatus.finished,
+                        description: wish.description,
+                        releaseYear: wish.releaseYear,
+                        externalId: wish.externalId,
+                        coverUrl: wish.posterUrl,
+                      ),
+                    ))
+                .id,
       ),
       WishKind.music => (
         domain: TrackedDomain.concerts,
-        id: (await _ref.read(gigRepositoryProvider).create(
-          GigDraft(
-            title: wish.title,
-            happenedOn: today,
-            description: wish.description,
-            externalId: wish.externalId,
-          ),
-        )).id,
+        id:
+            (await _ref
+                    .read(gigRepositoryProvider)
+                    .create(
+                      GigDraft(
+                        title: wish.title,
+                        happenedOn: today,
+                        description: wish.description,
+                        externalId: wish.externalId,
+                      ),
+                    ))
+                .id,
       ),
     };
 

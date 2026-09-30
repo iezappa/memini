@@ -41,10 +41,7 @@ class AccentBackdrop extends StatelessWidget {
           gradient: RadialGradient(
             center: const Alignment(1.1, 1.0),
             radius: 1.2,
-            colors: [
-              tint.withValues(alpha: 0.85),
-              tint.withValues(alpha: 0),
-            ],
+            colors: [tint.withValues(alpha: 0.85), tint.withValues(alpha: 0)],
           ),
         ),
         child: child,

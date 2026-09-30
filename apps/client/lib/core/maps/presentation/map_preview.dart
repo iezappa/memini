@@ -56,12 +56,16 @@ class MapPreview extends StatelessWidget {
                 // from the first frame rather than growing into it as each
                 // picture lands.
                 ColoredBox(color: context.colors.surfaceContainerHighest),
-                for (var x = (left / _tile).floor();
-                    x <= ((left + width) / _tile).floor();
-                    x++)
-                  for (var y = (top / _tile).floor();
-                      y <= ((top + height) / _tile).floor();
-                      y++)
+                for (
+                  var x = (left / _tile).floor();
+                  x <= ((left + width) / _tile).floor();
+                  x++
+                )
+                  for (
+                    var y = (top / _tile).floor();
+                    y <= ((top + height) / _tile).floor();
+                    y++
+                  )
                     Positioned(
                       left: x * _tile - left,
                       top: y * _tile - top,

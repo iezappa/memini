@@ -225,11 +225,7 @@ class _HomeShell extends StatelessWidget {
             destinations: destinations,
             selectedIndex: shell.currentIndex,
             onSelected: shell.goBranch,
-            footer: (
-              Icons.settings_outlined,
-              Icons.settings,
-              l10n.navSettings,
-            ),
+            footer: (Icons.settings_outlined, Icons.settings, l10n.navSettings),
             footerSelected: shell.currentIndex == settingsBranch,
             onFooterSelected: () => shell.goBranch(settingsBranch),
           ),

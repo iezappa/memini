@@ -11,9 +11,9 @@ Future<void> loadRealFonts() async {
   for (final family in const ['Inter', 'Fraunces']) {
     final loader = FontLoader(family)
       ..addFont(
-        File('assets/fonts/$family.ttf').readAsBytes().then(
-          (bytes) => ByteData.sublistView(bytes),
-        ),
+        File('assets/fonts/$family.ttf')
+            .readAsBytes()
+            .then((bytes) => ByteData.sublistView(bytes)),
       );
     await loader.load();
   }

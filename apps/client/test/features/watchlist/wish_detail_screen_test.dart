@@ -77,9 +77,8 @@ void main() {
     await tester.tap(find.text('I have seen it'));
     await tester.pumpAndSettle();
 
-    final viewings = await DriftViewingRepository(
-      db,
-    ).list(const ViewingFilter());
+    final viewings = await DriftViewingRepository(db)
+        .list(const ViewingFilter());
     expect(viewings.single.title, 'Dune: Part Three');
     expect(await wishes.list(const WishFilter()), isEmpty);
     await unmount(tester);

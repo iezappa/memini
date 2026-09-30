@@ -182,11 +182,8 @@ void main() {
     tester,
   ) async {
     final rooms = await addRooms(1);
-    await DriftPhotoRepository(db).add(
-      ownerId: rooms.single.id,
-      bytes: _png,
-      mimeType: 'image/png',
-    );
+    await DriftPhotoRepository(db)
+        .add(ownerId: rooms.single.id, bytes: _png, mimeType: 'image/png');
 
     await pump(tester);
 

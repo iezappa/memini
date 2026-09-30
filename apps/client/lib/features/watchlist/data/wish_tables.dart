@@ -10,9 +10,7 @@ import '../domain/wish.dart';
 /// score, no review — and a nullable version of each of those, five times
 /// over, would be five tables that no longer mean what they say.
 @DataClassName('WishRow')
-@TableIndex.sql(
-  'CREATE INDEX IF NOT EXISTS wish_by_kind ON wishes (kind)',
-)
+@TableIndex.sql('CREATE INDEX IF NOT EXISTS wish_by_kind ON wishes (kind)')
 class Wishes extends Table {
   TextColumn get id => text().clientDefault(newUuid)();
   IntColumn get kind => intEnum<WishKind>()();

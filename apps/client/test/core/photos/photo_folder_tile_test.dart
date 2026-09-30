@@ -61,7 +61,9 @@ void main() {
     await pump(tester);
 
     expect(
-      find.text('This browser cannot write into a folder. Chrome and Edge can.'),
+      find.text(
+        'This browser cannot write into a folder. Chrome and Edge can.',
+      ),
       findsOneWidget,
     );
     expect(find.text('Choose'), findsNothing);

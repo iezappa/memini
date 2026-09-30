@@ -57,7 +57,8 @@ class OpenLibrarySource implements EnrichmentSource {
   }
 
   @override
-  Future<EnrichmentSuggestion> details(EnrichmentSuggestion picked) async => picked;
+  Future<EnrichmentSuggestion> details(EnrichmentSuggestion picked) async =>
+      picked;
 
   static List<EnrichmentSuggestion> parseSearch(String body) {
     final decoded = jsonDecode(body);
@@ -101,7 +102,6 @@ class OpenLibrarySource implements EnrichmentSource {
     return names.first;
   }
 
-  static String? _coverUrl(Object? coverId) => coverId is int
-      ? '$_coverBase/$coverId-L.jpg'
-      : null;
+  static String? _coverUrl(Object? coverId) =>
+      coverId is int ? '$_coverBase/$coverId-L.jpg' : null;
 }

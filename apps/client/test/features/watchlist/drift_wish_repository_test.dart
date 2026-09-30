@@ -74,9 +74,7 @@ void main() {
     await add(title: 'Silksong', kind: WishKind.game);
     await add(title: 'Dune: Part Three');
 
-    final games = await repository.list(
-      const WishFilter(kind: WishKind.game),
-    );
+    final games = await repository.list(const WishFilter(kind: WishKind.game));
 
     expect(games.map((w) => w.title), ['Silksong']);
   });
@@ -114,9 +112,8 @@ void main() {
 
     await repository.delete(wish.id);
 
-    expect(
-      (await repository.list(const WishFilter())).map((w) => w.title),
-      ['Stays'],
-    );
+    expect((await repository.list(const WishFilter())).map((w) => w.title), [
+      'Stays',
+    ]);
   });
 }

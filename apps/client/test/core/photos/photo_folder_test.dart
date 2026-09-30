@@ -65,7 +65,8 @@ void main() {
         ),
         photoFolderProvider.overrideWithValue(folder),
         photoPickerProvider.overrideWithValue(
-          () async => (bytes: Uint8List.fromList([1, 2, 3]), mimeType: 'image/png'),
+          () async =>
+              (bytes: Uint8List.fromList([1, 2, 3]), mimeType: 'image/png'),
         ),
       ],
     );
@@ -92,9 +93,9 @@ void main() {
     // not be skipped just because the folder is still being looked up.
     await container.read(photoActionsProvider).attach('room-1');
 
-    final photo = (await container
-        .read(photoRepositoryProvider)
-        .forOwner('room-1')).single;
+    final photo =
+        (await container.read(photoRepositoryProvider).forOwner('room-1'))
+            .single;
     expect(folder.written.keys, [photo.fileName]);
     expect(folder.written.values.single, [1, 2, 3]);
   });

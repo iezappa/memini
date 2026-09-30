@@ -106,8 +106,7 @@ class TrackerListScreen<T> extends ConsumerStatefulWidget {
       _TrackerListScreenState<T>();
 }
 
-class _TrackerListScreenState<T>
-    extends ConsumerState<TrackerListScreen<T>> {
+class _TrackerListScreenState<T> extends ConsumerState<TrackerListScreen<T>> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   int _page = 0;
@@ -292,9 +291,7 @@ class _TrackerListScreenState<T>
                           SliverToBoxAdapter(
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: Gap.sm),
-                              child: SectionLabel(
-                                labels.count(entries.length),
-                              ),
+                              child: SectionLabel(labels.count(entries.length)),
                             ),
                           ),
                           if (view == TrackerView.grid)
@@ -404,8 +401,7 @@ class TrackerViewToggle extends StatelessWidget {
       // shows the one it would switch to and says so.
       icon: Icon(grid ? Icons.view_list_outlined : Icons.grid_view_outlined),
       tooltip: grid ? l10n.viewList : l10n.viewGrid,
-      onPressed: () =>
-          onSelected(grid ? TrackerView.list : TrackerView.grid),
+      onPressed: () => onSelected(grid ? TrackerView.list : TrackerView.grid),
     );
   }
 }

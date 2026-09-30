@@ -66,10 +66,7 @@ void main() {
     await pump(tester);
 
     expect(find.text('Dune: Part Three'), findsOneWidget);
-    expect(
-      find.text('Film or series · 2027 · Sep 25, 2026'),
-      findsOneWidget,
-    );
+    expect(find.text('Film or series · 2027 · Sep 25, 2026'), findsOneWidget);
     await unmount(tester);
   });
 

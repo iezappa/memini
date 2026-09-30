@@ -52,7 +52,10 @@ class WatchlistScreen extends ConsumerWidget {
           itemBuilder: (context) => [
             PopupMenuItem(value: null, child: Text(l10n.wishKindAll)),
             for (final kind in WishKind.values)
-              PopupMenuItem(value: kind, child: Text(wishKindLabel(l10n, kind))),
+              PopupMenuItem(
+                value: kind,
+                child: Text(wishKindLabel(l10n, kind)),
+              ),
           ],
           child: ChipShell(
             label: filter.kind == null

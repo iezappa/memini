@@ -104,6 +104,7 @@ class MealDraft {
   final String? dish;
   final double? price;
   final String? company;
+
   /// A link to the place on a map, as pasted.
   final String? mapsUrl;
 }

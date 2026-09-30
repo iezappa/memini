@@ -70,9 +70,11 @@ void main() {
     http.Client answering(String body, {int status = 200}) {
       return MockClient((request) async {
         requests.add(request.url);
-        return http.Response(body, status, headers: const {
-          'content-type': 'application/json; charset=utf-8',
-        });
+        return http.Response(
+          body,
+          status,
+          headers: const {'content-type': 'application/json; charset=utf-8'},
+        );
       });
     }
 
@@ -204,27 +206,33 @@ void main() {
       expect(detailed.description, isNot(contains('And then the sun')));
     });
 
-    test('a game with no text and no facts keeps its description null', () async {
-      final source = RawgSource(
-        apiKey: 'k',
-        client: answering(jsonEncode({'description_raw': '   '})),
-      );
+    test(
+      'a game with no text and no facts keeps its description null',
+      () async {
+        final source = RawgSource(
+          apiKey: 'k',
+          client: answering(jsonEncode({'description_raw': '   '})),
+        );
 
-      expect((await source.details(picked)).description, isNull);
-    });
+        expect((await source.details(picked)).description, isNull);
+      },
+    );
 
-    test('a page that will not load costs the description, not the pick', () async {
-      final source = RawgSource(
-        apiKey: 'k',
-        client: answering('nope', status: 500),
-      );
+    test(
+      'a page that will not load costs the description, not the pick',
+      () async {
+        final source = RawgSource(
+          apiKey: 'k',
+          client: answering('nope', status: 500),
+        );
 
-      final detailed = await source.details(picked);
+        final detailed = await source.details(picked);
 
-      expect(detailed.description, isNull);
-      expect(detailed.title, 'Outer Wilds');
-      expect(detailed.platforms, 'PC');
-    });
+        expect(detailed.description, isNull);
+        expect(detailed.title, 'Outer Wilds');
+        expect(detailed.platforms, 'PC');
+      },
+    );
 
     test('a request that throws hands back what was picked', () async {
       final source = RawgSource(

@@ -51,9 +51,11 @@ void main() {
 
     expect(moved.domain, TrackedDomain.screen);
 
-    final viewing = (await container
-        .read(viewingRepositoryProvider)
-        .list(const ViewingFilter())).single;
+    final viewing =
+        (await container
+                .read(viewingRepositoryProvider)
+                .list(const ViewingFilter()))
+            .single;
     expect(viewing.id, moved.id);
     expect(viewing.title, 'Dune: Part Three');
     expect(viewing.happenedOn, DateTime(2026, 9, 25));
@@ -83,9 +85,9 @@ void main() {
     final moved = await container.read(wishFulfilmentProvider).fulfil(pending);
 
     expect(moved.domain, TrackedDomain.games);
-    final game = (await container
-        .read(gameRepositoryProvider)
-        .list(const GameFilter())).single;
+    final game =
+        (await container.read(gameRepositoryProvider).list(const GameFilter()))
+            .single;
     expect(game.title, 'Dune: Part Three');
     expect(game.coverUrl, 'https://image.tmdb.org/t/p/w500/dune.jpg');
     expect(game.rating, isNull);
@@ -97,9 +99,9 @@ void main() {
     final moved = await container.read(wishFulfilmentProvider).fulfil(pending);
 
     expect(moved.domain, TrackedDomain.concerts);
-    final gig = (await container
-        .read(gigRepositoryProvider)
-        .list(const GigFilter())).single;
+    final gig =
+        (await container.read(gigRepositoryProvider).list(const GigFilter()))
+            .single;
     expect(gig.title, 'Dune: Part Three');
     expect(gig.externalId, '438631');
   });
