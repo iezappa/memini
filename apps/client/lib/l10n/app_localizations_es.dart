@@ -1435,4 +1435,95 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get fieldReadOn => 'Leído el';
+
+  @override
+  String get serverAccountTitle => 'Cuenta de servidor';
+
+  @override
+  String get serverAccountHint =>
+      'Opcional: conectá tu propio servidor Memini para backup con cuenta. El modo local sigue disponible sin login.';
+
+  @override
+  String get serverUrl => 'URL del servidor';
+
+  @override
+  String get serverUsername => 'Usuario';
+
+  @override
+  String get serverPassword => 'Contraseña';
+
+  @override
+  String get serverConnect => 'Conectar';
+
+  @override
+  String get serverReconnect => 'Reconectar';
+
+  @override
+  String get serverDisconnect => 'Desconectar';
+
+  @override
+  String get serverConnected => 'Conectado al servidor.';
+
+  @override
+  String get serverDisconnected =>
+      'Desconectado del servidor. Los datos locales quedan en este dispositivo.';
+
+  @override
+  String serverConnectedAs(String username, String server) {
+    return 'Conectado como $username en $server';
+  }
+
+  @override
+  String get serverManualSyncHint =>
+      'Backup manual al servidor. Subir copia este dispositivo a la cuenta; Descargar reemplaza este dispositivo con el backup de la cuenta.';
+
+  @override
+  String get serverUpload => 'Subir a la cuenta';
+
+  @override
+  String get serverDownload => 'Descargar de la cuenta';
+
+  @override
+  String serverUploaded(int count) {
+    return 'Se subieron $count registros a la cuenta';
+  }
+
+  @override
+  String serverDownloaded(int count) {
+    return 'Se descargaron $count registros de la cuenta';
+  }
+
+  @override
+  String get serverDownloadConfirmBody =>
+      'Los datos de este dispositivo se van a borrar y reemplazar por el backup de la cuenta. Subí o exportá primero si no estás seguro.';
+
+  @override
+  String get serverFamilyAccounts => 'Cuentas familiares';
+
+  @override
+  String get serverFamilyAccountsHint =>
+      'Solo admin: creá cuentas para familiares. Van a entrar con su propio usuario y contraseña.';
+
+  @override
+  String get serverNewUsername => 'Nuevo usuario';
+
+  @override
+  String get serverNewPassword => 'Nueva contraseña';
+
+  @override
+  String get serverCreateUser => 'Crear cuenta';
+
+  @override
+  String get serverUserCreated =>
+      'Cuenta creada. Compartí la URL del servidor, el usuario y la contraseña con esa persona.';
+
+  @override
+  String get serverUsernameRequired => 'Ingresá un usuario.';
+
+  @override
+  String get serverPasswordTooShort =>
+      'Usá al menos 8 caracteres para la contraseña.';
+
+  @override
+  String get backupConfirmTitle => '¿Reemplazar este dispositivo?';
 }

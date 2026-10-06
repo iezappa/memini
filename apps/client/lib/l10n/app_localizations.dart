@@ -2503,6 +2503,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read on'**
   String get fieldReadOn;
+
+  /// No description provided for @serverAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Server account'**
+  String get serverAccountTitle;
+
+  /// No description provided for @serverAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: connect to your own Memini server for account backup. Local mode stays available without login.'**
+  String get serverAccountHint;
+
+  /// No description provided for @serverUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get serverUrl;
+
+  /// No description provided for @serverUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get serverUsername;
+
+  /// No description provided for @serverPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get serverPassword;
+
+  /// No description provided for @serverConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get serverConnect;
+
+  /// No description provided for @serverReconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect'**
+  String get serverReconnect;
+
+  /// No description provided for @serverDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get serverDisconnect;
+
+  /// No description provided for @serverConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected to server.'**
+  String get serverConnected;
+
+  /// No description provided for @serverDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected from server. Local data stays on this device.'**
+  String get serverDisconnected;
+
+  /// No description provided for @serverConnectedAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected as {username} on {server}'**
+  String serverConnectedAs(String username, String server);
+
+  /// No description provided for @serverManualSyncHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual server backup. Upload copies this device to the account; Download replaces this device with the account backup.'**
+  String get serverManualSyncHint;
+
+  /// No description provided for @serverUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload to account'**
+  String get serverUpload;
+
+  /// No description provided for @serverDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download from account'**
+  String get serverDownload;
+
+  /// No description provided for @serverUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded {count} records to the account'**
+  String serverUploaded(int count);
+
+  /// No description provided for @serverDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded {count} records from the account'**
+  String serverDownloaded(int count);
+
+  /// No description provided for @serverDownloadConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The data on this device will be deleted and replaced by the account backup. Upload or export first if you are unsure.'**
+  String get serverDownloadConfirmBody;
+
+  /// No description provided for @serverFamilyAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Family accounts'**
+  String get serverFamilyAccounts;
+
+  /// No description provided for @serverFamilyAccountsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin only: create accounts for family members. They will log in with their own username and password.'**
+  String get serverFamilyAccountsHint;
+
+  /// No description provided for @serverNewUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'New username'**
+  String get serverNewUsername;
+
+  /// No description provided for @serverNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get serverNewPassword;
+
+  /// No description provided for @serverCreateUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get serverCreateUser;
+
+  /// No description provided for @serverUserCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created. Share the server URL, username, and password with that person.'**
+  String get serverUserCreated;
+
+  /// No description provided for @serverUsernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a username.'**
+  String get serverUsernameRequired;
+
+  /// No description provided for @serverPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 8 characters for the password.'**
+  String get serverPasswordTooShort;
+
+  /// No description provided for @backupConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace this device?'**
+  String get backupConfirmTitle;
 }
 
 class _AppLocalizationsDelegate

@@ -671,5 +671,55 @@
   "deleteBook": "Delete book",
   "fieldAuthor": "Author",
   "fieldPublicationYear": "Publication year",
-  "fieldReadOn": "Read on"
+  "fieldReadOn": "Read on",
+  "serverAccountTitle": "Server account",
+  "serverAccountHint": "Optional: connect to your own Memini server for account backup. Local mode stays available without login.",
+  "serverUrl": "Server URL",
+  "serverUsername": "Username",
+  "serverPassword": "Password",
+  "serverConnect": "Connect",
+  "serverReconnect": "Reconnect",
+  "serverDisconnect": "Disconnect",
+  "serverConnected": "Connected to server.",
+  "serverDisconnected": "Disconnected from server. Local data stays on this device.",
+  "serverConnectedAs": "Connected as {username} on {server}",
+  "@serverConnectedAs": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      },
+      "server": {
+        "type": "String"
+      }
+    }
+  },
+  "serverManualSyncHint": "Manual server backup. Upload copies this device to the account; Download replaces this device with the account backup.",
+  "serverUpload": "Upload to account",
+  "serverDownload": "Download from account",
+  "serverUploaded": "Uploaded {count} records to the account",
+  "@serverUploaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serverDownloaded": "Downloaded {count} records from the account",
+  "@serverDownloaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serverDownloadConfirmBody": "The data on this device will be deleted and replaced by the account backup. Upload or export first if you are unsure.",
+  "serverFamilyAccounts": "Family accounts",
+  "serverFamilyAccountsHint": "Admin only: create accounts for family members. They will log in with their own username and password.",
+  "serverNewUsername": "New username",
+  "serverNewPassword": "New password",
+  "serverCreateUser": "Create account",
+  "serverUserCreated": "Account created. Share the server URL, username, and password with that person.",
+  "serverUsernameRequired": "Enter a username.",
+  "serverPasswordTooShort": "Use at least 8 characters for the password.",
+  "backupConfirmTitle": "Replace this device?"
 }

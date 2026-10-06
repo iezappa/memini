@@ -20,6 +20,7 @@ import '../../legal/data/asset_legal_documents.dart';
 import '../../legal/presentation/legal_document_screen.dart';
 import '../../legal/presentation/legal_links.dart';
 import '../../release_notes/presentation/release_notes_dialog.dart';
+import '../../server_account/presentation/widgets/server_account_card.dart';
 import '../../release_notes/presentation/release_notes_providers.dart';
 import '../../onboarding/presentation/tutorial_dialog.dart';
 import '../../shared/support_actions.dart';
@@ -530,6 +531,7 @@ class _DataSection extends ConsumerWidget {
         // folder they are copied into belongs beside the file that carries
         // everything else.
         const PhotoFolderTile(),
+        const ServerAccountCard(),
         const EraseAllDataTile(),
       ],
     );

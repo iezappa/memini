@@ -565,5 +565,55 @@
   "deleteBook": "Eliminar libro",
   "fieldAuthor": "Autor",
   "fieldPublicationYear": "Año de publicación",
-  "fieldReadOn": "Leído el"
+  "fieldReadOn": "Leído el",
+  "serverAccountTitle": "Cuenta de servidor",
+  "serverAccountHint": "Opcional: conectá tu propio servidor Memini para backup con cuenta. El modo local sigue disponible sin login.",
+  "serverUrl": "URL del servidor",
+  "serverUsername": "Usuario",
+  "serverPassword": "Contraseña",
+  "serverConnect": "Conectar",
+  "serverReconnect": "Reconectar",
+  "serverDisconnect": "Desconectar",
+  "serverConnected": "Conectado al servidor.",
+  "serverDisconnected": "Desconectado del servidor. Los datos locales quedan en este dispositivo.",
+  "serverConnectedAs": "Conectado como {username} en {server}",
+  "@serverConnectedAs": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      },
+      "server": {
+        "type": "String"
+      }
+    }
+  },
+  "serverManualSyncHint": "Backup manual al servidor. Subir copia este dispositivo a la cuenta; Descargar reemplaza este dispositivo con el backup de la cuenta.",
+  "serverUpload": "Subir a la cuenta",
+  "serverDownload": "Descargar de la cuenta",
+  "serverUploaded": "Se subieron {count} registros a la cuenta",
+  "@serverUploaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serverDownloaded": "Se descargaron {count} registros de la cuenta",
+  "@serverDownloaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serverDownloadConfirmBody": "Los datos de este dispositivo se van a borrar y reemplazar por el backup de la cuenta. Subí o exportá primero si no estás seguro.",
+  "serverFamilyAccounts": "Cuentas familiares",
+  "serverFamilyAccountsHint": "Solo admin: creá cuentas para familiares. Van a entrar con su propio usuario y contraseña.",
+  "serverNewUsername": "Nuevo usuario",
+  "serverNewPassword": "Nueva contraseña",
+  "serverCreateUser": "Crear cuenta",
+  "serverUserCreated": "Cuenta creada. Compartí la URL del servidor, el usuario y la contraseña con esa persona.",
+  "serverUsernameRequired": "Ingresá un usuario.",
+  "serverPasswordTooShort": "Usá al menos 8 caracteres para la contraseña.",
+  "backupConfirmTitle": "¿Reemplazar este dispositivo?"
 }

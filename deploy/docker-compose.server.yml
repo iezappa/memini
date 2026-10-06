@@ -1,0 +1,55 @@
+# ZimaOS / CasaOS server-backed Memini edition.
+# This version stores data on the server, per logged-in user, in SQLite.
+# First start: set MEMINI_ADMIN_USER and MEMINI_ADMIN_PASSWORD.
+
+name: memini-server
+services:
+  memini-server:
+    image: ghcr.io/iezappa/memini-server:latest
+    container_name: memini-server
+    restart: unless-stopped
+    network_mode: bridge
+    environment:
+      MEMINI_ADMIN_USER: "admin"
+      MEMINI_ADMIN_PASSWORD: "change-this-password"
+    volumes:
+      - ./data:/app/data
+    ports:
+      - target: 8080
+        published: "5053"
+        protocol: tcp
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    x-casaos:
+      ports:
+        - container: "8080"
+          description:
+            en_US: Status page and API port
+            es_ES: Puerto de estado y API
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: memini-server
+  author: Zeke Zappa Developments (iezappa)
+  developer: Zeke Zappa Developments (iezappa)
+  category: Productivity
+  icon: https://raw.githubusercontent.com/iezappa/memini/master/apps/client/web/icons/Icon-512.png
+  tagline:
+    en_US: Personal media and experiences log with server-side user persistence
+    es_ES: Registro personal de experiencias y medios con persistencia de usuarios en servidor
+  description:
+    en_US: |
+      Runs the Memini Dart API with SQLite storage. Each logged-in user
+      has their own persisted backup document under the server data volume.
+    es_ES: |
+      Ejecuta la API Dart de Memini con almacenamiento SQLite. Cada usuario
+      logueado tiene su propio documento persistido bajo el volumen de datos.
+  title:
+    en_US: Memini Server
+  index: /
+  port_map: "5053"
+  scheme: http

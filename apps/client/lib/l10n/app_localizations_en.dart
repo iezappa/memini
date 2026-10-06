@@ -1434,4 +1434,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldReadOn => 'Read on';
+
+  @override
+  String get serverAccountTitle => 'Server account';
+
+  @override
+  String get serverAccountHint =>
+      'Optional: connect to your own Memini server for account backup. Local mode stays available without login.';
+
+  @override
+  String get serverUrl => 'Server URL';
+
+  @override
+  String get serverUsername => 'Username';
+
+  @override
+  String get serverPassword => 'Password';
+
+  @override
+  String get serverConnect => 'Connect';
+
+  @override
+  String get serverReconnect => 'Reconnect';
+
+  @override
+  String get serverDisconnect => 'Disconnect';
+
+  @override
+  String get serverConnected => 'Connected to server.';
+
+  @override
+  String get serverDisconnected =>
+      'Disconnected from server. Local data stays on this device.';
+
+  @override
+  String serverConnectedAs(String username, String server) {
+    return 'Connected as $username on $server';
+  }
+
+  @override
+  String get serverManualSyncHint =>
+      'Manual server backup. Upload copies this device to the account; Download replaces this device with the account backup.';
+
+  @override
+  String get serverUpload => 'Upload to account';
+
+  @override
+  String get serverDownload => 'Download from account';
+
+  @override
+  String serverUploaded(int count) {
+    return 'Uploaded $count records to the account';
+  }
+
+  @override
+  String serverDownloaded(int count) {
+    return 'Downloaded $count records from the account';
+  }
+
+  @override
+  String get serverDownloadConfirmBody =>
+      'The data on this device will be deleted and replaced by the account backup. Upload or export first if you are unsure.';
+
+  @override
+  String get serverFamilyAccounts => 'Family accounts';
+
+  @override
+  String get serverFamilyAccountsHint =>
+      'Admin only: create accounts for family members. They will log in with their own username and password.';
+
+  @override
+  String get serverNewUsername => 'New username';
+
+  @override
+  String get serverNewPassword => 'New password';
+
+  @override
+  String get serverCreateUser => 'Create account';
+
+  @override
+  String get serverUserCreated =>
+      'Account created. Share the server URL, username, and password with that person.';
+
+  @override
+  String get serverUsernameRequired => 'Enter a username.';
+
+  @override
+  String get serverPasswordTooShort =>
+      'Use at least 8 characters for the password.';
+
+  @override
+  String get backupConfirmTitle => 'Replace this device?';
 }
