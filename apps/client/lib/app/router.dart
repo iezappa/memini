@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,6 +31,7 @@ import '../features/screen/presentation/viewing_list_screen.dart';
 import '../features/rooms/presentation/room_detail_screen.dart';
 import '../features/rooms/presentation/room_form_screen.dart';
 import '../core/tracking/presentation/tracking_labels.dart';
+import '../features/server_account/presentation/server_account_providers.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/stats/presentation/stats_screen.dart';
 import '../features/watchlist/presentation/watchlist_screen.dart';
@@ -256,9 +259,53 @@ class _WithNotices extends StatelessWidget {
             const UpdateBanner(),
             const StorageWarningBanner(),
             const BackupReminderBanner(),
+            const _AutoBackupTrigger(),
           ],
         ),
       ),
     ),
   );
+}
+
+class _AutoBackupTrigger extends ConsumerStatefulWidget {
+  const _AutoBackupTrigger();
+
+  @override
+  ConsumerState<_AutoBackupTrigger> createState() => _AutoBackupTriggerState();
+}
+
+class _AutoBackupTriggerState extends ConsumerState<_AutoBackupTrigger> {
+  static const _interval = Duration(minutes: 2);
+
+  Timer? _timer;
+  bool _running = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _runOnce();
+      _timer = Timer.periodic(_interval, (_) => _runOnce());
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _runOnce() async {
+    if (_running) return;
+    _running = true;
+    try {
+      await ref.read(serverAccountActionsProvider).runAutomaticBackup();
+    } finally {
+      _running = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

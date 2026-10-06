@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/providers.dart';
 import '../../backup/domain/backup_document.dart';
 import '../data/memini_server_client.dart';
+import '../domain/backup_fingerprint.dart';
 import '../domain/server_account.dart';
 
 final serverBaseUrlProvider = NotifierProvider<ServerBaseUrlController, String>(
@@ -18,6 +19,28 @@ final serverTokenProvider = NotifierProvider<ServerTokenController, String>(
 final serverIsAdminProvider = NotifierProvider<ServerIsAdminController, bool>(
   ServerIsAdminController.new,
 );
+final serverAutoBackupEnabledProvider =
+    NotifierProvider<ServerAutoBackupEnabledController, bool>(
+      ServerAutoBackupEnabledController.new,
+    );
+final serverLastAutoBackupFingerprintProvider =
+    NotifierProvider<ServerLastAutoBackupFingerprintController, String>(
+      ServerLastAutoBackupFingerprintController.new,
+    );
+final serverLastAutoBackupSucceededAtProvider =
+    NotifierProvider<ServerLastAutoBackupSucceededAtController, String>(
+      ServerLastAutoBackupSucceededAtController.new,
+    );
+
+final localBackupReaderProvider = Provider<Future<BackupDocument> Function()>(
+  (ref) => ref.watch(backupServiceProvider).read,
+);
+
+final meminiServerClientFactoryProvider =
+    Provider<MeminiServerClient Function(String)>(
+      (ref) =>
+          (baseUrl) => MeminiServerClient(baseUrl: baseUrl),
+    );
 
 class ServerBaseUrlController extends _StringPreferenceController {
   @override
@@ -56,6 +79,30 @@ class ServerIsAdminController extends Notifier<bool> {
     state = value;
     ref.read(sharedPreferencesProvider).setBool('serverAccount.isAdmin', value);
   }
+}
+
+class ServerAutoBackupEnabledController extends Notifier<bool> {
+  static const key = 'serverAccount.autoBackupEnabled';
+
+  @override
+  bool build() => ref.watch(sharedPreferencesProvider).getBool(key) ?? false;
+
+  void set(bool value) {
+    state = value;
+    ref.read(sharedPreferencesProvider).setBool(key, value);
+  }
+}
+
+class ServerLastAutoBackupFingerprintController
+    extends _StringPreferenceController {
+  @override
+  String get key => 'serverAccount.lastAutoBackupFingerprint';
+}
+
+class ServerLastAutoBackupSucceededAtController
+    extends _StringPreferenceController {
+  @override
+  String get key => 'serverAccount.lastAutoBackupSucceededAt';
 }
 
 final serverAccountProvider = Provider<ServerAccount>(
@@ -97,7 +144,7 @@ class ServerAccountActions {
     required String username,
     required String password,
   }) async {
-    final client = MeminiServerClient(baseUrl: baseUrl);
+    final client = _ref.read(meminiServerClientFactoryProvider)(baseUrl);
     await client.healthCheck();
     final login = await client.login(username: username, password: password);
     _ref.read(serverBaseUrlProvider.notifier).set(baseUrl.trim());
@@ -110,7 +157,8 @@ class ServerAccountActions {
     final account = _ref.read(serverAccountProvider);
     if (account.isConnected) {
       try {
-        await MeminiServerClient(baseUrl: account.baseUrl)
+        await _ref
+            .read(meminiServerClientFactoryProvider)(account.baseUrl)
             .logout(account.token);
       } on Object {
         // Local disconnect must always remove the token from this device.
@@ -129,9 +177,13 @@ class ServerAccountActions {
     if (!account.isConnected || !account.isAdmin) {
       throw const ServerAccountException('Admin account required');
     }
-    await MeminiServerClient(
-      baseUrl: account.baseUrl,
-    ).createUser(token: account.token, username: username, password: password);
+    await _ref
+        .read(meminiServerClientFactoryProvider)(account.baseUrl)
+        .createUser(
+          token: account.token,
+          username: username,
+          password: password,
+        );
   }
 
   Future<ServerBackupOutcome> uploadLocalBackup() async {
@@ -140,8 +192,9 @@ class ServerAccountActions {
       return const ServerBackupFailed(ServerAccountException('Not connected'));
     }
     try {
-      final document = await _ref.read(backupServiceProvider).read();
-      final result = await MeminiServerClient(baseUrl: account.baseUrl)
+      final document = await _ref.read(localBackupReaderProvider)();
+      final result = await _ref
+          .read(meminiServerClientFactoryProvider)(account.baseUrl)
           .uploadBackup(token: account.token, document: document);
       return ServerBackupSucceeded(result.rowCount);
     } on Object catch (error) {
@@ -155,12 +208,40 @@ class ServerAccountActions {
       return const ServerBackupFailed(ServerAccountException('Not connected'));
     }
     try {
-      final BackupDocument document = await MeminiServerClient(
-        baseUrl: account.baseUrl,
-      ).downloadBackup(token: account.token);
+      final BackupDocument document = await _ref
+          .read(meminiServerClientFactoryProvider)(account.baseUrl)
+          .downloadBackup(token: account.token);
       await _ref.read(backupServiceProvider).restore(document);
       _ref.invalidate(databaseProvider);
       return ServerBackupSucceeded(document.entryCount);
+    } on Object catch (error) {
+      return ServerBackupFailed(error);
+    }
+  }
+
+  Future<ServerBackupOutcome?> runAutomaticBackup() async {
+    final account = _ref.read(serverAccountProvider);
+    if (!account.isConnected || !_ref.read(serverAutoBackupEnabledProvider)) {
+      return null;
+    }
+
+    try {
+      final document = await _ref.read(localBackupReaderProvider)();
+      final fingerprint = backupDocumentFingerprint(document);
+      if (fingerprint == _ref.read(serverLastAutoBackupFingerprintProvider)) {
+        return null;
+      }
+
+      final result = await _ref
+          .read(meminiServerClientFactoryProvider)(account.baseUrl)
+          .uploadBackup(token: account.token, document: document);
+      _ref
+          .read(serverLastAutoBackupFingerprintProvider.notifier)
+          .set(fingerprint);
+      _ref
+          .read(serverLastAutoBackupSucceededAtProvider.notifier)
+          .set(DateTime.now().toUtc().toIso8601String());
+      return ServerBackupSucceeded(result.rowCount);
     } on Object catch (error) {
       return ServerBackupFailed(error);
     }

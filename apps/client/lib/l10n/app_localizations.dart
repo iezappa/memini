@@ -2570,6 +2570,12 @@ abstract class AppLocalizations {
   /// **'Connected as {username} on {server}'**
   String serverConnectedAs(String username, String server);
 
+  /// No description provided for @serverAutoBackupSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up automatically when signed in'**
+  String get serverAutoBackupSwitch;
+
   /// No description provided for @serverManualSyncHint.
   ///
   /// In en, this message translates to:

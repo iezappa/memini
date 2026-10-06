@@ -168,6 +168,7 @@ class _ServerAccountCardState extends ConsumerState<ServerAccountCard> {
     final theme = Theme.of(context);
     final account = ref.watch(serverAccountProvider);
     final connected = account.isConnected;
+    final autoBackupEnabled = ref.watch(serverAutoBackupEnabledProvider);
 
     return ExpansionTile(
       tilePadding: EdgeInsets.zero,
@@ -236,6 +237,17 @@ class _ServerAccountCardState extends ConsumerState<ServerAccountCard> {
         ),
         if (connected) ...[
           const SizedBox(height: Gap.lg),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            value: autoBackupEnabled,
+            onChanged: _busy
+                ? null
+                : (value) => ref
+                      .read(serverAutoBackupEnabledProvider.notifier)
+                      .set(value),
+            title: Text(l10n.serverAutoBackupSwitch),
+          ),
+          const SizedBox(height: Gap.sm),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(

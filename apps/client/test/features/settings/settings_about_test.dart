@@ -63,8 +63,8 @@ void main() {
     );
     expect(top('Licences'), greaterThan(top('Developer')));
     await tester.pumpAndSettle();
-    expect(top('Version 1.1.14'), greaterThan(top('Licences')));
-    expect(top('Show the tutorial again'), greaterThan(top('Version 1.1.14')));
+    expect(top('Version 1.1.15'), greaterThan(top('Licences')));
+    expect(top('Show the tutorial again'), greaterThan(top('Version 1.1.15')));
 
     await unmount(tester);
   });
@@ -121,12 +121,12 @@ void main() {
     await pumpSettings(tester);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Version 1.1.14'));
+    await tester.tap(find.text('Version 1.1.15'));
     await tester.pumpAndSettle();
 
     expect(find.text('Release notes'), findsOneWidget);
     expect(
-      find.textContaining('Optional Memini Server account backup'),
+      find.textContaining('back up automatically while signed in'),
       findsWidgets,
     );
 

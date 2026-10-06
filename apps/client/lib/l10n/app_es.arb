@@ -587,6 +587,7 @@
       }
     }
   },
+  "serverAutoBackupSwitch": "Hacer backup automáticamente mientras estés conectado",
   "serverManualSyncHint": "Backup manual al servidor. Subir copia este dispositivo a la cuenta; Descargar reemplaza este dispositivo con el backup de la cuenta.",
   "serverUpload": "Subir a la cuenta",
   "serverDownload": "Descargar de la cuenta",

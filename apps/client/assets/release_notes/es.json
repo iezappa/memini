@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.15",
+      "date": "2026-10-06",
+      "highlights": [
+        "Las cuentas de Memini Server ahora pueden hacer backup automático mientras estés conectado, con detección de cambios para evitar subidas repetidas si los datos locales no cambiaron."
+      ]
+    },
+    {
       "version": "1.1.14",
       "date": "2026-10-06",
       "highlights": [

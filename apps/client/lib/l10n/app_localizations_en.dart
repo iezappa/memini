@@ -1473,6 +1473,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get serverAutoBackupSwitch => 'Back up automatically when signed in';
+
+  @override
   String get serverManualSyncHint =>
       'Manual server backup. Upload copies this device to the account; Download replaces this device with the account backup.';
 

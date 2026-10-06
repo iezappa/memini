@@ -1474,6 +1474,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get serverAutoBackupSwitch =>
+      'Hacer backup automáticamente mientras estés conectado';
+
+  @override
   String get serverManualSyncHint =>
       'Backup manual al servidor. Subir copia este dispositivo a la cuenta; Descargar reemplaza este dispositivo con el backup de la cuenta.';
 

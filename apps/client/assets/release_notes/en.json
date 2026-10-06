@@ -1,6 +1,13 @@
 {
   "releases": [
     {
+      "version": "1.1.15",
+      "date": "2026-10-06",
+      "highlights": [
+        "Memini Server accounts can now back up automatically while signed in, using change detection that avoids repeat uploads when local data has not changed."
+      ]
+    },
+    {
       "version": "1.1.14",
       "date": "2026-10-06",
       "highlights": [
