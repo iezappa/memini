@@ -84,12 +84,13 @@ void main() {
     await tester.pumpAndSettle();
 
     final name = 'Room ${DateTime.now().microsecondsSinceEpoch}';
-    await tester.tap(find.text('Escape rooms').first);
+    await tester.tap(find.byType(NavigationDestination).at(1));
     await tester.pumpAndSettle();
+    expect(find.text('Escape rooms'), findsWidgets);
     await tester.tap(find.text('Add room'));
     await tester.pumpAndSettle();
     await tester.enterText(find.widgetWithText(TextFormField, 'Name'), name);
-    await tester.tap(find.text('Save'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Save'));
     await tester.pumpAndSettle();
 
     expect(find.text(name), findsWidgets);
